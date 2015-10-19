@@ -1,3 +1,3 @@
 # deployment
 
-Deployment tool for VoltDB
+Deployment tool for VoltDB.
