@@ -1,0 +1,346 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice 4.1.1  (Unix)">
+	<META NAME="AUTHOR" CONTENT="Andrew Gent">
+	<META NAME="CREATED" CONTENT="20151019;10345400">
+	<META NAME="CHANGEDBY" CONTENT="Andrew Gent">
+	<META NAME="CHANGED" CONTENT="20151019;10353800">
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The following are the use cases for a VoltDB deployment tool. The use
+cases are identified by letters (A through H).</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<B>Design Assumptions:</B></P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	Use cases A through D are considered required for a minimal viable
+	product.</P>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	Use cases  E through J are considered desirable but not required.
+	There is no implied order or priority for these use cases (yet).</P>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	To management deployment of a cluster, all servers involved must be
+	running the deployment tool.</P>
+</UL>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<B>The distinction between VMC and the deployment tool:</B></P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	The goal of the deployment tool is to configure and start VoltDB
+	databases and server processes.</P>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	The goal of the VMC is to management running databases.</P>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	Wherever possible the two functions should remain separate.</P>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	For example,. the deployment tool does not need to/should not be
+	able to stop nodes or databases.</P>
+</UL>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<H1 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.vdkl09rph2ko"></A>
+Use Case A: Start 1 Node</H1>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Description: The user connects to the deployment tool with a web
+browser and starts a database on that server.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Design Goal: Simplicity. Once connected to the deployment tool,
+starting the database should be a single click.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<H1 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.9zmfqsbj6u30"></A>
+Use Case B: Start 3+ Nodes</H1>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Description: The user connects to one of the nodes to be used, adds
+the other nodes, then starts the database as a cluster.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Design Goal: Again, this should be a simple, self-evident process.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<H1 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.mahahghztk5"></A>
+Use Case C: Configure then Start Cluster</H1>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Description: Similar to Use Case B, except rather than just starting
+the cluster, the user wants to customize the configuration, changing
+settings associated with the deployment file.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Design Goal: Completeness and consistency. The configuration doesn’t
+have to be “simple” or “intuitive””. It should be clear and
+understandable. More importantly, it should allow for all
+cluster-wide deployment options. It should also allow for importing
+(and then editing) existing configurations. 
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<H1 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.u9s2evyucang"></A>
+Use Case D: Connect to Running Cluster, Go to VMC</H1>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Description:  If a user connects to the deployment tool on a node
+that is already a member of a running cluster. it should be clear the
+database is running and the user should be able to redirect to VMC on
+one of the nodes with a single click.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Design Goal: Reinforce separation of the two tools/functions. Guide
+the user to the management interface.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<H1 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.ltokv3pzjyp1"></A>
+Use Case E: Rejoin Failed Node in K-Safe Cluster</H1>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Description: Having started a K-Safe cluster using the deployment
+tool, then having one node fail (or be intentionally stopped), the
+user can go to the deployment tool to:</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<OL>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	See the state of the cluster</P>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	Restart/rejoin the failed node.</P>
+</OL>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Ideally this could be done from the deployment tool on any node in
+the cluster. (In other words, user does not necessarily have to
+connect to the deployment tool on the failed node.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Design Goal: make it clear what the status of the cluster
+infrastructure is, what node needs restarting, and how to restart it.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Issue: This is where the functions of deployment and management
+cross. The cluster is running; VMC knows a node has failed. Should
+the user have to go to the deployment tool to rejoin it? Or can VMC
+be taught to invoke the deployment tool to rejoin it? 
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<H1 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.7rq32bmeixe6"></A>
+Use Case F: Restart or Recover Previously Defined Cluster</H1>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Description: Having started a cluster using the deployment tool,
+after the cluster stops (intentionally or by accident), make it easy
+to either restart the cluster with its original configuration or
+recover if there are command logs.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Design Goal: Returning to a node that was previously configured, it
+should be possible to retrieve that configuration (deployment &amp;
+cluster, i.e. nodes), then restart it or recover it. 
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Issue: Is restart/recover the default? Can I “clear” the past
+history of the configuration?</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<H1 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.je1cnf9zxx0l"></A>
+Use Case G: Server-Specific Configuration Before Starting</H1>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Description: Like User Case C, except the user wants to configure
+server-specific settings (ports &amp; network interfaces) for one or
+more of the cluster nodes before starting the cluster.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Design Goal: Completeness (like deployment configuration) but
+distinctly secondary activity.  Should not interfere with other,
+primary functions.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<H1 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.nst2p1l56i91"></A>
+Use Case H: Add Node to Running Cluster<BR><BR><BR>
+</H1>
+<H1 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.q2euiqgrd59s"></A>
+<FONT FACE="Arial, sans-serif"><FONT SIZE=2 STYLE="font-size: 11pt">Description:
+Two options:</FONT></FONT></H1>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<OL>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	The user connects to the deployment tool on a node of a running
+	cluster, adds one or more nodes to the server list, (as required by
+	the K-safety factor), then clicks to start the servers and have them
+	join the cluster.</P>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	The user connects to the deployment tool of a non-running server,
+	tells it to join a cluster, specifying a node on the already-running
+	cluster.</P>
+</OL>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Design Goal: Support all deployment actions. (In this case,
+elasticity.) However, unclear how important this feature is to
+current users.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Issues: Option 01 requires the deployment tool on all nodes. Option
+02 allows (potentially) a server with the deployment tool to join a
+cluster without it. Probably do not want to support this action.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<H1 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.o15xkabhdlcw"></A>
+Use Case I: Define and Start Multiple VoltDB Instances on a Single
+Server</H1>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Description: Two options:</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<OL>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	Rather than starting a three node cluster on three nodes, the user
+	connects to a server, adds two more “instances” to the same
+	server, then starts a three “node” cluster using three separate
+	processes on the same server.</P>
+	<LI><P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	After one database cluster is declared and/or running on a server.
+	Add a second instance to run a different database. 
+	</P>
+</OL>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Design Goal: To support this use case, the interface (and back end)
+must support multiple virtual “nodes” for each deployment tool
+instance. This must be done in such a way so as not to make running
+one instance per server more complicated. In other words, this must
+be a non-intrusive additional capability.</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Issues: Is it possible to add this feature without complicating the
+standard use cases?</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<H1 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.p7ianaex4rce"></A>
+Use Case J: Use Deployment Tool on Node X to start a database on Node
+Y</H1>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Description: User wants to use a single deployment tool instance to
+deploy database(s) on other servers. (similar to the old VEM  model).</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The easy way to support this would be to allow someone to connect to
+the deployment tool on a server, then remove that server from the
+node list and add the servers they want to manage.  However, this
+only supports deploying/configuring a single cluster. And does the
+cluster save the deployment configuration for a cluster it is not a
+member of? 
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Design Goal: The more “correct “way to implement this use case is
+to separate the cluster configurations from the server that handles
+the deployment UI. This would allow the user to manage the
+configuration of multiple cluster from any location. But this needs
+to be done without complicating use cases A through D. 
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0in; line-height: 115%"><BR>
+</P>
+</BODY>
+</HTML>
