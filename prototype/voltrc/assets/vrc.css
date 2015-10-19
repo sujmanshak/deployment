@@ -1,0 +1,250 @@
+/*
+body {
+   max-width: 320px;
+    }
+    p,li {
+      font-size: 15px;
+    }
+    .top-bar { 
+      height: 44px; 
+      background: #00AEEF; 
+      text-align: center; 
+      top:0; 
+      z-index:1; 
+      border-bottom: 1px solid #0094d9; 
+      box-shadow: rgba(0, 0, 0, .25) 0 1px 2px;
+    }
+    h2 { 
+        color:#fff; 
+        font-weight: 
+        normal; 
+        font-size: 23px; 
+        line-height: 44px; 
+        margin: 0; 
+        text-shadow: 0 -1px rgba(0,0,0,.2); 
+      }
+    .top-bar-button { 
+        border-style: solid;
+        border-width: 1px;
+        font-family: inherit;
+        font-weight: bold;
+        line-height: 1;
+        position: relative;
+        text-decoration: none;
+        text-align: center;
+        -webkit-border-radius: 3px;
+        border-radius: 3px;
+        background: #009fd9;
+        color: #fff;
+        box-shadow: rgba(255, 255, 255, .4) 0 1px 0 inset;
+        border-color: #008cbf;
+        font-size: 12px;
+        padding: 5px 6px;
+        margin-top: 9px;
+      }
+*/
+body {
+    background-color: #DEE0E0;
+    margin-bottom: 20px;
+}
+div.vrcpanel {
+    background-color: white;
+    margin-bottom: 20px;
+    padding: 15px;
+}
+.vrcheader {
+    background-color: black;
+    min-height: 76px;
+    border: 0pt;
+    width: 100%;
+    margin-bottom: 20px;
+}
+.vrclogo {
+    background-color: white;
+    height: 76px;
+    padding: 10px 15px;
+    float: left;
+}
+.vrctitle {
+    color: white;
+    font-size: 18pt;
+    height: 76px;
+    padding: 15px;
+    padding-bottom: 10px;
+    padding-top: 45px;
+    float:left;
+}
+
+/*
+#addDbButtonDiv, #addServerButtonDiv {
+  text-align:right;
+}
+#debugger {
+ clear: both; 
+  margin: 1em;
+  border: 2pt solid black;
+  min-height: 4em;
+  background-color: #ddd;
+  color: black;
+  display: none;
+  overflow:scroll;
+  height: 50%;
+}
+#controller {
+  background-color: #333;
+   padding: 1em;
+   margin-top: .5em;
+}
+#controller button {
+  color: #333;
+}
+#controller input {
+  color: #333;
+}
+ */
+
+/*
+#database_list {
+  width: 20%;
+  float: left;
+  margin: 1em;
+  min-height: 4em;
+}
+*/
+
+/*
+#dashboard {
+  box-shadow: rgba(0, 0, 0, .25) 0 1px 2px;
+  border: 1pt solid #ccc;
+  padding: 1em;
+  margin: 1em;
+  float: left;
+  min-width: 70%;
+  min-height: 4em;
+}
+*/
+
+#main.row, #banner.row {
+margin: 0em 1em;
+}
+.config_banner {
+  background-color:#aae;
+  padding: 1em;
+  margin: .25em;
+/*  float: left;
+  min-width: 70%;
+  min-height: 4em;
+*/
+}
+
+.config_panel {
+  box-shadow: rgba(0, 0, 0, .25) 0 1px 2px;
+  border: 1pt solid #ccc;
+  padding: 1em;
+  margin: .25em;
+/*  float: left;
+  min-width: 70%;
+  min-height: 4em;
+*/
+}
+.db {
+  background-repeat: no-repeat;
+  height: 60px;
+  padding-left: 60px;
+  background-color: #eee;
+  margin: 2px;
+}
+.db.offline {
+  background-image: url('../graphics/vem/DBStopped.png');
+}
+.db.online {
+  background-image: url('../graphics/vem/DBRunning.png');
+}
+.db.starting {
+  background-image: url('../graphics/vem/DBSpinToRunning.gif');
+}
+.db.paused {
+  background-image: url('../graphics/vem/DBAdmin.png');
+}
+.db.active {
+  background-color: #aae;
+}
+
+/*  DB BANNER */
+
+#DBMainEntity {
+  background-repeat: no-repeat;
+  height: 60px;
+  padding-left: 85px;
+  background-size: 80px 56px;
+}
+#DBMainEntity.offline {
+  background-image: url('../graphics/vem/DBStoppedLarge.png');
+}
+#DBMainEntity.online {
+  background-image: url('../graphics/vem/DBRunningLarge.png');
+}
+#DBMainEntity.starting {
+  background-image: url('../graphics/vem/DBSpinToRunningLarge.gif');
+}
+#DBMainEntity.paused {
+  background-image: url('../graphics/vem/DBAdminLarge.png');
+}
+
+
+#DBMainControls {
+  font-size: 200%;
+  color: #00f;
+}
+
+#DBMainControls span {
+  margin: .125em;
+  padding: .125em;
+}
+#DBMainControls span:hover {
+  background-color: #00f;
+  color: #fff;
+}
+
+.server {
+  background-repeat: no-repeat;
+  background-position: center top;
+  padding-top: 30px;
+  float: left;
+}
+.server.offline {
+  background-image: url('../graphics/vem/ServerStopped.png');
+}
+#DBMainEntity.online {
+  background-image: url('../graphics/vem/ServerRunning.png');
+}
+
+
+
+table.grid {
+  font-size: small;
+}
+
+table.grid td {
+  padding-left: .25em;
+  padding-right: .25em;
+}
+
+table.grid  tr td:first-of-type {
+  text-align: right;
+}
+
+/*
+    ul {
+      list-style: none;
+      margin-bottom: 0;
+    }
+    a:hover {
+      color: #fff;
+    }
+    .content
+    {
+      height: 396px;
+      background: #fbfbfb;
+    }    
+*/          
