@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, abort, make_response, request
+from flask.views import MethodView
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder ="../templates", static_folder="../static")
 
 servers = [
     {
@@ -26,6 +27,7 @@ servers = [
     }
 ]
 
+
 @app.errorhandler(400)
 def not_found(error):
     return make_response(jsonify( { 'error': 'Bad request' } ), 400)
@@ -34,61 +36,77 @@ def not_found(error):
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
-@app.route('/api/1.0/servers/', methods=['GET'])
-def get_servers():
-    return jsonify({'servers':servers})
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-@app.route('/api/1.0/servers/<int:serverId>', methods=['GET'])
-def get_server(serverId):
-    server = filter(lambda t: t['id'] == serverId, servers)
-    if len(server) == 0:
-        abort(404)
-    return jsonify( { 'server': server[0] } )
+def make_public_server(servers):
+    new_server = {}
+    for field in servers:
+        new_server[field] = servers[field]
+    return new_server
 
-@app.route('/api/1.0/servers/', methods=['POST'])
-def create_server():
-    if not request.json or not 'name' in request.json or not 'hostname' in request.json:
-        abort(400)
-    server = {
+class ServerAPI(MethodView):
+
+    def get(self, server_id):
+        if server_id is None:
+            # return a list of users
+            return jsonify( { 'servers': map(make_public_server, servers) } )
+        else:
+            # expose a single user
+            server = filter(lambda t: t['id'] == server_id, servers)
+            if len(server) == 0:
+                abort(404)
+            return jsonify( { 'server': make_public_server(server[0]) } )
+
+    def post(self):
+        if not request.json or not 'name' in request.json or not 'hostname' in request.json:
+            abort(400)
+        server = {
         'id': servers[-1]['id'] + 1,
         'name': request.json['name'],
         'description': request.json.get('description', ""),
         'hostname': request.json.get('hostname', ""),
         'enabled': True
         }
-    servers.append(server)
-    return jsonify( { 'server': server } ),201
+        servers.append(server)
+        return jsonify( { 'server': server } ),201
 
-@app.route('/api/1.0/servers/<int:serverId>', methods=['PUT'])
-def update_server(serverId):
-    # update a single server
-    server = filter(lambda t: t['id'] == serverId, servers)
-    if len(server) == 0:
-        abort(404)
-    if not request.json:
-        abort(400)
-    if 'name' in request.json and type(request.json['name']) != unicode:
-        abort(400)
-    if 'description' in request.json and type(request.json['description']) is not unicode:
-        abort(400)
-    if 'enabled' in request.json and type(request.json['enabled']) is not bool:
-        abort(400)
-    server[0]['name'] = request.json.get('name', server[0]['name'])
-    server[0]['description'] = request.json.get('description', server[0]['description'])
-    server[0]['enabled'] = request.json.get('enabled', server[0]['enabled'])
-    return jsonify( { 'server': server[0] } )
+    def delete(self, server_id):
+        # delete a single server
+        server = filter(lambda t: t['id'] == server_id, servers)
+        if len(server) == 0:
+            abort(404)
+        servers.remove(server[0])
+        return jsonify( { 'result': True } )
 
-@app.route('/api/1.0/servers/<int:serverId>', methods=['DELETE'])
-def delete_server(serverId):
-    # delete a single server
-    server = filter(lambda t: t['id'] == serverId, servers)
-    if len(server) == 0:
-        abort(404)
-    servers.remove(server[0])
-    return jsonify( { 'result': True } )
+    def put(self, server_id):
+        # update a single server
+        server = filter(lambda t: t['id'] == server_id, servers)
+        if len(server) == 0:
+            abort(404)
+        if not request.json:
+            abort(400)
+        if 'name' in request.json and type(request.json['name']) != unicode:
+            abort(400)
+        if 'description' in request.json and type(request.json['description']) is not unicode:
+            abort(400)
+        if 'enabled' in request.json and type(request.json['enabled']) is not bool:
+            abort(400)
+        server[0]['name'] = request.json.get('name', server[0]['name'])
+        server[0]['description'] = request.json.get('description', server[0]['description'])
+        server[0]['enabled'] = request.json.get('enabled', server[0]['enabled'])
+        return jsonify( { 'server': server[0] } )
 
 if __name__ == '__main__':
     app.config.update(
         DEBUG=True,
     );
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    server_view = ServerAPI.as_view('server_api')
+    app.add_url_rule('/api/1.0/servers/', defaults={'server_id': None},
+                     view_func=server_view, methods=['GET',])
+    app.add_url_rule('/api/1.0/servers/', view_func=server_view, methods=['POST',])
+    app.add_url_rule('/api/1.0/servers/<int:server_id>', view_func=server_view,
+                     methods=['GET', 'PUT', 'DELETE'])
+
+    app.run(threaded=True, host='0.0.0.0', port=8000)
