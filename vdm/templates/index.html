@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voltdb Deployment Manager</title>
+
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap/css/bootstrap.css') }}">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/aero.css') }}">
+<!--<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/fileinput.css') }}">-->
+
+</head>
+<body>
+<div id="wrap">
+  <div id="main">
+    <nav class="navbar navbar-inverse navbar-fixed-top shadow">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+          <a class="navbar-brand" href="index.html"><img src="{{ url_for('static',filename='images/logo.jpg') }}" alt="Voltdb Deployment Manager"></a> </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-left">
+            <li class="active"><a href="#" id="dbManager">Cluster Settings</a></li>
+            <li><a href="#" id="serverSetting">Server Settings</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid" id="divDbManager">
+      <div class="row">
+        <div class="col-md-12 clusterWrapTop">
+              <div class="clusterHeading">
+                <h4 class="clusterIcon"> <a class="clusterName"> DB 01 </a> </h4>
+             
+              </div>
+        </div>
+      </div>
+     
+      <div class="clusterContent">  
+      <div class="clusterStartStop">
+    <div class="clusterBtnWrap">
+     <a href="javascript:void(0);" class="clustBtn" data-toggle="modal" data-target="#stopClusterConfirmation"><span aria-hidden="true" class="glyphicon glyphicon-play playColor"></span><span class="clusterFont">Start <span style="font-size:14px;">Cluster</span></span></a>
+    <div class="clear"></div>
+    </div>
+      
+      </div>
+      <div class="resetpb">
+                  <div class="clusterWrapper">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tblCluster" id="serverList">
+                    <!--<tr>-->
+                        <!--<th><span class="serverIcon">Servers</span></th>-->
+                       <!-- -->
+                        <!--<th>-->
+                        <!--<div class="addServer">-->
+                        <!--<a href="javascript:void(0);"data-toggle="modal" data-target="#addServer"> <span class="plus"></span>Add Server</a> </div>-->
+                        <!--</th>-->
+                       <!-- -->
+                      <!--</tr>-->
+                      <!--<tr>-->
+                        <!--<td>Deerwalk 01</td>-->
+                       <!-- -->
+                        <!--<td><a href="javascript:void(0);"data-toggle="modal" data-target="#deleteConfirmation" >-->
+                          <!--<div class="deleteServer"></div>-->
+                          <!--</a> <span class="deleteServerTxt">Delete</span></td>-->
+                       <!-- -->
+                      <!--</tr>-->
+                      <!--<tr>-->
+                        <!--<td>Deerwalk 02</td>-->
+                       <!-- -->
+                        <!--<td><a href="javascript:void(0);"data-toggle="modal" data-target="#deleteConfirmation" >-->
+                          <!--<div class="deleteServer" ></div>-->
+                          <!--</a> <span class="deleteServerTxt">Delete</span></td>-->
+                      <!-- -->
+                      <!--</tr>-->
+                      <!--<tr>-->
+                        <!--<td>Deerwalk 03</td>-->
+                       <!-- -->
+                        <!--<td><a href="javascript:void(0);"data-toggle="modal" data-target="#deleteConfirmation" >-->
+                          <!--<div class="deleteServer"></div>-->
+                          <!--</a> <span class="deleteServerTxt">Delete</span></td>-->
+                       <!-- -->
+                      <!--</tr>-->
+                      <!--<tr>-->
+                        <!--<td>Deerwalk 04</td>-->
+                       <!-- -->
+                        <!--<td><a href="javascript:void(0);"data-toggle="modal" data-target="#deleteConfirmation">-->
+                          <!--<div class="deleteServer"></div>-->
+                          <!--</a> <span class="deleteServerTxt">Delete</span></td>-->
+                        <!-- -->
+                      <!--</tr>-->
+                     
+                    </table>
+                  </div>
+                </div>
+      <div class="clear"></div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-12">
+          <div class="clusterConfigWrapper" style="">
+            <div class="leftSide"> <span class="clusterConfigIcon" ></span> 
+            <!--<a href="javascript:void(0);"data-toggle="modal" data-target="#saveConfirmation" class="btn saveBtn">Save</a> <a href="#" class="btn btn-gray">Cancel</a>--> <span class="clustHeadText">Cluster Configuration</span></div>
+            <div class="rightSide">
+              <div class="leftSide upDownBtn"> <span class="uploadIcon"></span><span class="file-input  btn-file"> Upload Configuration
+                <input type="file" multiple>
+                </span> </div>
+              <div class="leftSide upDownBtn"><span class="downloadIcon" ></span> Download Configuration</div>
+            </div>
+            <div class="clear"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+      <div class="container-fluid clusterConfig">
+        <div class="col-md-6 clusterConfigLeft" >
+          <div class="main">
+            <div class="mainContent">
+              <h1>Overview</h1>
+            </div>
+            <div class="mainTbl">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" class="adminTbl">
+                <tr>
+                  <td width="62%" class="configLabel">Site per host</td>
+                  <td id="sitePerHost" width="25%" align="right" ><input type="text" value="8" class="overviewInputText"></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td class="configLabel">K-safety </td>
+                  <td id="kSafety" align="right" ><input type="text" value="3" class="overviewInputText"></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="security">
+                  <td class="configLabel">Partition detection </td>
+                  <td align="right"><input tabindex="8" type="checkbox" id="input-8" checked="oncheck" ></td>
+                  <td class="onOff">On</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="hasSubLabel parent" id="row-6">
+                  <td class="configLabel"><a href="javascript:vold(0)" class="glyphicon-triangle-right"><span class="fontFamily">Security</span></a></td>
+                  <td align="right"><input tabindex="1" type="checkbox" id="input-1" checked="oncheck" ></td>
+                  <td class="onOff">On</td>
+                  <td>&nbsp;</td>
+                </tr>
+                 <tr class="child-row-6 subLabelRow">
+                  <td colspan="4">
+                   <div class="securWrapper">
+  <table width="100%" cellpadding="0" cellspacing="0" class="secTbl">
+    <tbody>
+      <tr>
+        <th>Username</th>
+        <th>Role</th>
+        <th><span class="plusIcon"></span></th>
+        <th>&nbsp;</th>
+      </tr>
+      <tr>
+        <td><input type="text" value="Admin"></td>
+        <td><select>
+        <option selected>Administrator</option>
+        <option>User</option>
+        </select></td>       
+        <td> <div class="secCrossIcon"></div></td>
+         <td>&nbsp;</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  </td>
+                 
+                </tr>
+                <tr class="hasSubLabel parent" id="row-1">
+                  <td class="configLabel"><a href="javascript:vold(0)" class="glyphicon-triangle-right">
+                  <span class="fontFamily">HTTP Access</span></a></td>
+                  <td align="right"><input tabindex="9" type="checkbox" id="input-9"  checked="oncheck"></td>
+                  <td class="onOff">On</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="child-row-1 subLabelRow">
+                  <td class="configLabel"> JSON API</td>
+                  <td align="right"><input tabindex="10" type="checkbox" id="input-10"  checked="oncheck"></td>
+                  <td class="onOff">On</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="hasSubLabel parent" id="row-2">
+                  <td class="configLabel"><a href="javascript:void(0)" class="glyphicon-triangle-right">
+                  <span class="fontFamily">Auto Snapshots</span></a></td>
+                  <td align="right"><input tabindex="3" type="checkbox" id="input-3"  checked="oncheck"></td>
+                  <td class="onOff">On</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="child-row-2 subLabelRow">
+                  <td class="configLabel">File Prefix</td>
+                  <td align="right"><input type="text" value="VEMAUTO" class="overviewInputText1"></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="child-row-2 subLabelRow">
+                  <td class="configLabel">Frequency </td>
+                  <td align="right"><span id="frequencySpan">
+                    <input type="text" value="10" class="overviewInputText"></span>
+                   </td>
+                  <td>Sec</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="child-row-2 subLabelRow">
+                  <td class="configLabel">Retained </td>
+                  <td align="right"><input type="text" value="3" class="overviewInputText"></td>
+                  <td>Copies </td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="hasSubLabel parent" id="row-3">
+                  <td class="configLabel"><a href="javascript:void(0)" class="glyphicon-triangle-right">
+                  <span class="fontFamily">Command Logging</span></a></td>
+                  <td align="right"><input tabindex="4" type="checkbox" id="input-4"></td>
+                  <td class="onOff">Off</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="child-row-3 subLabelRow">
+                  <td class="configLabel">Log Frequency Time </td>
+                  <td id="commandlogfreqtime" align="right"><input type="text" value="800" class="overviewInputText"></td>
+                  <td>ms</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="child-row-3 subLabelRow">
+                  <td class="configLabel">Log Frequency Transactions </td>
+                  <td id="commandlogfreqtxns" align="right"><input type="text" value="2147483647" class="overviewInputText1"></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="child-row-3 subLabelRow">
+                  <td class="configLabel">Log Segment Size</td>
+                  <td align="right"><input type="text" value="254" class="overviewInputText"></td>
+                  <td>MB</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="hasSubLabel parent" id="row-4">
+                  <td class="configLabel"><a href="javascript:void(0)" class="glyphicon-triangle-right"><span class="fontFamily">Export</span></a></td>
+                  <td align="right">&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td><span class="plusIcon"></span></td>
+                </tr>
+                <tr class="child-row-4 subLabelRow">
+                  <td class="configLabel">Export Tables</td>
+                  
+                 <td colspan="3" align="right"><a href="javascript:void(0);"data-toggle="modal" data-target="#expTable" class="drTblBtn" style="display: block;">Export Tables</a></td>
+                 
+                </tr>
+                <tr class="child-row-4 subLabelRow">
+                  <td class="configLabel">No configuration available.</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                
+                <tr class="hasSubLabel parent" id="row-7">
+                  <td class="configLabel"><a href="javascript:void(0)" class="glyphicon-triangle-right"><span class="fontFamily">Import</span></a></td>
+                  <td align="right">&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td><span class="plusIcon"></span></td>
+                </tr>
+                
+                <tr class="child-row-7 subLabelRow">
+                  <td class="configLabel">No configuration available.</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                
+                <tr class="hasSubLabel parent" id="row-5">
+                  <td class="configLabel"><a href="javascript:void(0)" class="glyphicon-triangle-right"><span class="fontFamily">Advanced</span></a></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="child-row-5 subLabelRow">
+                  <td class="configLabel">Max Java Heap </td>
+                  <td align="right"><input type="text" value="512" class="overviewInputText"></td>
+                  <td>MB</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="child-row-5 subLabelRow">
+                  <td class="configLabel">Heartbeat time out </td>
+                  <td align="right" class="heartbeattd"><input type="text" value="500" class="overviewInputText"></td>
+                  <td>ms</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="child-row-5 subLabelRow">
+                  <td class="configLabel">Query time out</td>
+                  <td align="right" class="queryTimeOut"><input type="text" value="500" class="overviewInputText"></td>
+                  <td>ms</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="child-row-5 subLabelRow">
+                  <td class="configLabel">Max temp table memory</td>
+                  <td  id="temptablesmaxsize" align="right"><input type="text" value="256" class="overviewInputText"></td>
+                  <td>MB</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr class="child-row-5 subLabelRow">
+                  <td class="configLabel">Snapshot priority</td>
+                  <td id="snapshotpriority" align="right"><input type="text" value="8" class="overviewInputText"></td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                 <tr class="child-row-5 subLabelRow">
+                  <td class="configLabel">Memory Limit</td>
+                  <td id="snapshotpriority" align="right"><input type="text" value="1" class="overviewInputText"></td>
+                  <td>GB</td>
+                  <td>&nbsp;</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="drWrapperAdmin" id="divDrWrapperAdmin" >
+            <div class="headerAdminContent">
+              <h1>
+                <div class="drAdminHeaderLeft">Database Replication (DR)</div>
+                <div class="drAdminHeaderRight">
+                  <ul class="drList">
+                    <li>Mode</li>
+                    <li class="drArrow">Master</li>
+                  </ul>
+                  <div class="clear"></div>
+                </div>
+                <div class="clear"></div>
+              </h1>
+            </div>
+            <div class="drContent">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" class="adminTbl ">
+                <tr>
+                  <td width="62%" class="configLabel">ID</td>
+                  <td id="drId" width="20%" align="right"></td>
+                  <td width="2%"><input type="text" value="1" class="overviewInputText"></td>
+                  <td width="16%">&nbsp;</td>
+                </tr>
+                <tr id="row-DrConfig" class="rowDr">
+                  <td class="configLabel">Master</td>
+                  <td align="right" class="tdDrConfig">&nbsp;</td>
+                  <td align="right"><input tabindex="6" type="checkbox" id="input-6" checked></td>
+                  <td class="onOff">On</td>
+                </tr>
+                <tr class="rowDr">
+                  <td class="configLabel">Replica <span id="replicaSource" style="font-weight:normal"></span></td>
+                  <td align="right">&nbsp;</td>
+                  <td align="right"><input tabindex="7" type="checkbox" id="input-7"  ></td>
+                  <td class="onOff">Off</td>
+                </tr>
+               
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 clusterConfigRight" >
+          <div class="main">
+            <div class="mainContent">
+              <h1>Network Interfaces</h1>
+            </div>
+            <div style="overflow: auto">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" class="adminTbl network">
+                <tr>
+                  <th width="80%">Port Name</th>
+                  <th width="20%">Cluster Settings</th>
+                </tr>
+                <tr>
+                  <td>Client Port</td>
+                  <td><input type="text" value="21212" class="inputText"></td>
+                </tr>
+                <tr>
+                  <td>Admin Port</td>
+                  <td><input type="text" value="21212" class="inputText"></td>
+                </tr>
+                <tr>
+                  <td>HTTP Port</td>
+                  <td><input type="text" value="8080" class="inputText"></td>
+                </tr>
+                <tr>
+                  <td>Internal Port</td>
+                  <td><input type="text" value="deerwalk4.internal" class="inputText"></td>
+                </tr>
+                <tr>
+                  <td>Zookeeper Port</td>
+                  <td><input type="text" value="127.0.0.1" class="inputText"></td>
+                </tr>
+                <tr>
+                  <td>Replication Port</td>
+                  <td><input type="text" value="deerwalk4" class="inputText"></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="main">
+            <div class="mainContent">
+              <h1>Directories</h1>
+            </div>
+            <div class="adminDirect">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" class="adminTbl directories">
+                  <tr>
+                  <td>Snapshot</td>
+                  <td><input type="text" value="snapshots" class="inputText"></td>
+                </tr>
+                <tr>
+                  <td>Export Overflow</td>
+                  <td><input type="text" value="export_overflow" class="inputText"></td>
+                </tr>
+                <tr>
+                  <td>Command Log</td>
+                  <td><input type="text" value="command_log" class="inputText"></td>
+                </tr>
+                <tr>
+                  <td>Command Log Snapshots</td>
+                  <td><input type="text" value="command_log_snapshot" class="inputText"></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="clusterConfigSaveCancel">
+          
+            <a href="javascript:void(0);"data-toggle="modal" data-target="#saveConfirmation" class="btn saveBtn">Save</a> <a href="#" class="btn btn-gray">Cancel</a></div>
+            
+           
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div  class="container-fluid hidden" id="divServerSetting">
+      <div class="row">
+        <div class="col-md-12">
+          
+          <div class="serverMain ">
+            <form action="">
+     <!--         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="servertbl">
+                <tr>
+                  <th width="12%" rowspan="2" class="vAlign">Port</th>
+                  <th width="17%" rowspan="2" class="vAlign">Default Network Interface</th>
+                  <th colspan="4" class="serAlign">Servers</th>
+                </tr>
+              <tr>
+              	<th width="20%" style="text-align:center">Deerwalk 01</th>
+              	<th width="17%">Deerwalk 02</th>
+              	<th width="17%">Deerwalk 03</th>
+              	<th width="17%">Deerwalk 04</th>
+           	  </tr>
+              <tr>
+              	<td>Client Port</td>
+              	<td>21212</td>
+              	<td><input type="text" value="21223"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              </tr>
+              <tr>
+              	<td>Admin Port</td>
+              	<td>21211</td>
+              	<td><input type="text" value="21351"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              </tr>
+              <tr>
+              	<td>HTTP</td>
+              	<td>8080</td>
+              	<td><input type="text" value="9090"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              </tr>
+              <tr>
+              	<td>Internal Port</td>
+              	<td>3021</td>
+              	<td><input type="text" value="deerwalk2.internal"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              </tr>
+              <tr>
+              	<td>Zookeeper</td>
+              	<td>2181</td>
+              	<td><input type="text" value="127.0.0.1"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              </tr>
+              <tr>
+              	<td>Replication Port</td>
+              	<td>5555</td>
+              	<td><input type="text" value="deerwalk2"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              </tr>
+              </table>-->
+ <table width="100%" border="0" cellpadding="0" cellspacing="0" class="servertbl tbl01">
+  <tr>
+    <th rowspan="2" class="vAlign">Ports</th>
+    <th rowspan="2" class="vAlign">Default Network Interface</th>
+  </tr>
+  <tr></tr>
+  <tr>
+    <td>Client Port</td>
+    <td>21212</td>
+  </tr>
+  <tr>
+    <td>Admin Port</td>
+    <td>21211</td>
+  </tr>
+  <tr>
+    <td>HTTP</td>
+    <td>8080</td>
+  </tr>
+  <tr>
+    <td>Internal Port</td>
+    <td>3021</td>
+  </tr>
+  <tr>
+    <td>Zookeeper</td>
+    <td>2181</td>
+  </tr>
+  <tr>
+    <td>Replication Port</td>
+    <td>5555</td>
+  </tr>
+</table>
+                
+<div class="mainServ">
+<div class="servTop">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="servertbl tbl02">
+                <tr>
+                  <th colspan="10" class="serAlign">Servers</th>
+                </tr>
+                </table>
+ </div>
+<div class="serv">
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="servertbl tbl03">
+             
+              <tr>
+              	<th>Deerwalk 01</th>
+              	<th>Deerwalk 02</th>
+              	<th>Deerwalk 03</th>
+              	<th>Deerwalk 04</th>
+              	<th>Deerwalk 05</th>
+              	<th>Deerwalk 06</th>
+              	<th>Deerwalk 07</th>
+              	<th>Deerwalk 08</th>
+              	<th>Deerwalk 09</th>
+              	<th>Deerwalk 10</th>
+           	  </tr>
+              <tr>
+              	<td><input type="text" value="21223"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              </tr>
+              <tr>
+              	<td><input type="text" value="21351"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              </tr>
+              <tr>
+              	<td><input type="text" value="9090"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              </tr>
+              <tr>
+              	<td><input type="text" value="4021"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              </tr>
+              <tr>
+              	<td><input type="text" value="2183"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              </tr>
+              <tr>
+              	<td><input type="text" value="5525"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              	<td><input type="text"></td>
+              </tr>
+              </table>
+ </div>
+ </div>
+            </form>
+          </div>
+          <div class="serverTop">
+            <button type="button" class="btn" data-toggle="modal" data-target="#serverSaveCon">Save</button>
+            <a href="#" class="btn btn-gray">Cancel</a> </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="footer" id="mainFooter">
+  <p>Copyright © 2015 VoltDB. All rights reserved. </p>
+</div>
+<script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.cookie.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vdm.config.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vdm.core.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vdm.ui.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vdm.render.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vdm.serversetting.ui.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vdm.service.js') }}"></script>
+
+<script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/icheck.js') }}"></script>
+<script>
+          $(document).ready(function(){
+			 
+			  
+            var callbacks_list = $('.mainContent');
+            $('.hasSubLabel td input, .security td input, .rowDr td input, .subLabelRow td ').on('ifCreated ifClicked ifChanged ifChecked ifUnchecked ifDisabled ifEnabled ifDestroyed', function(event){
+              callbacks_list.prepend();
+            }).iCheck({
+              checkboxClass: 'icheckbox_square-blue',
+              radioClass: 'iradio_square-blue',
+              increaseArea: '20%'
+            });
+			 // $("#input-4").fileinput({showCaption: false});
+			  
+			 $("#navbar li").click(function () {
+       $("#navbar li").removeClass('active');
+       $(this).addClass('active');
+       var activeLinkId = "";
+       var activeLink = $("#navbar li.active a");
+       if (activeLink.length > 0) {
+           activeLinkId = activeLink.attr("id");
+           if (activeLinkId == "serverSetting") {
+               $("#divDbManager").addClass("hidden");
+               $("#divServerSetting").removeClass("hidden");
+           }
+           else {
+               $("#divServerSetting").addClass("hidden");
+               $("#divDbManager").removeClass("hidden");
+           }
+           $("#navbar").removeClass("in");
+       }
+
+       //if (activeLinkId == "navSqlQuery")
+       //        return NavigationTabs.SQLQuery;
+       //
+       //    else if (activeLinkId == "navSchema")
+       //        return NavigationTabs.Schema;
+   });
+          });
+		  
+		  
+ 
+
+$("[rel=top]").tooltip({ placement: 'top'}); 
+$("[rel=left]").tooltip({ placement: 'left'}); 
+$("[rel=right]").tooltip({ placement: 'right'}); 
+$("[rel=bottom]").tooltip({ placement: 'bottom'}); 
+
+		
+
+		  </script> 
+
+<!-- Add Server -->
+<div id="addServer" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-dialog-center"> 
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Server</h4>
+      </div>
+      <div class="modal-body">
+        <form action="">
+          <ul class="addServerList">
+            <li>Server Name:</li>
+            <li>
+              <input id="serverName" type="text">
+            </li>
+          </ul>
+          <div class="clear"></div>
+        </form>
+        <p>Note: <span class="txt-bold">Go to "Server Settings" tab to change server specific settings.</span></p>
+      </div>
+      <div class="modal-footer">
+        <button id="btnCreateServerOk" type="button" class="btn" data-dismiss="modal">Ok</button>
+        <button type="button" class="btn btn-gray" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Add Server End --> 
+<!-- Save Confirmation -->
+<div id="saveConfirmation" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-dialog-center"> 
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Save</h4>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to save the changes?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">Ok</button>
+        <button type="button" class="btn btn-gray" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Save Confirmation End --> 
+
+<!-- Stop Confirmation -->
+<div id="stopClusterConfirmation" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-dialog-center"> 
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Start Cluster</h4>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to start this cluster?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">Ok</button>
+        <button type="button" class="btn btn-gray" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Stop Confirmation End --> 
+<!-- Delete Confirmation -->
+<div id="deleteConfirmation" class="modal fade" role="dialog" data-serverid="">
+  <div class="modal-dialog modal-dialog-center"> 
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Delete Server</h4>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to delete this server?</p>
+      </div>
+      <div class="modal-footer">
+        <button id="deleteServerOk" type="button" class="btn" data-dismiss="modal">Ok</button>
+        <button type="button" class="btn btn-gray" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Delete Confirmation -->
+<div id="" style="display: none">
+  <div class="overlay-title icon-alert"></div>
+  <div class="clear"></div>
+  <div class="overlay-content confirmationHeight"> </div>
+  <div class="overlay-btns"><a id="" class="btn closeBtn">Ok</a> <a id="close" class="btn btn-gray closeBtn">Cancel</a></div>
+</div>
+<!-- Delete Confirmation End --> 
+
+<!-- Save server Setting -->
+<div id="serverSaveCon" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-dialog-center"> 
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Save</h4>
+      </div>
+      <div class="modal-body">
+        <p>Do you want to save the changes?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">Ok</button>
+        <button type="button" class="btn btn-gray" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Save Server Setting End -->
+
+<!-- Export table -->
+<div id="expTable" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-dialog-center"> 
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Export Tables</h4>
+      </div>
+      <div class="modal-body">
+        
+        <p>No Export tables available.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">Ok</button>
+     
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Export table End -->  
+
+</body>
+</html>
