@@ -1,14 +1,14 @@
 (function (window) {
     var procedures = {};
     var tips = $(".validateTips");
-    var server = VoltDBConfig.GetDefaultServerIP();
-    var port = VoltDBConfig.GetPortId();
+    var server = VdmConfig.GetDefaultServerIP();
+    var port = VdmConfig.GetPortId();
     var user = "";
     var password = "";
     var admin = true;
     var isHashedPassword = true;
     this.connection = null;
-    var iVoltDbService = (function () {
+    var iVdmService = (function () {
         var _connection = connection;
 
         this.SetUserCredentials = function (lUsername, lPassword, lAdmin) {
@@ -40,18 +40,17 @@
         };
 
         this.GetServerList = function (onConnectionAdded) {
-           debugger;
             try {
                 var processName = "SERVER_LISTING";
                 var requestMethod = "get"
-                _connection = VoltDBCore.HasConnection(server, port, admin, user, processName);
+                _connection = VdmCore.HasConnection(server, port, admin, user, processName);
                 if (_connection == null){
-                    VoltDBCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
+                    VdmCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
                         onConnectionAdded(connection, status);
                     }, requestMethod);
 
                 } else {
-                    VoltDBCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
+                    VdmCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
                         onConnectionAdded(connection, status);
                     }, requestMethod);
                 }
@@ -67,13 +66,13 @@
                 var serverDetails = {
                     "serverData" :serverData
                 }
-                _connection = VoltDBCore.HasConnection(server, port, admin, user, processName);
+                _connection = VdmCore.HasConnection(server, port, admin, user, processName);
                 if (_connection == null){
-                    VoltDBCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
+                    VdmCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
                         onConnectionAdded(connection, status);
                     }, requestMethod,serverDetails);
                 } else {
-                    VoltDBCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
+                    VdmCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
                         onConnectionAdded(connection, status);
                     }, requestMethod,serverDetails);
                 }
@@ -89,13 +88,13 @@
                 var serverDetails = {
                     serverData:serverData
                 };
-                _connection = VoltDBCore.HasConnection(server, port, admin, user, processName);
+                _connection = VdmCore.HasConnection(server, port, admin, user, processName);
                 if (_connection == null){
-                    VoltDBCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
+                    VdmCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
                         onConnectionAdded(connection, status);
                     }, requestMethod,serverDetails);
                 } else {
-                    VoltDBCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
+                    VdmCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
                         onConnectionAdded(connection, status);
                     }, requestMethod,serverDetails);
                 }
@@ -104,6 +103,6 @@
             }
         }
     });
-    window.VoltDBService = VoltDBService = new iVoltDbService();
+    window.VdmService = VdmService = new iVdmService();
 })(window);
 

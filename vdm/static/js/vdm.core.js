@@ -1,6 +1,6 @@
 (function (window, unused) {
 
-    var iVoltDbCore = (function () {
+    var iVdmCore = (function () {
         this.connections = {};
         this.isServerConnected = true;
         this.hostIP = "";
@@ -21,7 +21,7 @@
             this.Metadata = {};
             this.ready = false;
             this.procedureCommands = {};
-            this.authorization = VoltDBService.BuildAuthorization(this.user, this.isHashedPassword, this.password);
+            this.authorization = VdmService.BuildAuthorization(this.user, this.isHashedPassword, this.password);
 
             this.getQueue = function () {
                 return (new iQueue(this));
@@ -111,13 +111,12 @@
                                                 return value;
                                             });
                                         }
-                                        if (VoltDBCore.hostIP == "") {
-                                            VoltDBCore.hostIP = headerInfo;
+                                        if (VdmCore.hostIP == "") {
+                                            VdmCore.hostIP = headerInfo;
                                         }
 
                                         if (response.status != 1)
                                             success = false;
-                                        debugger;
                                         if (item[0] != null)
                                             item[0](response);
 
@@ -154,7 +153,6 @@
         };
 
         this.AddConnection = function (server, port, admin, user, password, isHashedPassword, processName, onConnectionAdded, requestMethod, serverDetails) {
-            debugger;
             var conn = new DbConnection(server, port, admin, user, password, isHashedPassword, processName);
             this.connections[conn.key] = conn;
             loadConnectionMetadata(this.connections[conn.key], onConnectionAdded, processName, requestMethod, serverDetails);
@@ -203,7 +201,7 @@
 
         return this;
     });
-    window.VoltDBCore = VoltDBCore = new iVoltDbCore();
+    window.VdmCore = VdmCore = new iVdmCore();
 
 })(window);
 

@@ -24,20 +24,26 @@
         $("#navbar li").removeClass('active');
         $(this).addClass('active');
         getCurrentTabContent();
-        VoltDbManagerUI.CurrentTab = getCurrentTab();
-        saveSessionCookie("current-tab", VoltDbManagerUI.CurrentTab);
+        VdmUI.CurrentTab = getCurrentTab();
+        saveSessionCookie("current-tab", VdmUI.CurrentTab);
         $("#navbar").removeClass("in");
+    });
+
+    //checkbox
+    $("input[type=checkbox]").on('ifChanged', function () {
+     var onOffText = $(this).is(":checked") ? "On" : "Off";
+     $(this).parent().parent().next().text(onOffText);
     });
 
     loadPage();
 });
 
 var saveCookie = function (name, value) {
-    $.cookie(name + "_" + VoltDBConfig.GetPortId(), value, { expires: 365 });
+    $.cookie(name + "_" + VdmConfig.GetPortId(), value, { expires: 365 });
 };
 
 var saveSessionCookie = function (name, value) {
-    $.cookie(name + "_" + VoltDBConfig.GetPortId(), value);
+    $.cookie(name + "_" + VdmConfig.GetPortId(), value);
 };
 
 var NavigationTabs = {
@@ -77,13 +83,13 @@ var saveCurrentServer = function (serverName) {
 };
 
 var getCurrentServer = function () {
-    return VoltDbManagerUI.getCookie("currentServer");
+    return VdmUI.getCookie("currentServer");
 };
 
 var loadPage = function() {
     //Retains the current tab while page refreshing.
     var retainCurrentTab = function () {
-        var curTab = VoltDbManagerUI.getCookie("current-tab");
+        var curTab = VdmUI.getCookie("current-tab");
         if (curTab != undefined) {
             curTab = curTab * 1;
             if (curTab == NavigationTabs.ServerSetting) {
@@ -94,50 +100,124 @@ var loadPage = function() {
     };
     retainCurrentTab();
 
-    VoltDBService.GetServerList(function(connection){
-        debugger;
-        VoltDbManagerUI.displayServers(connection.Metadata['SERVER_LISTING'])
+    var validationRules = {
+        ServerNameRule: {
+            required: true,
+            checkDuplicateServer: [],
+            regex: /^[a-zA-Z0-9_.]+$/
+        },
+        ServerNameMessage: {
+            required: "This field is required",
+            checkDuplicateServer: 'This server name already exists.',
+            regex: 'Only alphabets, numbers, _ and . are allowed.'
+        },
+        HostNameRule:{
+            required: true,
+            checkDuplicateHost: [],
+            regex: /^[a-zA-Z0-9_.]+$/
+        },
+        HostNameMessage: {
+            required: "This field is required",
+            checkDuplicateHost:'This host name already exists.',
+            regex: 'Only alphabets, numbers, _ and . are allowed.'
+        }
+    }
+
+    $.validator.addMethod(
+        "checkDuplicateServer",
+        function (value) {
+            var arr = VdmUI.CurrentServerList;
+            if ($.inArray(value, arr) != -1) {
+                return false;
+            } else {
+                return true;
+            }
+        },
+        "Server name already exists."
+    );
+
+    $.validator.addMethod(
+        "checkDuplicateHost",
+        function (value) {
+            var arr = VdmUI.CurrentHostList;
+            if ($.inArray(value, arr) != -1) {
+                return false;
+            } else {
+                return true;
+            }
+        },
+        "Host name already exists."
+    );
+
+    $.validator.addMethod(
+        "regex",
+        function (value, element, regexp) {
+            var re = new RegExp(regexp);
+            return this.optional(element) || re.test(value);
+        },
+        "Please enter only valid characters."
+    );
+
+    VdmService.GetServerList(function(connection){
+        VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
     })
 
-    $('#btnCreateServerOk').on('click', function(){
+    $("#frmCreateServer").validate({
+        rules: {
+            serverName: validationRules.ServerNameRule,
+            txtHostName: validationRules.HostNameRule
+        },
+        messages: {
+            serverName: validationRules.ServerNameMessage,
+            txtHostName: validationRules.HostNameMessage
+        }
+    });
+
+    $('#btnCreateServerOk').on('click', function(e){
+        if (!$("#frmCreateServer").valid()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
+
         var serverName = $('#serverName').val()
+        var hostName = $('#txtHostName').val()
+        var description = $('#txtDescription').val()
         var serverData ={
             "name" : serverName,
-            "hostname" : serverName,
-            "description" : "test " + serverName
+            "hostname" : hostName,
+            "description" : description
         }
-        VoltDBService.CreateServer(function(connection){
+        VdmService.CreateServer(function(connection){
             if(connection.Metadata['SERVER_CREATE'].status == 1){
-                VoltDBService.GetServerList(function(connection){
-                    debugger;
-                    VoltDbManagerUI.displayServers(connection.Metadata['SERVER_LISTING'])
+                VdmService.GetServerList(function(connection){
+                    VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
                 })
             }
         },serverData);
     });
 
     $('#deleteServerOk').on('click',function(){
-        debugger;
         var serverId = $('#deleteConfirmation').data('serverid');
         var serverData = {
            "id": serverId
         }
-        VoltDBService.DeleteServer(function(connection){
-            VoltDBService.GetServerList(function(connection){
-                debugger;
-                VoltDbManagerUI.displayServers(connection.Metadata['SERVER_LISTING'])
+        VdmService.DeleteServer(function(connection){
+            VdmService.GetServerList(function(connection){
+                VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
             })
         }, serverData);
     })
-
 };
 
 (function (window) {
-    var iVoltDbManagerUi = (function () {
+    var iVdmUi = (function () {
         this.CurrentTab = NavigationTabs.DBMonitor;
+        this.CurrentServerList = [];
+        this.CurrentHostList = [];
 
         this.getCookie = function(name) {
-            return $.cookie(name + "_" + VoltDBConfig.GetPortId());
+            return $.cookie(name + "_" + VdmConfig.GetPortId());
         };
 
         this.displayServers = function(serverList){
@@ -151,9 +231,11 @@ var loadPage = function() {
                             '<a id="btnAddServer" href="javascript:void(0);"data-toggle="modal" data-target="#addServer"> <span class="plus"></span>Add Server</a> </div>' +
                             '</th>' +
                        '</tr>';
-
+            VdmUI.CurrentServerList = [];
+            VdmUI.CurrentHostList = [];
             serverList.servers.forEach(function (info) {
                 var hostName = info["hostname"];
+                var serverName = info["name"]
                 var hostId = info["id"];
                 htmlList += '<tr>' +
                             '<td>' + hostName + '</td>' +
@@ -161,6 +243,8 @@ var loadPage = function() {
                             '<div class="deleteServer"></div>' +
                             '</a> <span class="deleteServerTxt">Delete</span></td>' +
                         '</tr>';
+                VdmUI.CurrentServerList.push(serverName);
+                VdmUI.CurrentHostList.push(hostName)
             });
 
             $('#serverList').html(htmlList)
@@ -172,10 +256,15 @@ var loadPage = function() {
 
             $('#btnAddServer').on('click', function(){
                 $('#serverName').val('');
+                $('#txtHostName').val('');
+                $('#txtDescription').val('');
+                $('#errorServerName').hide();
+                $('#errorHostName').hide();
+                $('#errorDescription').hide();
             });
         };
     });
-    window.VoltDbManagerUI = VoltDbManagerUI = new iVoltDbManagerUi();
+    window.VdmUI = VdmUI = new iVdmUi();
 
 })(window);
 

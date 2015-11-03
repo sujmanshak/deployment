@@ -3,9 +3,9 @@
 }
 
 (function (window) {
-    var iVoltDbServerSettingUi = (function () {
+    var iVdmServerSettingUi = (function () {
 
     });
-    window.VoltDbServerSettingUI = VoltDbServerSettingUI = new iVoltDbServerSettingUi();
+    window.VdmServerSettingUI = VdmServerSettingUI = new iVdmServerSettingUi();
 
 })(window);

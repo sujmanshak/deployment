@@ -1,9 +1,9 @@
 ﻿
 (function (window) {
 
-    var iVoltDBConfig = (function () {
+    var iVdmConfig = (function () {
         this.GetDefaultServerIP = function () {
-            return "localhost";
+            return "192.168.1.35";
         };
 
         this.GetDefaultServerNameForKey = function () {
@@ -15,6 +15,6 @@
         };
     });
 
-    window.VoltDBConfig = VoltDBConfig = new iVoltDBConfig();
+    window.VdmConfig = VdmConfig = new iVdmConfig();
 
 })(window);
