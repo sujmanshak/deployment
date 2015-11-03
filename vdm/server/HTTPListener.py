@@ -70,7 +70,7 @@ class ServerAPI(MethodView):
         'enabled': True
         }
         servers.append(server)
-        return jsonify( { 'server': server } ),201
+        return jsonify( { 'server': server, 'status':1 } ),201
 
     def delete(self, server_id):
         # delete a single server

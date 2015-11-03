@@ -1,0 +1,898 @@
+/* CSS Document */
+
+
+/* CSS Reset */
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+body {
+	line-height: 1;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+nav ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after, q:before, q:after {
+	content: '';
+	content: none;
+}
+a {
+	margin: 0;
+	padding: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+a:hover, a:active, a:focus {
+	outline: 0;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* change border colour to suit your needs */
+hr {
+	display: block;
+	height: 1px;
+	border: 0;
+	border-top: 1px solid #cccccc;
+	margin: 1em 0;
+	padding: 0;
+}
+input, select {
+	vertical-align: middle;
+}
+li {
+	list-style: none;
+}
+/* CSS Reset ends */
+
+/***********sticky footer***********/
+
+html, body {
+	height: 100%;
+}
+#wrap {
+	min-height: 100%;
+}
+#main {
+	overflow: auto;
+	padding-bottom: 100px; /* this needs to be bigger than footer height*/
+}
+.footer {
+	position: relative;
+	margin-top: -77px!important; /* negative value of footer height */
+	height: 77px!important;
+	clear: both;
+}
+.txt-bold {
+	text-decoration: underline;
+	font-size: 13px;
+	font-style: italic;
+}
+/***********sticky footer End***********/
+
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	background: #f1f1f1;
+	font-size: 13px;
+	line-height: 20px;
+}
+.top5 {
+	margin-top: 5px;
+}
+.top10 {
+	margin-top: 10px;
+}
+.top15 {
+	margin-top: 15px;
+}
+.top20 {
+	margin-top: 20px;
+}
+.clear {
+	clear: both;
+}
+.rightSide {
+	float: right;
+}
+.leftSide {
+	float: left;
+}
+.inputText {
+	height: 30px;
+	padding: 5px 10px;
+	line-height: 1.5;
+	text-align: center;
+}
+.glyphicon-triangle-right {
+	font-family: 'Glyphicons Halflings';
+}
+.fontFamily {
+	font-family: Arial, Helvetica, sans-serif;
+	padding: 0 0 0 5px;
+}
+.active {
+/*background-color: #76BD1D;
+	color: #FFF;*/
+}
+.clusterIcon, .plus, .stop, .stopServer, .deleteServer, .editServer, .uploadIcon, .downloadIcon, .drArrow, .popup_close, .popup_close:hover, .clusterConfigIcon, .serverIcon, .plusIcon, .secCrossIcon {
+	background-image: url(../images/icons.png);
+	background-repeat: no-repeat;
+}
+.clusterIcon {
+	width: 120px;
+	height: 35px;
+	background-position: 0 -12px;
+}
+.plus {
+	width: 30px;
+	height: 22px;
+	background-position: 0 -198px;
+	display: inline-block;
+}
+.stop {
+	width: 40px;
+	height: 26px;
+	background-position: 0px -54px;
+}
+.stopServer {
+	width: 40px;
+	height: 26px;
+	background-position: 0px -54px;
+	cursor: pointer;
+}
+.deleteServer {
+	width: 84px;
+	height: 26px;
+	background-position: 43px -95px;
+	cursor: pointer;
+}
+.editServer {
+	width: 40px;
+	height: 30px;
+	background-position: 0px -177px;
+	cursor: pointer;
+}
+.clusterName {
+	position: relative;
+	top: 8px;
+	left: 38px;
+	font-weight: bold;
+	font-size:16px;
+}
+.uploadIcon {
+	width: 30px;
+	height: 22px;
+	background-position: 0 -233px;
+	display: inline-block;
+}
+.downloadIcon {
+	width: 30px;
+	height: 22px;
+	background-position: 0 -268px;
+	display: inline-block;
+}
+.secCrossIcon {
+	width: 30px;
+    height: 28px;
+    background-position: 0px -290px;
+    display: inline-block; cursor:pointer; position:relative; top:4px;}
+.clusterConfigIcon {
+	background-position: -8px -408px;
+	display: inline-block;
+	height: 25px;
+	width: 26px;
+}
+.serverIcon {
+	width: 120px;
+	padding:4px 0 7px 40px;
+	background-position: 0 -447px;
+	font-size:16px;
+}
+.plusIcon {
+	width: 120px;
+	padding:4px 0 7px 40px;
+	background-position: 0 -483px;
+	font-size:16px;
+	cursor:pointer;
+}
+
+.btn {
+	background-color: #aa1f2f;
+	cursor: pointer;
+	padding: 8px 10px;
+	text-align: center;
+	color: #FFFFFF;
+	font: 14px Arial, Helvetica, sans-serif;
+	text-shadow: none;
+	text-decoration: none;
+	border-radius: 0;
+	border: none;
+}
+.btn-gray {
+	background-color: #999;
+	cursor: pointer;
+	padding: 8px 10px;
+	text-align: center;
+	color: #fff;
+	font: 14px Arial, Helvetica, sans-serif;
+	text-shadow: none;
+	text-decoration: none;
+	border-radius: 0;
+	border: none;
+}
+.saveBtn {
+	background-color: #c70000;
+	color: #FFF;
+}
+.saveBtn:hover, .btn:hover {
+	background-color: #76BD1D;
+	color: #FFF;
+}
+.overlay-title {
+	background: #fbfbfb;
+	height: 42px;
+	line-height: 42px;
+	padding: 4px 4px 4px 20px;
+	border-bottom: 1px solid #dbdbdb;
+	font-size: 16px; /* font-weight:bold;*/
+	color: #3e3a3a;
+}
+.overlay-content {
+	padding: 20px;
+	min-width: 450px;
+	height: auto;
+	overflow: auto;
+	line-height: 18px;
+}
+/******navigation****/
+ul.nav li a {
+	display: block;
+	margin: 0;
+	padding: 28px 15px 0 15px;
+	color: #000000;
+	border-right: 1px solid #CCCCCC;
+	height: 75px;
+	text-decoration: none;
+	font-size: 16px;
+}
+ul.nav li:nth-child(1) {
+	border-left: 1px solid #CCCCCC;
+}
+ul.nav li a:hover {
+	background: #AA1F2F;
+	color: #FFFFFF;
+}
+ul.nav li a:hover, ul.nav li a.active, ul.nav li.active a {
+	background: #76bd1d;
+	color: #FFFFFF;
+}
+.shadow {
+	-webkit-box-shadow: 0 6px 4px -7px black;
+	-moz-box-shadow: 0 6px 4px -7px black;
+	box-shadow: 0 6px 4px -7px black;
+}
+.navbar-header a img {
+	height: 50px;
+}
+/******navigation ends****/
+.clusterWrapTop {
+	margin: 95px 0 0 0;
+}
+.clusterHeading {
+	background-color: #f5f6f6;
+	border-color: #ddd;
+	color: #333;
+	border: 1px solid #CCCCCC;
+	padding: 10px 15px;
+}
+.clusterContent {
+	background-color: #FFF;
+	margin: 0;
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
+}
+.clusterWrapper {
+}
+.clusterStartStop {
+	float: left;
+	width: 50%;
+	position: relative;
+}
+.resetpb {
+	float: right;
+	width: 50%
+}
+.clusterConfig {
+	background: #e4e4e4;
+	margin: 0 15px 0 15px;
+	padding-bottom: 15px;
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
+}
+.clusterConfigLeft {
+	padding: 0 0 0 5px;
+}
+.clusterConfigRight {
+	padding: 0 5px 0 20px;
+}
+.clustHeadText {
+	position: relative;
+	top: -7px;
+	font-weight: bold;
+	font-size:16px;
+}
+.iconCorrection {
+	padding: 14px 36px 0 0;
+}
+.addServer {
+	background: #cccccc none repeat scroll 0 0;
+	cursor: pointer;
+	display: block;
+	font-weight: bold;
+	height: 34px;
+	margin: 10px 20px;
+	padding: 0 10px 5px 0;
+	width: 111px;
+}
+.addServer a:hover, .addServer a:active, .addServer a:focus {
+	color: #000000;
+}
+ul.addServerList {
+	margin: 0;
+	padding: 0;
+}
+ul.addServerList li {
+	margin: 0;
+	padding: 0 0 10px 0;
+	float: left;
+}
+ul.addServerList li:nth-child(1) {
+	padding: 2px 5px 0 0;
+	font-weight: bold;
+}
+label.error {
+    color: #c70000;
+    width: auto;
+    display: block;
+    line-height: 0px;
+    font-size: 11px;
+    /*padding: 10px 5px 0 7px;*/
+    padding: 10px 5px 0 0;
+    margin: 0 0 6px 0;
+    height: 10px;
+}
+.stopTxt {
+	position: relative;
+	top: 24px;
+	padding: 0 0 0 8px;
+	color: #000000;
+}
+.stopTxt:hover {
+	color: #000000;
+}
+.tblCluster {
+	margin: 0;
+	padding: 0;
+	border-left: 1px solid #CCC;
+}
+.tblCluster tr {
+	border-bottom: 1px solid #CCCCCC;
+}
+.tblCluster tr th {
+	background-color: #fbfbfb;
+}
+.tblCluster tr td a { margin:0; display:block;}
+.tblCluster tr th:nth-child(1) {
+	padding: 0 0 0 15px;
+}
+
+.tblCluster tr td:nth-child(1) {
+	width: 80%;
+	position: relative;
+	top: -13px;
+	padding-left:20px;
+	font-weight: bold;
+}
+.tblCluster tr td:nth-child(2) {
+	text-align: center;
+}
+.tblCluster tr td:nth-child(2), .tblCluster tr td:nth-child(3), .tblCluster tr td:nth-child(4) {
+	width: 5%;
+}
+.tblCluster tr td {
+	padding: 5px 10px 3px 10px;
+}
+.stopServerTxt {
+	padding: 0 0 0 10px;
+	font-size: 12px;
+}
+.deleteServerTxt {
+	padding: 0 0 0 5px;
+	font-size: 12px;
+}
+.clusterConfigWrapper {
+	background-color: #f5f6f6;
+	padding: 15px 20px;
+	margin: 15px 0 0 0;
+	border: 1px solid #CCCCCC;
+}
+.clusterConfigSaveCancel {
+	background-color: #f5f6f6;
+	padding: 15px 20px;
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
+}
+.overviewInputText {
+	height: 30px;
+	padding: 5px 10px;
+	line-height: 1.5;
+	width: 50px;
+	text-align: center;
+}
+.overviewInputText1 {
+	height: 30px;
+	padding: 5px 10px;
+	line-height: 1.5;
+	width: 100px;
+	text-align: center;
+}
+.upDownBtn {
+	background: none repeat scroll 0 0 #CCCCCC;
+	cursor: pointer;
+	font-weight: bold;
+	padding: 0px 10px 5px 0px;
+	margin-left: 5px
+}
+.main {
+	background-color: #FFFFFF;
+	margin-top: 20px;
+}
+.mainContent {
+	height: 53px;
+	position: relative;
+	background: #fbfbfb;
+	border-bottom: 1px solid #aaa;
+}
+.mainContent h1 {
+	padding: 18px 0 0 20px;
+	font-size: 17px;
+}
+.headerAdminContent h1 {
+	padding: 18px 0 0 20px;
+	font-size: 17px;
+}
+.mainTbl {
+	overflow: auto;
+	width: auto;
+}
+.adminTbl {
+	margin: 0;
+	padding: 0;
+}
+.adminTbl tr {
+	border-bottom: 1px solid #CCCCCC;
+}
+.adminTbl th {
+	margin: 0;
+	padding: 15px 25px 15px 20px;
+	border-bottom: 1px solid #CCCCCC;
+	font-weight: bold;
+	font-size: 14px;
+}
+.adminTbl th:nth-child(1) {
+	text-align: left;
+}
+.adminTbl th:nth-child(2) {
+	
+}
+.adminTbl tr td:nth-child(1) {
+	font-weight: bold;
+}
+.adminTbl th:nth-child(3) {
+	
+}
+.adminTbl tr td {
+	margin: 0;
+	padding: 5px 2px;
+	border-left: none;
+	border-right: none;
+	line-height: 38px;
+	height: 32px;
+}
+.adminTbl tr td.configLabel {
+	padding-left: 35px;
+	font-weight: bold;
+	white-space: nowrap;
+	color:#000;
+}
+.adminTbl tr.subLabelRow td.configLabel {
+    padding-left: 40px;
+    font-weight: normal;}
+	
+.adminTbl tr td.configLabel1 {
+	padding-left: 35px;
+	font-weight: bold;
+	white-space: nowrap;
+	width:30px;
+}
+.securWrapper { /*margin:10px 40px;*/
+    margin: 0 0 -3px 0;
+}
+.secTbl tr {border-bottom:none;}
+.secTbl tr th, .secTbl tr td {
+    border-bottom:1px solid #CCC;
+    text-align: left; /*padding:5px 0 10px 10px;*/
+    padding:0 0 0 40px;
+}
+.secTbl tr td input[type="text"] { font-weight:normal;}
+.secTbl tr td select { height:30px; width:130px; font-weight:normal;}
+.secTbl tr th {
+    font-weight: bold;
+    background: #FBFBFB;
+}
+.secTbl tr td { border-bottom:none;}
+
+.secTbl tr td input[type="text"] {
+	margin: 10px 0;
+    height: 30px;
+    padding: 0 5px;
+    line-height: 20px;
+	
+}
+.removeCirc { color:#C70000; font-size:20px; position:relative; top:7px; cursor:pointer}
+.onOff { position: relative;top:3px;}
+
+
+.userName {
+    float: left;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 0 0 0 40px;
+}
+
+.secLine {
+    border-bottom: 1px solid #CCCCCC;
+}
+.adminTbl tr.hasSubLabel td.configLabel {
+	padding-left: 15px;
+	font-weight: bold;
+}
+.network tr td:nth-child(2), .network tr td:nth-child(3) {
+	text-align: center;
+}
+.network tr td, .directories tr td {
+	padding: 5px 15px;
+}
+.directories tr td:nth-child(2) { text-align:right}
+.drWrapperAdmin {
+	margin: 20px 0 0 0;
+}
+.headerAdminContent {
+	height: 53px;
+	position: relative;
+	background: #fbfbfb;
+	border-bottom: 1px solid #aaa;
+}
+.drAdminHeaderLeft {
+	float: left;
+}
+.drAdminHeaderRight {
+	float: right;
+	position: relative;
+	top: -6px;
+}
+.replicaWrapper {
+	position: relative; /*top: -27px;*/
+}
+ul.drList {
+	margin: 0 20px 0 0;
+	padding: 0;
+	float: left;
+	height: 28px;
+	line-height: 30px;
+}
+ul.drList li {
+	margin: 0 0 0 10px;
+	padding: 0;
+	float: left;
+	font-size: 14px;
+}
+ul.drList li.drArrow {
+	background-position: left -368px;
+	color: #76bd1d;
+	padding-left: 25px;
+}
+.drTbl tr td {
+	text-align: center;
+}
+.drTbl tr td:first-child {
+	text-align: left;
+}
+.drTbl tr th {
+	background: #3f5364;
+}
+.drContent {
+	background: #FFFFFF;
+	width: 100%;
+}
+.drContent table td {
+	white-space: nowrap !important;
+}
+a.drTblBtn {
+	background: #4E8DB5;
+	margin: 3px 4px 3px 0;
+	color: #ffffff;
+	text-align: center;
+	width: 110px;
+	line-height: 27px;
+}
+a.drTblBtn:hover {
+	background: #AA1F2F;
+}
+.adminDirect {
+	overflow: auto;
+	width: auto;
+}
+.hidden {
+	display: none;
+}
+.footer {
+	background: #1a1a1a;
+	height: 75px;
+	margin: 22px 0 0 0;
+}
+.footer p {
+	text-align: center;
+	padding: 27px 0 0 0;
+	color: #FFFFFF;
+}
+table.tblPopup {
+	border: 1px solid #cccccc;
+}
+.tblPopup tr td {
+	border-bottom: 1px solid #cccccc;
+	padding: 10px 25px 10px 10px;
+}
+/****************Server Settings**********************/
+.serverTop {
+	background-color: #f5f6f6;
+	border-left:1px solid #CCCCCC;border-right:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC; 
+	padding: 15px 20px;
+}
+.serverMain {
+	background: #FFFFFF;
+	width: 100%;
+	overflow: auto;
+	
+}
+.servertbl {
+	margin: 0;
+	padding: 0;
+}
+.servertbl tr th, .servertbl tr td {
+	border: 1px solid #CCCCCC;
+}
+.servertbl tr th:nth-child(1), .servertbl tr td:nth-child(1) { text-align:left;}
+.servertbl tr th {
+	margin: 0;
+	padding: 10px 20px;
+	background: #fbfbfb;
+	border-bottom: 1px solid #aaa;
+	font-size: 14px;
+	text-align:center;
+}
+.servertbl tr td {
+	margin: 0;
+	padding: 8px 20px;
+	text-align:center;
+}
+.servertbl tr td input[type="text"] {
+	width: 130px;
+	height:30px;
+	text-align: center;
+	padding: 0 5px 0 0
+}
+.servertbl tr td:nth-child(1) {
+	font-weight: bold;
+}
+/*************fixed column table*************/
+.mainServ { overflow:auto; width:auto;}
+.tbl01 {float:left; width:300px;}
+.tbl01 tr th {
+	margin: 0;
+	padding: 7px 20px 6px;
+	background: #fbfbfb;
+	border-bottom: 1px solid #aaa;
+	font-size: 14px;
+}
+.tbl01 tr td {
+	margin: 0;
+	padding: 9px 20px;
+}
+.tbl01 tr th:first-child, .tbl01 tr td:first-child { border-left:none; width:200px}
+.tbl02 tr th { border-bottom:none; border-left:none; border-right:none;}
+.servTop {width:auto; }
+.serv { width:auto; overflow:auto;}
+.tbl03 tr th, .tbl03 tr td { border-left:none;}
+/*************fixed column table ends*************/
+
+.vAlign { vertical-align:middle;}
+.serAlign { text-align:center; }
+/****************Server Settings Ends**********************/
+.btn-file {
+	position: relative;
+	overflow: hidden;
+}
+.btn-file input[type=file] {
+	position: absolute;
+	top: 0;
+	right: 0;
+	min-width: 100%;
+	min-height: 100%;
+	text-align: right;
+	filter: alpha(opacity=0);
+	opacity: 0;
+	cursor: inherit;
+}
+/*************overwriting the bootstrap***************/
+
+.navbar {
+	height: 75px;
+}
+.modal-header {
+	background: #fbfbfb;
+	border-bottom: 1px solid #dbdbdb;
+	color: #3e3a3a;
+	font-size: 16px;
+}
+.modal-footer {
+	border-top: none;
+}
+.modal-content {
+	border-radius: 0;
+}
+.btn-info.focus, .btn-info:active, .btn-info:active:hover, .btn-info:active:focus {
+	background-color: #aa1f2f!important;
+	border-color: none!important;
+}
+.modal-dialog-center {
+	margin-top: 15%;
+}
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+	background-color: #76bd1d
+}
+/**************Button start/Stop******************/
+.clusterBtnWrap {
+	text-align: center;
+	margin-top: 13%;
+}
+a.clustBtn {
+	display: inline-block;
+	background-image: linear-gradient(  #FFFFFF, #f3f3f3  );
+	padding: 15px 20px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px; /* future proofing */
+	-khtml-border-radius: 10px; /* for old Konqueror browsers */
+	border: 1px solid #cecece;
+	-moz-box-shadow: 1px 1px 2px 0 #ccc;
+	-webkit-box-shadow: 1px 1px 2px 0 #ccc;
+	box-shadow: 1px 1px 2px 0 #ccc;
+	width: 160px;
+}
+a.clustBtn:hover {
+	display: inline-block;
+	background-image: linear-gradient(  #f3f3f3, #FFFFFF  );
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px; /* future proofing */
+	-khtml-border-radius: 10px; /* for old Konqueror browsers */
+	border: 1px solid #cecece;
+	-moz-box-shadow: 1px 1px 2px 0 #ccc;
+	-webkit-box-shadow: 1px 1px 2px 0 #ccc;
+	box-shadow: 1px 1px 2px 0 #ccc;
+}
+.clusterFont {
+	position: relative;
+	top: 10px;
+	font-weight: bold;
+	font-size: 26px;
+	line-height: 10px;
+}
+.playColor {
+	color: #76bd1d;
+	font-size: 50px;
+	float: left;
+}
+
+
+/**************Button start/Stop ends******************/
+
+/************Media Queries for mobile compatibility***************/
+@media (max-width: 767px) {
+ul.nav li a {
+	height: 50px;
+	margin: 0;
+	padding: 14px 15px 0;
+}
+.navbar-inverse .navbar-nav > li > a {
+	color: #FFFFFF;
+	background-color: #435464;
+	border-right: none;
+	border-bottom: 1px solid #000000;
+}
+ul.nav li:nth-child(1) {
+	border-left: none;
+}
+.navbar-nav {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+.modal-dialog-center {
+	margin-top: 45%;
+}
+.clusterStartStop { /*float:none;*/
+	width: 100%
+}
+.resetpb {/*float:none; */
+	width: 100%
+}
+.clusterBtnWrap {
+	margin-top: 5%;
+	margin-bottom: 5%;
+}
+.tblCluster tr th {
+	border-top: 1px solid #CCCCCC;
+}
+}
+@media (max-width: 991px) {
+.clusterConfigLeft {
+	padding: 0;
+}
+.clusterConfigRight {
+	padding: 0;
+}
+}
+@media (min-width: 320px) and (max-width: 620px) {
+.rightSide {
+	float: none;
+}
+.leftSide {
+	float: none;
+}
+.upDownBtn {
+	margin: 10px 0 0 0;
+}
+}
+@media (width: 320px) {
+.navbar-header a img {
+	height: 40px
+}
+.clusterIcon {
+	width: 100px;
+}
+}
+
+/*ie hack*/
+@media screen\0 {
+   
+.tblCluster tr td:nth-child(1) {
+
+}
+}
