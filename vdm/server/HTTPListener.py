@@ -77,8 +77,13 @@ class ServerAPI(MethodView):
         if len(server)!=0:
             return make_response(jsonify({'error': 'Host name already exists'}), 404)
 
+        serverId = 0
+        if not servers:
+            serverId = 1
+        else:
+            serverId = servers[-1]['id'] + 1
         server = {
-        'id': servers[-1]['id'] + 1,
+        'id': serverId,
         'name': request.json['name'],
         'description': request.json.get('description', ""),
         'hostname': request.json.get('hostname', ""),

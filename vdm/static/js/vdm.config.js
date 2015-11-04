@@ -3,7 +3,8 @@
 
     var iVdmConfig = (function () {
         this.GetDefaultServerIP = function () {
-            return "192.168.1.35";
+            var hostName = document.location.hostname
+            return hostName;
         };
 
         this.GetDefaultServerNameForKey = function () {

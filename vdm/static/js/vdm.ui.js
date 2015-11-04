@@ -224,13 +224,7 @@ var loadPage = function() {
             if (serverList == undefined) {
                 return;
             }
-            var htmlList = '<tr>' +
-                            '<th><span class="serverIcon">Servers</span></th>' +
-                            '<th>' +
-                            '<div class="addServer">' +
-                            '<a id="btnAddServer" href="javascript:void(0);"data-toggle="modal" data-target="#addServer"> <span class="plus"></span>Add Server</a> </div>' +
-                            '</th>' +
-                       '</tr>';
+            var htmlList = "";
             VdmUI.CurrentServerList = [];
             VdmUI.CurrentHostList = [];
             serverList.servers.forEach(function (info) {
@@ -246,8 +240,11 @@ var loadPage = function() {
                 VdmUI.CurrentServerList.push(serverName);
                 VdmUI.CurrentHostList.push(hostName)
             });
-
-            $('#serverList').html(htmlList)
+            if(htmlList == ""){
+                $('#serverList').html('<tr><td style="top:-1px !important">No servers Available.</td><td></td></tr>')
+            }else{
+                $('#serverList').html(htmlList)
+            }
 
             $('.btnDeleteServer').on('click', function(){
                 var serverId = $(this.parentElement).data('id');
