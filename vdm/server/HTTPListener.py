@@ -62,8 +62,13 @@ class ServerAPI(MethodView):
     def post(self):
         if not request.json or not 'name' in request.json or not 'hostname' in request.json:
             abort(400)
+        serverId = 0
+        if not servers:
+            serverId = 1
+        else:
+            serverId = servers[-1]['id'] + 1
         server = {
-        'id': servers[-1]['id'] + 1,
+        'id': serverId,
         'name': request.json['name'],
         'description': request.json.get('description', ""),
         'hostname': request.json.get('hostname', ""),
