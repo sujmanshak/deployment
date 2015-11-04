@@ -62,6 +62,21 @@ class ServerAPI(MethodView):
     def post(self):
         if not request.json or not 'name' in request.json or not 'hostname' in request.json:
             abort(400)
+
+        if request.json['name']=="":
+            return make_response(jsonify({'error':'Server name is required'}),404)
+
+        if request.json['hostname']=="":
+            return make_response(jsonify({'error':'Host name is required'}),404)
+
+        server = filter(lambda t: t['name'] == request.json['name'], servers)
+        if len(server)!=0:
+            return make_response(jsonify({'error': 'Server name already exists'}), 404)
+
+        server = filter(lambda t: t['hostname'] == request.json['hostname'], servers)
+        if len(server)!=0:
+            return make_response(jsonify({'error': 'Host name already exists'}), 404)
+
         server = {
         'id': servers[-1]['id'] + 1,
         'name': request.json['name'],
@@ -93,6 +108,7 @@ class ServerAPI(MethodView):
             abort(400)
         if 'enabled' in request.json and type(request.json['enabled']) is not bool:
             abort(400)
+
         server[0]['name'] = request.json.get('name', server[0]['name'])
         server[0]['description'] = request.json.get('description', server[0]['description'])
         server[0]['enabled'] = request.json.get('enabled', server[0]['enabled'])
