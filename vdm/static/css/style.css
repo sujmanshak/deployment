@@ -89,6 +89,8 @@ body {
 	font-size: 13px;
 	line-height: 20px;
 }
+
+/***********global css ***********/
 .top5 {
 	margin-top: 5px;
 }
@@ -127,6 +129,19 @@ body {
 /*background-color: #76BD1D;
 	color: #FFF;*/
 }
+
+label.error {
+    color: #c70000;
+    width: auto;
+    display: block;
+    line-height: 0px;
+    font-size: 11px;
+    /*padding: 10px 5px 0 7px;*/
+    padding: 10px 5px 0 0;
+    margin: 0 0 6px 0;
+    height: 10px;
+}
+
 .clusterIcon, .plus, .stop, .stopServer, .deleteServer, .editServer, .uploadIcon, .downloadIcon, .drArrow, .popup_close, .popup_close:hover, .clusterConfigIcon, .serverIcon, .plusIcon, .secCrossIcon {
 	background-image: url(../images/icons.png);
 	background-repeat: no-repeat;
@@ -154,9 +169,9 @@ body {
 	cursor: pointer;
 }
 .deleteServer {
-	width: 84px;
+	/*width: 84px;*/
 	height: 26px;
-	background-position: 43px -95px;
+	background-position:-4px -95px;
 	cursor: pointer;
 }
 .editServer {
@@ -257,6 +272,14 @@ body {
 	overflow: auto;
 	line-height: 18px;
 }
+
+.modal.custom .modal-dialog {
+   width:40%;
+   margin:10% auto;
+   /*add what you want here*/
+}
+
+/***********global css Ends ***********/
 /******navigation****/
 ul.nav li a {
 	display: block;
@@ -314,8 +337,14 @@ ul.nav li a:hover, ul.nav li a.active, ul.nav li.active a {
 }
 .resetpb {
 	float: right;
-	width: 50%
+	width: 50%;
+	border-left:1px solid #CCC;
+	 border-right:1px solid #CCC;
 }
+.ContentServerHead {border-bottom:1px solid #CCCCCC;}
+.ContentServerLeft {float:left; margin-top:15px}
+.ContentServerRight { float:right}
+.ContentServerBody {overflow:auto; height:220px;}
 .clusterConfig {
 	background: #e4e4e4;
 	margin: 0 15px 0 15px;
@@ -365,17 +394,6 @@ ul.addServerList li:nth-child(1) {
 	padding: 2px 5px 0 0;
 	font-weight: bold;
 }
-label.error {
-    color: #c70000;
-    width: auto;
-    display: block;
-    line-height: 0px;
-    font-size: 11px;
-    /*padding: 10px 5px 0 7px;*/
-    padding: 10px 5px 0 0;
-    margin: 0 0 6px 0;
-    height: 10px;
-}
 .stopTxt {
 	position: relative;
 	top: 24px;
@@ -388,7 +406,7 @@ label.error {
 .tblCluster {
 	margin: 0;
 	padding: 0;
-	border-left: 1px solid #CCC;
+	/*border-left: 1px solid #CCC;*/
 }
 .tblCluster tr {
 	border-bottom: 1px solid #CCCCCC;
@@ -422,7 +440,7 @@ label.error {
 	font-size: 12px;
 }
 .deleteServerTxt {
-	padding: 0 0 0 5px;
+	padding: 0 0 0 0px;
 	font-size: 12px;
 }
 .clusterConfigWrapper {
@@ -669,6 +687,11 @@ table.tblPopup {
 	border-bottom: 1px solid #cccccc;
 	padding: 10px 25px 10px 10px;
 }
+
+.formServer input[type="text"] { width:80%;}
+.formServer textarea {width:80%; height:46px;resize: none;}
+
+
 /****************Server Settings**********************/
 .serverTop {
 	background-color: #f5f6f6;
