@@ -113,6 +113,15 @@ class ServerTest(TestCase):
 
     #ensure servers are deleted propery
     def test_08DeleteServer(self):
+        #Create a server to delete
+        headers = {'Content-Type': 'application/json; charset=utf-8'}
+        data={'description':'test','hostname':'test','name':'test'}
+        response = requests.post(URL,json=data, headers = headers)
+        if response.status_code==201:
+            self.assertEqual(response.status_code, 201)
+        else:
+            self.assertEqual(response.status_code, 404)
+
         #get a serverId
         response= requests.get(URL)
         value= response.json()
