@@ -14,9 +14,12 @@ class ClusterSettingsPage extends Page {
         // Add Server Popup
         popupAddServer                  { $("#addServer > div > div") }
         popupAddServerNameField         { $("#serverName") }
+        popupAddServerHostNameField     { $("#txtHostName") }
+        popupAddServerDescriptionField  { $("#txtDescription") }
         popupAddServerButtonOk          { $("#btnCreateServerOk") }
         popupAddServerButtonCancel      { $("#addServer > div > div > div.modal-footer > button.btn.btn-gray") }
-
+        
+        // Delete Server
         deleteServer                    { $("#serverList > tbody > tr:nth-child(5) > td:nth-child(2) > a > div") }
         popupDeleteServer               { $("#deleteConfirmation > div > div") }
         popupDeleteServerButtonOk       { $("#deleteServerOk") }
@@ -25,7 +28,7 @@ class ClusterSettingsPage extends Page {
     }
 
     static at = {
-        clusterSettingsTab.isDisplayed()
-        serverSettingsTab.isDisplayed()
+        waitFor(30) { clusterSettingsTab.isDisplayed() }
+        waitFor(30) { serverSettingsTab.isDisplayed() }
     }
 }
