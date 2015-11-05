@@ -127,10 +127,20 @@ var loadPage = function() {
         "checkDuplicateServer",
         function (value) {
             var arr = VdmUI.CurrentServerList;
-            if ($.inArray(value, arr) != -1) {
-                return false;
+            if (VdmUI.isServerCreate == false) {
+                if ($.inArray(value, arr) != -1) {
+                    if (value == VdmUI.serverToUpdate)
+                        return true;
+                    return false;
+                } else {
+                    return true;
+                }
             } else {
-                return true;
+                if ($.inArray(value, arr) != -1) {
+                    return false;
+                } else {
+                    return true;
+                }
             }
         },
         "Server name already exists."
@@ -140,10 +150,20 @@ var loadPage = function() {
         "checkDuplicateHost",
         function (value) {
             var arr = VdmUI.CurrentHostList;
-            if ($.inArray(value, arr) != -1) {
-                return false;
+            if (VdmUI.isServerCreate == false) {
+                if ($.inArray(value, arr) != -1) {
+                    if (value == VdmUI.hostToUpdate)
+                        return true;
+                    return false;
+                } else {
+                    return true;
+                }
             } else {
-                return true;
+                if ($.inArray(value, arr) != -1) {
+                    return false;
+                } else {
+                    return true;
+                }
             }
         },
         "Host name already exists."
@@ -179,22 +199,41 @@ var loadPage = function() {
                     e.stopPropagation();
                     return;
                 }
-
         var serverName = $('#serverName').val()
         var hostName = $('#txtHostName').val()
         var description = $('#txtDescription').val()
-        var serverData ={
-            "name" : serverName,
-            "hostname" : hostName,
-            "description" : description
+        var serverInfo ={
+            serverData:{
+                "name" : serverName,
+                "hostname" : hostName,
+                "description" : description
+            },
+            id:$('#addServer').data('serverid')
         }
-        VdmService.CreateServer(function(connection){
-            if(connection.Metadata['SERVER_CREATE'].status == 1){
-                VdmService.GetServerList(function(connection){
-                    VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
-                })
-            }
-        },serverData);
+        if(VdmUI.isServerCreate){
+            VdmService.CreateServer(function(connection){
+                debugger;
+                if(connection.Metadata['SERVER_CREATE'].status == 1){
+                    VdmService.GetServerList(function(connection){
+                        VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
+                    })
+                } else{
+                    $('#errorMsg').html('Unable to create server.')
+                    $('#errorDialog').modal('show');
+                }
+            },serverInfo);
+        } else {
+            VdmService.UpdateServer(function(connection){
+                if(connection.Metadata['SERVER_UPDATE'].status == 1){
+                    VdmService.GetServerList(function(connection){
+                        VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
+                    })
+                } else{
+                    $('#errorMsg').html('Unable to update server.')
+                    $('#errorDialog').modal('show');
+                }
+            },serverInfo);
+        }
     });
 
     $('#deleteServerOk').on('click',function(){
@@ -215,7 +254,9 @@ var loadPage = function() {
         this.CurrentTab = NavigationTabs.DBMonitor;
         this.CurrentServerList = [];
         this.CurrentHostList = [];
-
+        this.isServerCreate = true;
+        this.serverToUpdate = '';
+        this.hostToUpdate = '';
         this.getCookie = function(name) {
             return $.cookie(name + "_" + VdmConfig.GetPortId());
         };
@@ -231,8 +272,12 @@ var loadPage = function() {
                 var hostName = info["hostname"];
                 var serverName = info["name"]
                 var hostId = info["id"];
+                var infos = JSON.stringify(info)
                 htmlList += '<tr>' +
                             '<td>' + hostName + '</td>' +
+                            '<td data-id="' + hostId + '" data-info=\''+ infos +'\'><a class="btnUpdateServer" href="javascript:void(0);"data-toggle="modal" data-target="#addServer" >' +
+                            '<div class="editServer"></div>' +
+                            '</a> <span class="editServerTxt">Edit</span></td>' +
                             '<td data-id="' + hostId + '" ><a class="btnDeleteServer" href="javascript:void(0);"data-toggle="modal" data-target="#deleteConfirmation" >' +
                             '<div class="deleteServer"></div>' +
                             '</a> <span class="deleteServerTxt">Delete</span></td>' +
@@ -251,7 +296,26 @@ var loadPage = function() {
                 $('#deleteConfirmation').data('serverid',serverId);
             });
 
+            $('.btnUpdateServer').on('click', function(){
+                VdmUI.isServerCreate = false;
+                var serverInfo = $(this.parentElement).data('info');
+                VdmUI.serverToUpdate = serverInfo['name'];
+                VdmUI.hostToUpdate = serverInfo['hostname'];
+                $('#addServer').data('serverid',serverInfo['id']);
+                $('#serverName').val(serverInfo['name']);
+                $('#txtHostName').val(serverInfo['hostname']);
+                $('#txtDescription').val(serverInfo['description']);
+                $('#addServerTitle').html('Update Server');
+                $('#errorServerName').hide();
+                $('#errorHostName').hide();
+                $('#errorDescription').hide();
+            });
+
             $('#btnAddServer').on('click', function(){
+                VdmUI.isServerCreate = true;
+                VdmUI.serverToUpdate = '';
+                VdmUI.hostToUpdate = '';
+                $('#addServerTitle').html('Add Server');
                 $('#serverName').val('');
                 $('#txtHostName').val('');
                 $('#txtDescription').val('');
