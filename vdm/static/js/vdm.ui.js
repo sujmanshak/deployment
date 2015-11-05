@@ -212,7 +212,6 @@ var loadPage = function() {
         }
         if(VdmUI.isServerCreate){
             VdmService.CreateServer(function(connection){
-                debugger;
                 if(connection.Metadata['SERVER_CREATE'].status == 1){
                     VdmService.GetServerList(function(connection){
                         VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
