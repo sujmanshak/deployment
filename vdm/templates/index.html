@@ -20,12 +20,12 @@
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
           <a class="navbar-brand" href="index.html"><img src="{{ url_for('static',filename='images/logo.jpg') }}" alt="Voltdb Deployment Manager"></a> </div>
-        <div id="navbar" class="navbar-collapse collapse">
+        <!--<div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-left">
             <li class="active"><a href="#" id="dbManager">Cluster Settings</a></li>
             <li><a href="#" id="serverSetting">Server Settings</a></li>
           </ul>
-        </div>
+        </div>-->
       </div>
     </nav>
     <div class="container-fluid" id="divDbManager">
@@ -685,7 +685,7 @@ $("[rel=bottom]").tooltip({ placement: 'bottom'});
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">Add Server</h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="overflow:auto; height:300px;">
         <form id="frmCreateServer" action="" method="get" class="form-horizontal">
           <div class="form-group formServer">
             <label for="serverName" class="col-sm-3 control-label" >Server Name:</label>
@@ -708,8 +708,52 @@ $("[rel=bottom]").tooltip({ placement: 'bottom'});
               <label id="errorDescription" for="txtDescription" class="error" style="display:none">This field is required</label>
             </div>
           </div>
+          
+          <div class="form-group formServer">
+            <label for="txtHostName" class="col-sm-3 control-label" >Client Port:</label>
+            <div class="col-sm-9">
+              <input type="text"  id="txtHost	Name" name="txtHostName" >
+              <label id="errorHostName" for="txtHostName" class="error" style="display:none">This field is required</label>
+            </div>
+          </div>
+          <div class="form-group formServer">
+            <label for="txtHostName" class="col-sm-3 control-label" >Admin Port:</label>
+            <div class="col-sm-9">
+              <input type="text"  id="txtHostName" name="txtHostName" >
+              <label id="errorHostName" for="txtHostName" class="error" style="display:none">This field is required</label>
+            </div>
+          </div>
+          <div class="form-group formServer">
+            <label for="txtHostName" class="col-sm-3 control-label" >HTTP:</label>
+            <div class="col-sm-9">
+              <input type="text"  id="txtHostName" name="txtHostName" >
+              <label id="errorHostName" for="txtHostName" class="error" style="display:none">This field is required</label>
+            </div>
+          </div>
+          <div class="form-group formServer">
+            <label for="txtHostName" class="col-sm-3 control-label" >Internal Port:</label>
+            <div class="col-sm-9">
+              <input type="text"  id="txtHostName" name="txtHostName" >
+              <label id="errorHostName" for="txtHostName" class="error" style="display:none">This field is required</label>
+            </div>
+          </div>
+          <div class="form-group formServer">
+            <label for="txtHostName" class="col-sm-3 control-label" >Zookeeper:</label>
+            <div class="col-sm-9">
+              <input type="text"  id="txtHostName" name="txtHostName" >
+              <label id="errorHostName" for="txtHostName" class="error" style="display:none">This field is required</label>
+            </div>
+          </div>
+          <div class="form-group formServer">
+            <label for="txtHostName" class="col-sm-3 control-label" >Replication Port:</label>
+            <div class="col-sm-9">
+              <input type="text"  id="txtHostName" name="txtHostName" >
+              <label id="errorHostName" for="txtHostName" class="error" style="display:none">This field is required</label>
+            </div>
+          </div>
+
         </form>
-        <p>Note: <span class="txt-bold">Go to "Server Settings" tab to change server specific settings.</span></p>
+       
       </div>
       <div class="modal-footer">
         <button id="btnCreateServerOk" type="button" class="btn" data-dismiss="modal">Ok</button>
