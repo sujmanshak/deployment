@@ -113,11 +113,14 @@ class ServerAPI(MethodView):
             abort(400)
         if 'enabled' in request.json and type(request.json['enabled']) is not bool:
             abort(400)
+        if 'hostname' in request.json and type(request.json['hostname']) is not unicode:
+            abort(400)
 
         server[0]['name'] = request.json.get('name', server[0]['name'])
         server[0]['description'] = request.json.get('description', server[0]['description'])
-        server[0]['enabled'] = request.json.get('enabled', server[0]['enabled'])
-        return jsonify( { 'server': server[0] } )
+        # server[0]['enabled'] = request.json.get('enabled', server[0]['enabled'])
+        server[0]['hostname'] = request.json.get('hostname', server[0]['hostname'])
+        return jsonify( { 'server': server[0], 'status':1 } )
 
 if __name__ == '__main__':
     app.config.update(

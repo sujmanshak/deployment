@@ -177,7 +177,7 @@ label.error {
 .editServer {
 	width: 40px;
 	height: 30px;
-	background-position: 0px -177px;
+	background-position: 4px -166px;
 	cursor: pointer;
 }
 .clusterName {
@@ -440,6 +440,10 @@ ul.addServerList li:nth-child(1) {
 	font-size: 12px;
 }
 .deleteServerTxt {
+	padding: 0 0 0 0px;
+	font-size: 12px;
+}
+.editServerTxt {
 	padding: 0 0 0 0px;
 	font-size: 12px;
 }

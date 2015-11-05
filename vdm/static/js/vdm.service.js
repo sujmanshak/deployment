@@ -102,6 +102,29 @@
                 console.log(e.message);
             }
         }
+
+        this.UpdateServer = function (onConnectionAdded, serverInfo) {
+            try {
+                var processName = "SERVER_UPDATE";
+                var requestMethod = "PUT"
+                var serverDetails = {
+                    "serverData" :serverInfo
+                }
+                _connection = VdmCore.HasConnection(server, port, admin, user, processName);
+                if (_connection == null){
+                    VdmCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod,serverDetails);
+                } else {
+                    VdmCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod,serverDetails);
+                }
+            } catch (e) {
+                console.log(e.message);
+            }
+        };
+
     });
     window.VdmService = VdmService = new iVdmService();
 })(window);
