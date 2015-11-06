@@ -116,6 +116,21 @@ class ServerAPI(MethodView):
         if 'hostname' in request.json and type(request.json['hostname']) is not unicode:
             abort(400)
 
+        if 'name' in request.json:
+            if request.json['name']=="":
+                return make_response(jsonify({'error':'Server name is required'}),404)
+            server = filter(lambda t: t['name'] == request.json['name'], servers)
+            if len(server)!=0:
+                return make_response(jsonify({'error': 'Server name already exists'}), 404)
+
+        if 'hostname' in request.json:
+            if request.json['hostname']=="":
+                return make_response(jsonify({'error':'Host name is required'}),404)
+            server = filter(lambda t: t['hostname'] == request.json['hostname'], servers)
+            if len(server)!=0:
+                return make_response(jsonify({'error': 'Host name already exists'}), 404)
+
+
         server[0]['name'] = request.json.get('name', server[0]['name'])
         server[0]['description'] = request.json.get('description', server[0]['description'])
         # server[0]['enabled'] = request.json.get('enabled', server[0]['enabled'])
