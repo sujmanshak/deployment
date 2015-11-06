@@ -3,29 +3,7 @@ from flask.views import MethodView
 
 app = Flask(__name__, template_folder ="../templates", static_folder="../static")
 
-servers = [
-    {
-        'id': 1,
-        'name': u'voltdb1',
-        'hostname': u'voltdb1',
-        'description': u'voltdb server 1',
-        'enabled': True
-    },
-    {
-        'id': 2,
-        'name': u'voltdb2',
-        'hostname': u'voltdb2',
-        'description': u'voltdb server 2',
-        'enabled': True
-    },
-    {
-        'id': 3,
-        'name': u'voltdb3',
-        'hostname': u'voltdb3',
-        'description': u'voltdb server 3',
-        'enabled': True
-    }
-]
+servers = []
 
 
 @app.errorhandler(400)
