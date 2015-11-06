@@ -14,6 +14,7 @@ from flask import Flask
 import unittest
 from flask.ext.testing import TestCase
 import requests
+import xmlrunner
 
 ############VARS
 
@@ -158,4 +159,5 @@ class ServerTest2(Server):
 
 
 if __name__ == '__main__':
-        unittest.main()
+    unittest.main(testRunner=xmlrunner.XMLTestRunner(output='test-reports'))
+    unittest.main()
