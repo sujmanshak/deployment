@@ -1,7 +1,12 @@
 from flask import Flask, render_template, jsonify, abort, make_response, request
 from flask.views import MethodView
 
+import socket
+import fcntl
+import struct
+
 app = Flask(__name__, template_folder ="../templates", static_folder="../static")
+
 
 servers = []
 
@@ -24,10 +29,37 @@ def make_public_server(servers):
         new_server[field] = servers[field]
     return new_server
 
+def get_ip_address(ifname):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', ifname[:15])
+    )[20:24])
+
+isCurrentNodeAdded = False
+
 class ServerAPI(MethodView):
 
     def get(self, server_id):
+        global isCurrentNodeAdded
+        hostname =  get_ip_address('eth0')
+
         if server_id is None:
+
+            if not servers and isCurrentNodeAdded==False:
+                #add default server
+                isCurrentNodeAdded = True
+                servers.append(
+                    {
+                        'id': 1,
+                        'name': hostname,
+                        'hostname': hostname,
+                        'description': "",
+                        'enabled': True
+                    }
+                    )
+
             # return a list of users
             return jsonify( { 'servers': map(make_public_server, servers) } )
         else:
@@ -80,8 +112,8 @@ class ServerAPI(MethodView):
 
     def put(self, server_id):
         # update a single server
-        server = filter(lambda t: t['id'] == server_id, servers)
-        if len(server) == 0:
+        currentserver = filter(lambda t: t['id'] == server_id, servers)
+        if len(currentserver) == 0:
             abort(404)
         if not request.json:
             abort(400)
@@ -97,23 +129,25 @@ class ServerAPI(MethodView):
         if 'name' in request.json:
             if request.json['name']=="":
                 return make_response(jsonify({'error':'Server name is required'}),404)
-            server = filter(lambda t: t['name'] == request.json['name'], servers)
-            if len(server)!=0:
-                return make_response(jsonify({'error': 'Server name already exists'}), 404)
+            if request.json['name']!= currentserver[0]['name']:
+                server = filter(lambda t: t['name'] == request.json['name'], servers)
+                if len(server)!=0:
+                    return make_response(jsonify({'error': 'Server name already exists'}), 404)
 
         if 'hostname' in request.json:
             if request.json['hostname']=="":
                 return make_response(jsonify({'error':'Host name is required'}),404)
-            server = filter(lambda t: t['hostname'] == request.json['hostname'], servers)
-            if len(server)!=0:
-                return make_response(jsonify({'error': 'Host name already exists'}), 404)
+            if request.json['hostname']!= currentserver[0]['hostname']:
+                server = filter(lambda t: t['hostname'] == request.json['hostname'], servers)
+                if len(server)!=0:
+                    return make_response(jsonify({'error': 'Host name already exists'}), 404)
 
 
-        server[0]['name'] = request.json.get('name', server[0]['name'])
-        server[0]['description'] = request.json.get('description', server[0]['description'])
+        currentserver[0]['name'] = request.json.get('name', currentserver[0]['name'])
+        currentserver[0]['description'] = request.json.get('description', currentserver[0]['description'])
         # server[0]['enabled'] = request.json.get('enabled', server[0]['enabled'])
-        server[0]['hostname'] = request.json.get('hostname', server[0]['hostname'])
-        return jsonify( { 'server': server[0], 'status':1 } )
+        currentserver[0]['hostname'] = request.json.get('hostname', currentserver[0]['hostname'])
+        return jsonify( { 'server': currentserver[0], 'status':1 } )
 
 if __name__ == '__main__':
     app.config.update(
