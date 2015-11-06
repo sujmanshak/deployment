@@ -469,13 +469,13 @@ $("[rel=bottom]").tooltip({ placement: 'bottom'});
 		  </script> 
 
 <!-- Add Server -->
-<div id="addServer" class="modal custom fade" role="dialog">
+<div id="addServer" class="modal custom fade" role="dialog" data-serverid="">
   <div class="modal-dialog modal-dialog-center">
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Server</h4>
+        <h4 class="modal-title" id="addServerTitle">Add Server</h4>
       </div>
       <div class="modal-body" style="overflow:auto; height:300px;">
         <form id="frmCreateServer" action="" method="get" class="form-horizontal">
@@ -665,7 +665,27 @@ $("[rel=bottom]").tooltip({ placement: 'bottom'});
     </div>
   </div>
 </div>
-<!-- Export table End -->  
+<!-- Export table End -->
+
+<!--Error -->
+<div id="errorDialog" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-dialog-center">
+    <!-- Modal content-->
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Error</h4>
+        </div>
+        <div class="modal-body">
+            <p id="errorMsg"></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn" data-dismiss="modal">Ok</button>
+        </div>
+    </div>
+  </div>
+</div>
+<!--Error -->
 
 </body>
 </html>
