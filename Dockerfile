@@ -30,5 +30,5 @@ FROM python:2.7
 ADD . /vdm
 add requirements.txt /vdm/requirements.txt
 WORKDIR /vdm/vdm/server
-RUN pip install flask
+RUN pip install -r /vdm/requirements.txt
 CMD python HTTPListener.py
