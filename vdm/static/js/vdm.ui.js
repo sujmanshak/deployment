@@ -178,9 +178,11 @@ var loadPage = function() {
         "Please enter only valid characters."
     );
 
+    setInterval(function () {
     VdmService.GetServerList(function(connection){
         VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
     })
+    }, 5000);
 
     $("#frmCreateServer").validate({
         rules: {
