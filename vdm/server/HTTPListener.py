@@ -340,7 +340,7 @@ class ServerAPI(MethodView):
         currentserver[0]['replicationport'] = request.json.get('replicationport', currentserver[0]['replicationport'])
         currentserver[0]['internalinterface'] = request.json.get('internalinterface', currentserver[0]['internalinterface'])
         currentserver[0]['externalinterface'] = request.json.get('externalinterface', currentserver[0]['externalinterface'])
-        return jsonify( { 'server': currentserver[0] } )
+        return jsonify( { 'server': currentserver[0], 'status': 1} )
 
 
 if __name__ == '__main__':

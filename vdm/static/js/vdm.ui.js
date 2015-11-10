@@ -120,6 +120,18 @@ var loadPage = function() {
             required: "This field is required",
             checkDuplicateHost:'This host name already exists.',
             regex: 'Only alphabets, numbers, _ and . are allowed.'
+        },
+        PortRule:{
+            portRegex : /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
+        },
+        PortMessage:{
+            portRegex : "Please enter a valid value.(e.g, 127.0.0.1:8000 or 8000(1-65535))"
+        },
+        IpRule:{
+            regex: /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
+        },
+        IpMessage:{
+            regex: 'Please enter a valid IP address.'
         }
     }
 
@@ -178,6 +190,37 @@ var loadPage = function() {
         "Please enter only valid characters."
     );
 
+    $.validator.addMethod(
+        "portRegex",
+        function(value, element, regexp){
+            var result = true
+            var values = value.split(':');
+            var re = new RegExp(regexp);
+            if(values.length == 1){
+                if(!$.isNumeric(values[0]) || !(values[0] > 1 && values[0] < 65536))
+                    result = false;
+                else{
+                    if(values[0].split('.').length > 1)
+                        result = false;
+                }
+            } else if(values.length == 2){
+                if(!$.isNumeric(values[1]) || !(values[1] > 1 && values[1] < 65536))
+                    result = false;
+                else{
+                    if(values[1].split('.').length > 1)
+                        result = false;
+                }
+                if(!re.test(values[0]))
+                    result = false;
+            } else {
+                result = false;
+            }
+
+            return this.optional(element) || result;
+        },
+        "Please enter only valid character."
+    );
+
     VdmService.GetServerList(function(connection){
         VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
     })
@@ -185,11 +228,27 @@ var loadPage = function() {
     $("#frmCreateServer").validate({
         rules: {
             serverName: validationRules.ServerNameRule,
-            txtHostName: validationRules.HostNameRule
+            txtHostName: validationRules.HostNameRule,
+            txtClientPort:validationRules.PortRule,
+            txtAdminPort:validationRules.PortRule,
+            txtHttpPort:validationRules.PortRule,
+            txtInternalPort:validationRules.PortRule,
+            txtZookeeper:validationRules.PortRule,
+            txtReplicationPort:validationRules.PortRule,
+            txtInternalInterface:validationRules.IpRule,
+            txtExternalInterface:validationRules.IpRule
         },
         messages: {
             serverName: validationRules.ServerNameMessage,
-            txtHostName: validationRules.HostNameMessage
+            txtHostName: validationRules.HostNameMessage,
+            txtClientPort:validationRules.PortMessage,
+            txtAdminPort:validationRules.PortMessage,
+            txtHttpPort:validationRules.PortMessage,
+            txtInternalPort:validationRules.PortMessage,
+            txtZookeeper:validationRules.PortMessage,
+            txtReplicationPort:validationRules.PortMessage,
+            txtInternalInterface:validationRules.IpMessage,
+            txtExternalInterface:validationRules.IpMessage
         }
     });
 
@@ -202,11 +261,27 @@ var loadPage = function() {
         var serverName = $('#serverName').val()
         var hostName = $('#txtHostName').val()
         var description = $('#txtDescription').val()
+        var clientPort = $('#txtClientPort').val()
+        var adminPort = $('#txtAdminPort').val()
+        var httpPort = $('#txtHttpPort').val()
+        var internalPort = $('#txtInternalPort').val()
+        var zookeeperPort = $('#txtZookeeper').val()
+        var replicationPort = $('#txtReplicationPort').val()
+        var internalInterface = $('#txtInternalInterface').val()
+        var externalInterface = $('#txtExternalInterface').val()
         var serverInfo ={
             serverData:{
                 "name" : serverName,
                 "hostname" : hostName,
-                "description" : description
+                "description" : description,
+                "portname" : clientPort,
+                "adminport" : adminPort,
+                "http" : httpPort,
+                "internalport" : internalPort,
+                "zookeeper" : zookeeperPort,
+                "replicationport" : replicationPort,
+                "internalinterface" : internalInterface,
+                "externalinterface" : externalInterface
             },
             id:$('#addServer').data('serverid')
         }
@@ -233,6 +308,7 @@ var loadPage = function() {
                 }
             },serverInfo);
         }
+        VdmUI.resetTextBox();
     });
 
     $('#deleteServerOk').on('click',function(){
@@ -296,6 +372,7 @@ var loadPage = function() {
             });
 
             $('.btnUpdateServer').on('click', function(){
+                VdmUI.resetTextBox();
                 VdmUI.isServerCreate = false;
                 var serverInfo = $(this.parentElement).data('info');
                 VdmUI.serverToUpdate = serverInfo['name'];
@@ -304,6 +381,14 @@ var loadPage = function() {
                 $('#serverName').val(serverInfo['name']);
                 $('#txtHostName').val(serverInfo['hostname']);
                 $('#txtDescription').val(serverInfo['description']);
+                $('#txtClientPort').val(serverInfo['portname']);
+                $('#txtAdminPort').val(serverInfo['adminport']);
+                $('#txtHttpPort').val(serverInfo['http']);
+                $('#txtInternalPort').val(serverInfo['internalport']);
+                $('#txtZookeeper').val(serverInfo['zookeeper']);
+                $('#txtReplicationPort').val(serverInfo['replicationport']);
+                $('#txtInternalInterface').val(serverInfo['internalinterface'])
+                $('#txtExternalInterface').val(serverInfo['externalinterface'])
                 $('#addServerTitle').html('Update Server');
                 $('#errorServerName').hide();
                 $('#errorHostName').hide();
@@ -315,13 +400,33 @@ var loadPage = function() {
                 VdmUI.serverToUpdate = '';
                 VdmUI.hostToUpdate = '';
                 $('#addServerTitle').html('Add Server');
+                VdmUI.resetTextBox();
+            });
+
+            this.resetTextBox = function(){
                 $('#serverName').val('');
                 $('#txtHostName').val('');
                 $('#txtDescription').val('');
+                $('#txtClientPort').val('');
+                $('#errorClientPort').hide();
+                $('#txtAdminPort').val('');
+                $('#errorAdminPort').hide();
+                $('#txtHttpPort').val('');
+                $('#errorHttpPort').hide();
+                $('#txtInternalPort').val('');
+                $('#errorInternalPort').hide();
+                $('#txtZookeeper').val('');
+                $('#errorZookeeper').hide();
+                $('#txtReplicationPort').val('');
+                $('#errorReplicationPort').hide();
+                $('#txtInternalInterface').val('')
+                $('#txtExternalInterface').val('')
                 $('#errorServerName').hide();
                 $('#errorHostName').hide();
                 $('#errorDescription').hide();
-            });
+                $('#errorInternalInterface').hide();
+                $('#errorExternalInterface').hide();
+            }
         };
     });
     window.VdmUI = VdmUI = new iVdmUi();
