@@ -207,6 +207,8 @@ class ServerAPI(MethodView):
             abort(400)
         if 'enabled' in request.json and type(request.json['enabled']) is not bool:
             abort(400)
+        if 'hostname' in request.json and type(request.json['hostname']) is not unicode:
+            abort(400)
 
         if 'name' in request.json:
             if request.json['name']=="":

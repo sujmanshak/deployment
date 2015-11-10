@@ -44,11 +44,11 @@
                    if (requestMethod.toLowerCase() == "get") {
                         jQuery.getJSON(uri, callback);
                     } else if (requestMethod.toLowerCase() == "put") {
-                        jQuery.putJSON(uri, serverDetails.serverData, callback);
+                        jQuery.putJSON(uri, serverDetails.serverData.serverData, callback);
                     } else if (requestMethod.toLowerCase() == "delete") {
                         jQuery.deleteJSON(uri, callback);
                     } else if (requestMethod.toLowerCase() == "post") {
-                        jQuery.postJSON(uri, serverDetails.serverData, callback);
+                        jQuery.postJSON(uri, serverDetails.serverData.serverData, callback);
                     }
                 } else if (callback != null)
                     callback({ "status": -1, "statusstring": "PrepareStatement error: " + params[0], "results": [] });
@@ -242,7 +242,8 @@ jQuery.extend({
         jQuery.ajax({
             type: 'PUT',
             url: url,
-            data: formData,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(formData),
             dataType: 'json',
             success: callback,
             error: function (e) {
