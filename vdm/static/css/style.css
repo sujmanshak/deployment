@@ -89,7 +89,6 @@ body {
 	font-size: 13px;
 	line-height: 20px;
 }
-
 /***********global css ***********/
 .top5 {
 	margin-top: 5px;
@@ -129,19 +128,17 @@ body {
 /*background-color: #76BD1D;
 	color: #FFF;*/
 }
-
 label.error {
-    color: #c70000;
-    width: auto;
-    display: block;
-    line-height: 0px;
-    font-size: 11px;
-    /*padding: 10px 5px 0 7px;*/
-    padding: 10px 5px 0 0;
-    margin: 0 0 6px 0;
-    height: 10px;
+	color: #c70000;
+	width: auto;
+	display: block;
+	line-height: 0px;
+	font-size: 11px;
+	/*padding: 10px 5px 0 7px;*/
+	padding: 10px 5px 0 0;
+	margin: 0 0 6px 0;
+	height: 10px;
 }
-
 .clusterIcon, .plus, .stop, .stopServer, .deleteServer, .editServer, .uploadIcon, .downloadIcon, .drArrow, .popup_close, .popup_close:hover, .clusterConfigIcon, .serverIcon, .plusIcon, .secCrossIcon {
 	background-image: url(../images/icons.png);
 	background-repeat: no-repeat;
@@ -171,7 +168,7 @@ label.error {
 .deleteServer {
 	/*width: 84px;*/
 	height: 26px;
-	background-position:-4px -95px;
+	background-position: -4px -95px;
 	cursor: pointer;
 }
 .editServer {
@@ -185,7 +182,7 @@ label.error {
 	top: 8px;
 	left: 38px;
 	font-weight: bold;
-	font-size:16px;
+	font-size: 16px;
 }
 .uploadIcon {
 	width: 30px;
@@ -201,9 +198,13 @@ label.error {
 }
 .secCrossIcon {
 	width: 30px;
-    height: 28px;
-    background-position: 0px -290px;
-    display: inline-block; cursor:pointer; position:relative; top:4px;}
+	height: 28px;
+	background-position: 0px -290px;
+	display: inline-block;
+	cursor: pointer;
+	position: relative;
+	top: 4px;
+}
 .clusterConfigIcon {
 	background-position: -8px -408px;
 	display: inline-block;
@@ -212,18 +213,17 @@ label.error {
 }
 .serverIcon {
 	width: 120px;
-	padding:4px 0 7px 40px;
+	padding: 4px 0 7px 40px;
 	background-position: 0 -447px;
-	font-size:16px;
+	font-size: 16px;
 }
 .plusIcon {
 	width: 120px;
-	padding:4px 0 7px 40px;
+	padding: 4px 0 7px 40px;
 	background-position: 0 -483px;
-	font-size:16px;
-	cursor:pointer;
+	font-size: 16px;
+	cursor: pointer;
 }
-
 .btn {
 	background-color: #aa1f2f;
 	cursor: pointer;
@@ -272,13 +272,10 @@ label.error {
 	overflow: auto;
 	line-height: 18px;
 }
-
 .modal.custom .modal-dialog {
-   width:40%;
-   margin:10% auto;
-   /*add what you want here*/
+	width: 45%;
+	margin: 10% auto;/*add what you want here*/
 }
-
 /***********global css Ends ***********/
 /******navigation****/
 ul.nav li a {
@@ -309,7 +306,7 @@ ul.nav li a:hover, ul.nav li a.active, ul.nav li.active a {
 }
 .navbar-header a img {
 	/*height: 50px;*/
-	height:45px;
+	height: 45px;
 }
 /******navigation ends****/
 .clusterWrapTop {
@@ -340,13 +337,22 @@ ul.nav li a:hover, ul.nav li a.active, ul.nav li.active a {
 .resetpb {
 	float: right;
 	width: 50%;
-	border-left:1px solid #CCC;
-	 border-right:1px solid #CCC;
+	border-left: 1px solid #CCC;/*border-right:1px solid #CCC;*/
 }
-.ContentServerHead {border-bottom:1px solid #CCCCCC;}
-.ContentServerLeft {float:left; margin-top:15px}
-.ContentServerRight { float:right}
-.ContentServerBody {overflow:auto; height:220px;}
+.ContentServerHead {
+	border-bottom: 1px solid #CCCCCC;
+}
+.ContentServerLeft {
+	float: left;
+	margin-top: 15px
+}
+.ContentServerRight {
+	float: right
+}
+.ContentServerBody {
+	overflow: auto;
+	height: 220px;
+}
 .clusterConfig {
 	background: #e4e4e4;
 	margin: 0 15px 0 15px;
@@ -365,7 +371,7 @@ ul.nav li a:hover, ul.nav li a.active, ul.nav li.active a {
 	position: relative;
 	top: -7px;
 	font-weight: bold;
-	font-size:16px;
+	font-size: 16px;
 }
 .iconCorrection {
 	padding: 14px 36px 0 0;
@@ -407,8 +413,7 @@ ul.addServerList li:nth-child(1) {
 }
 .tblCluster {
 	margin: 0;
-	padding: 0;
-	/*border-left: 1px solid #CCC;*/
+	padding: 0;/*border-left: 1px solid #CCC;*/
 }
 .tblCluster tr {
 	border-bottom: 1px solid #CCCCCC;
@@ -416,16 +421,18 @@ ul.addServerList li:nth-child(1) {
 .tblCluster tr th {
 	background-color: #fbfbfb;
 }
-.tblCluster tr td a { margin:0; display:block;}
+.tblCluster tr td a {
+	margin: 0;
+	display: block;
+}
 .tblCluster tr th:nth-child(1) {
 	padding: 0 0 0 15px;
 }
-
 .tblCluster tr td:nth-child(1) {
 	width: 80%;
 	position: relative;
 	top: -13px;
-	padding-left:20px;
+	padding-left: 20px;
 	font-weight: bold;
 }
 .tblCluster tr td:nth-child(2) {
@@ -523,13 +530,11 @@ ul.addServerList li:nth-child(1) {
 	text-align: left;
 }
 .adminTbl th:nth-child(2) {
-	
 }
 .adminTbl tr td:nth-child(1) {
 	font-weight: bold;
 }
 .adminTbl th:nth-child(3) {
-	
 }
 .adminTbl tr td {
 	margin: 0;
@@ -543,55 +548,69 @@ ul.addServerList li:nth-child(1) {
 	padding-left: 35px;
 	font-weight: bold;
 	white-space: nowrap;
-	color:#000;
+	color: #000;
 }
 .adminTbl tr.subLabelRow td.configLabel {
-    padding-left: 40px;
-    font-weight: normal;}
-	
+	padding-left: 40px;
+	font-weight: normal;
+}
 .adminTbl tr td.configLabel1 {
 	padding-left: 35px;
 	font-weight: bold;
 	white-space: nowrap;
-	width:30px;
+	width: 30px;
 }
 .securWrapper { /*margin:10px 40px;*/
-    margin: 0 0 -3px 0;
+	margin: 0 0 -3px 0;
 }
-.secTbl tr {border-bottom:none;}
+.secTbl tr {
+	border-bottom: none;
+}
 .secTbl tr th, .secTbl tr td {
-    border-bottom:1px solid #CCC;
-    text-align: left; /*padding:5px 0 10px 10px;*/
-    padding:0 0 0 40px;
+	border-bottom: 1px solid #CCC;
+	text-align: left; /*padding:5px 0 10px 10px;*/
+	padding: 0 0 0 40px;
 }
-.secTbl tr td input[type="text"] { font-weight:normal;}
-.secTbl tr td select { height:30px; width:130px; font-weight:normal;}
+.secTbl tr td input[type="text"] {
+	font-weight: normal;
+}
+.secTbl tr td select {
+	height: 30px;
+	width: 130px;
+	font-weight: normal;
+}
 .secTbl tr th {
-    font-weight: bold;
-    background: #FBFBFB;
+	font-weight: bold;
+	background: #FBFBFB;
 }
-.secTbl tr td { border-bottom:none;}
-
+.secTbl tr td {
+	border-bottom: none;
+}
 .secTbl tr td input[type="text"] {
 	margin: 10px 0;
-    height: 30px;
-    padding: 0 5px;
-    line-height: 20px;
-	
+	height: 30px;
+	padding: 0 5px;
+	line-height: 20px;
 }
-.removeCirc { color:#C70000; font-size:20px; position:relative; top:7px; cursor:pointer}
-.onOff { position: relative;top:3px;}
-
-
+.removeCirc {
+	color: #C70000;
+	font-size: 20px;
+	position: relative;
+	top: 7px;
+	cursor: pointer
+}
+.onOff {
+	position: relative;
+	top: 3px;
+}
 .userName {
-    float: left;
-    font-weight: bold;
-    font-size: 14px;
-    padding: 0 0 0 40px;
+	float: left;
+	font-weight: bold;
+	font-size: 14px;
+	padding: 0 0 0 40px;
 }
-
 .secLine {
-    border-bottom: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
 }
 .adminTbl tr.hasSubLabel td.configLabel {
 	padding-left: 15px;
@@ -603,7 +622,9 @@ ul.addServerList li:nth-child(1) {
 .network tr td, .directories tr td {
 	padding: 5px 15px;
 }
-.directories tr td:nth-child(2) { text-align:right}
+.directories tr td:nth-child(2) {
+	text-align: right
+}
 .drWrapperAdmin {
 	margin: 20px 0 0 0;
 }
@@ -693,22 +714,26 @@ table.tblPopup {
 	border-bottom: 1px solid #cccccc;
 	padding: 10px 25px 10px 10px;
 }
-
-.formServer input[type="text"] { width:80%;}
-.formServer textarea {width:80%; height:46px;resize: none;}
-
-
+.formServer input[type="text"] {
+	width: 80%;
+}
+.formServer textarea {
+	width: 80%;
+	height: 46px;
+	resize: none;
+}
 /****************Server Settings**********************/
 .serverTop {
 	background-color: #f5f6f6;
-	border-left:1px solid #CCCCCC;border-right:1px solid #CCCCCC;border-bottom:1px solid #CCCCCC; 
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
 	padding: 15px 20px;
 }
 .serverMain {
 	background: #FFFFFF;
 	width: 100%;
 	overflow: auto;
-	
 }
 .servertbl {
 	margin: 0;
@@ -717,23 +742,25 @@ table.tblPopup {
 .servertbl tr th, .servertbl tr td {
 	border: 1px solid #CCCCCC;
 }
-.servertbl tr th:nth-child(1), .servertbl tr td:nth-child(1) { text-align:left;}
+.servertbl tr th:nth-child(1), .servertbl tr td:nth-child(1) {
+	text-align: left;
+}
 .servertbl tr th {
 	margin: 0;
 	padding: 10px 20px;
 	background: #fbfbfb;
 	border-bottom: 1px solid #aaa;
 	font-size: 14px;
-	text-align:center;
+	text-align: center;
 }
 .servertbl tr td {
 	margin: 0;
 	padding: 8px 20px;
-	text-align:center;
+	text-align: center;
 }
 .servertbl tr td input[type="text"] {
 	width: 130px;
-	height:30px;
+	height: 30px;
 	text-align: center;
 	padding: 0 5px 0 0
 }
@@ -741,8 +768,14 @@ table.tblPopup {
 	font-weight: bold;
 }
 /*************fixed column table*************/
-.mainServ { overflow:auto; width:auto;}
-.tbl01 {float:left; width:300px;}
+.mainServ {
+	overflow: auto;
+	width: auto;
+}
+.tbl01 {
+	float: left;
+	width: 300px;
+}
 .tbl01 tr th {
 	margin: 0;
 	padding: 7px 20px 6px;
@@ -754,15 +787,33 @@ table.tblPopup {
 	margin: 0;
 	padding: 9px 20px;
 }
-.tbl01 tr th:first-child, .tbl01 tr td:first-child { border-left:none; width:200px}
-.tbl02 tr th { border-bottom:none; border-left:none; border-right:none;}
-.servTop {width:auto; }
-.serv { width:auto; overflow:auto;}
-.tbl03 tr th, .tbl03 tr td { border-left:none;}
+.tbl01 tr th:first-child, .tbl01 tr td:first-child {
+	border-left: none;
+	width: 200px
+}
+.tbl02 tr th {
+	border-bottom: none;
+	border-left: none;
+	border-right: none;
+}
+.servTop {
+	width: auto;
+}
+.serv {
+	width: auto;
+	overflow: auto;
+}
+.tbl03 tr th, .tbl03 tr td {
+	border-left: none;
+}
 /*************fixed column table ends*************/
 
-.vAlign { vertical-align:middle;}
-.serAlign { text-align:center; }
+.vAlign {
+	vertical-align: middle;
+}
+.serAlign {
+	text-align: center;
+}
 /****************Server Settings Ends**********************/
 .btn-file {
 	position: relative;
@@ -806,7 +857,10 @@ table.tblPopup {
 .navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
 	background-color: #76bd1d
 }
-.navbar-brand { height:50px; padding:4px 15px;}
+.navbar-brand {
+	height: 50px;
+	padding: 4px 15px;
+}
 /**************Button start/Stop******************/
 .clusterBtnWrap {
 	text-align: center;
@@ -814,7 +868,7 @@ table.tblPopup {
 }
 a.clustBtn {
 	display: inline-block;
-	background-image: linear-gradient(  #FFFFFF, #f3f3f3  );
+	background-image: linear-gradient( #FFFFFF, #f3f3f3 );
 	padding: 15px 20px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
@@ -828,7 +882,7 @@ a.clustBtn {
 }
 a.clustBtn:hover {
 	display: inline-block;
-	background-image: linear-gradient(  #f3f3f3, #FFFFFF  );
+	background-image: linear-gradient( #f3f3f3, #FFFFFF );
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
 	border-radius: 10px; /* future proofing */
@@ -855,6 +909,12 @@ a.clustBtn:hover {
 /**************Button start/Stop ends******************/
 
 /************Media Queries for mobile compatibility***************/
+
+@media (min-width: 768px) {
+.form-horizontal .control-label {
+	padding-top: 3px;
+}
+}
 @media (max-width: 767px) {
 ul.nav li a {
 	height: 50px;
@@ -881,7 +941,7 @@ ul.nav li:nth-child(1) {
 	width: 100%
 }
 .resetpb {/*float:none; */
-	width: 100%
+	width: 100%;
 }
 .clusterBtnWrap {
 	margin-top: 5%;
@@ -898,22 +958,29 @@ ul.nav li:nth-child(1) {
 .clusterConfigRight {
 	padding: 0;
 }
-	.modal.custom .modal-dialog {
+.modal.custom .modal-dialog {
 	margin: 20% auto;
 	width: 80%;
 }
-
 }
 @media (min-width: 320px) and (max-width: 480px) {
-	.modal.custom .modal-dialog {
+.headerAdminContent {
+	height: 63px;
+}
+ul.drList {
+	margin: 0 12px 0 0;
+}
+}
+@media (min-width: 320px) and (max-width: 480px) {
+.modal.custom .modal-dialog {
 	margin: 30% auto;
 	width: 95%;
 }
-
-.formServer input[type="text"], .formServer textarea { width:100%;}
+.formServer input[type="text"], .formServer textarea {
+	width: 100%;
 }
-
-@media (min-width: 320px) and (max-width: 620px) {
+}
+ @media (min-width: 320px) and (max-width: 620px) {
 .rightSide {
 	float: none;
 }
@@ -923,8 +990,6 @@ ul.nav li:nth-child(1) {
 .upDownBtn {
 	margin: 10px 0 0 0;
 }
-
-
 }
 @media (width: 320px) {
 .navbar-header a img {
@@ -937,8 +1002,6 @@ ul.nav li:nth-child(1) {
 
 /*ie hack*/
 @media screen\0 {
-   
 .tblCluster tr td:nth-child(1) {
-
 }
 }
