@@ -73,7 +73,7 @@ class ServerAPI(MethodView):
 
     def get(self, server_id):
         global isCurrentNodeAdded
-        hostname =  get_ip_address('eth0')
+        hostname =  get_ip_address('lo')
 
         if server_id is None:
 
