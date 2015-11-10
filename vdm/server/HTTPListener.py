@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, abort, make_response, request
 from flask.views import MethodView
+import socket
 
 app = Flask(__name__, template_folder ="../templates", static_folder="../static")
 
@@ -15,7 +16,9 @@ servers = [
         'http': '8080',
         'internalport':'3021',
         'zookeeper': '2181',
-        'replicationport':'5555'
+        'replicationport':'5555',
+        'internalinterface':'10.10.1.51',
+        'externalinterface':'10.10.1.52'
     },
     {
         'id': 2,
@@ -28,7 +31,9 @@ servers = [
         'http': '8080',
         'internalport':'3021',
         'zookeeper': '2181',
-        'replicationport':'5555'
+        'replicationport':'5555',
+        'internalinterface':'10.10.1.51',
+        'externalinterface':'10.10.1.52'
     },
     {
         'id': 3,
@@ -41,7 +46,9 @@ servers = [
         'http': '8080',
         'internalport':'3021',
         'zookeeper': '2181',
-        'replicationport':'5555'
+        'replicationport':'5555',
+        'internalinterface':'10.10.1.51',
+        'externalinterface':'10.10.1.52'
     }
 ]
 
@@ -162,6 +169,20 @@ class ServerAPI(MethodView):
                 except ValueError:
                     return make_response(jsonify({'error': 'Replication port must be a positive number'}), 404)
 
+        if 'internalinterface' in request.json:
+            if (request.json['internalinterface']!=""):
+                try:
+                    socket.inet_aton(request.json['internalinterface'])
+                    # legal
+                except socket.error:
+                    return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+        if 'externalinterface' in request.json:
+            if (request.json['externalinterface']!=""):
+                try:
+                    socket.inet_aton(request.json['externalinterface'])
+                    # legal
+                except socket.error:
+                    return make_response(jsonify({'error': 'Invalid IP address'}), 404)
 
 
         serverId = 0
@@ -180,7 +201,9 @@ class ServerAPI(MethodView):
         'http': request.json.get('http',""),
         'internalport': request.json.get('internalport',""),
         'zookeeper': request.json.get('zookeeper',""),
-        'replicationport': request.json.get('replicationport',"")
+        'replicationport': request.json.get('replicationport',""),
+        'internalinterface': request.json.get('internalinterface',""),
+        'externalinterface': request.json.get('externalinterface',"")
         }
         servers.append(server)
         return jsonify( { 'server': server, 'status':1 } ),201
@@ -290,6 +313,21 @@ class ServerAPI(MethodView):
                 except ValueError:
                     return make_response(jsonify({'error': 'Replication port must be a positive number'}), 404)
 
+        if 'internalinterface' in request.json:
+            if (request.json['internalinterface']!=""):
+                try:
+                    socket.inet_aton(request.json['internalinterface'])
+                    # legal
+                except socket.error:
+                    return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+        if 'externalinterface' in request.json:
+            if (request.json['externalinterface']!=""):
+                try:
+                    socket.inet_aton(request.json['externalinterface'])
+                    # legal
+                except socket.error:
+                    return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+
         currentserver[0]['name'] = request.json.get('name', currentserver[0]['name'])
         currentserver[0]['hostname'] = request.json.get('hostname', currentserver[0]['hostname'])
         currentserver[0]['description'] = request.json.get('description', currentserver[0]['description'])
@@ -300,6 +338,8 @@ class ServerAPI(MethodView):
         currentserver[0]['internalport'] = request.json.get('internalport', currentserver[0]['internalport'])
         currentserver[0]['zookeeper'] = request.json.get('zookeeper', currentserver[0]['zookeeper'])
         currentserver[0]['replicationport'] = request.json.get('replicationport', currentserver[0]['replicationport'])
+        currentserver[0]['internalinterface'] = request.json.get('internalinterface', currentserver[0]['internalinterface'])
+        currentserver[0]['externalinterface'] = request.json.get('externalinterface', currentserver[0]['externalinterface'])
         return jsonify( { 'server': currentserver[0] } )
 
 
