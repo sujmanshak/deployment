@@ -1,56 +1,44 @@
+# This file is part of VoltDB.
+
+# Copyright (C) 2008-2015 VoltDB Inc.
+#
+# This file contains original code and/or modifications of original code.
+# Any modifications made by VoltDB Inc. are licensed under the following
+# terms and conditions:
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
+
 from flask import Flask, render_template, jsonify, abort, make_response, request
 from flask.views import MethodView
 import socket
 
+import socket
+import fcntl
+import struct
+
 app = Flask(__name__, template_folder ="../templates", static_folder="../static")
 
-servers = [
-    {
-        'id': 1,
-        'name': u'voltdb1',
-        'hostname': u'voltdb1',
-        'description': u'voltdb server 1',
-        'enabled': True,
-        'portname': '21223',
-        'adminport': '21211',
-        'http': '8080',
-        'internalport':'3021',
-        'zookeeper': '2181',
-        'replicationport':'5555',
-        'internalinterface':'10.10.1.51',
-        'externalinterface':'10.10.1.52'
-    },
-    {
-        'id': 2,
-        'name': u'voltdb2',
-        'hostname': u'voltdb2',
-        'description': u'voltdb server 2',
-        'enabled': True,
-        'portname': '21223',
-        'adminport': '21211',
-        'http': '8080',
-        'internalport':'3021',
-        'zookeeper': '2181',
-        'replicationport':'5555',
-        'internalinterface':'10.10.1.51',
-        'externalinterface':'10.10.1.52'
-    },
-    {
-        'id': 3,
-        'name': u'voltdb3',
-        'hostname': u'voltdb3',
-        'description': u'voltdb server 3',
-        'enabled': True,
-        'portname': '21223',
-        'adminport': '21211',
-        'http': '8080',
-        'internalport':'3021',
-        'zookeeper': '2181',
-        'replicationport':'5555',
-        'internalinterface':'10.10.1.51',
-        'externalinterface':'10.10.1.52'
-    }
-]
+
+servers = []
+
 
 
 @app.errorhandler(400)
@@ -71,11 +59,45 @@ def make_public_server(servers):
         new_server[field] = servers[field]
     return new_server
 
+def get_ip_address(ifname):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', ifname[:15])
+    )[20:24])
+
+isCurrentNodeAdded = False
 
 class ServerAPI(MethodView):
 
     def get(self, server_id):
+        global isCurrentNodeAdded
+        hostname =  get_ip_address('eth0')
+
         if server_id is None:
+
+            if not servers and isCurrentNodeAdded==False:
+                #add default server
+                isCurrentNodeAdded = True
+                servers.append(
+                    {
+                        'id': 1,
+                        'name': hostname,
+                        'hostname': hostname,
+                        'description': "",
+                        'enabled': True,
+                        'adminport': "21211",
+                        'externalinterface': "10.10.1.52",
+                        'http': "8080",
+                        'internalinterface': "10.10.1.51",
+                        'internalport': "3021",
+                        'portname': "21223",
+                        'replicationport': "5555",
+                        'zookeeper': "2181"
+                    }
+                    )
+
             # return a list of users
             return jsonify( { 'servers': map(make_public_server, servers) } )
         else:
@@ -218,7 +240,6 @@ class ServerAPI(MethodView):
 
     def put(self, server_id):
         # update a single server
-
         currentserver = filter(lambda t: t['id'] == server_id, servers)
         if len(currentserver) == 0:
             abort(404)
@@ -236,12 +257,14 @@ class ServerAPI(MethodView):
         if 'name' in request.json:
             if request.json['name']=="":
                 return make_response(jsonify({'error':'Server name is required'}),404)
-            server = filter(lambda t: t['name'] == request.json['name'], servers)
-            if len(server)!=0:
-                return make_response(jsonify({'error': 'Server name already exists'}), 404)
+
+            if request.json['name']!= currentserver[0]['name']:
+                server = filter(lambda t: t['name'] == request.json['name'], servers)
+                if len(server)!=0:
+                    return make_response(jsonify({'error': 'Server name already exists'}), 404)
 
         if 'hostname' in request.json:
-            if request.json['hostname']=="":
+            if request.json['hostname']==   "":
                 return make_response(jsonify({'error':'Host name is required'}),404)
             server = filter(lambda t: t['hostname'] == request.json['hostname'], servers)
             if len(server)!=0:

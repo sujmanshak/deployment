@@ -38,6 +38,14 @@
     loadPage();
 });
 
+
+var editStates = {
+    ShowEdit: 0,
+    ShowOkCancel: 1,
+    ShowLoading: 2
+};
+
+
 var saveCookie = function (name, value) {
     $.cookie(name + "_" + VdmConfig.GetPortId(), value, { expires: 365 });
 };
@@ -221,9 +229,11 @@ var loadPage = function() {
         "Please enter only valid character."
     );
 
+    //setInterval(function () {
     VdmService.GetServerList(function(connection){
         VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
     })
+   // }, 5000);
 
     $("#frmCreateServer").validate({
         rules: {
@@ -285,6 +295,7 @@ var loadPage = function() {
             },
             id:$('#addServer').data('serverid')
         }
+        var hostId = $('#addServer').data('serverid')
         if(VdmUI.isServerCreate){
             VdmService.CreateServer(function(connection){
                 if(connection.Metadata['SERVER_CREATE'].status == 1){
@@ -297,6 +308,9 @@ var loadPage = function() {
                 }
             },serverInfo);
         } else {
+
+            toggleServer(editStates.ShowLoading,hostId)
+
             VdmService.UpdateServer(function(connection){
                 if(connection.Metadata['SERVER_UPDATE'].status == 1){
                     VdmService.GetServerList(function(connection){
@@ -307,15 +321,45 @@ var loadPage = function() {
                     $('#errorDialog').modal('show');
                 }
             },serverInfo);
+
         }
         VdmUI.resetTextBox();
     });
+
+    var toggleServer = function (state,hostId){
+
+        if(state == editStates.ShowLoading)
+        {
+            $("#editServer_"+hostId).hide()
+            $("#deleteServer_"+hostId).hide()
+            $("#editServerTxt_"+hostId).hide()
+            $("#deleteServerTxt_"+hostId).hide()
+            $("#loadingServer_"+hostId).show()
+
+        }
+        else if (state == editStates.ShowOkCancel) {
+            $("#editServer_"+hostId).show()
+            $("#deleteServer_"+hostId).show()
+            $("#editServerTxt_"+hostId).show()
+            $("#deleteServerTxt_"+hostId).show()
+            $("#loadingServer_"+hostId).hide()
+        }
+        else{
+            $("#editServer_"+hostId).show()
+            $("#deleteServer_"+hostId).show()
+            $("#editServerTxt_"+hostId).show()
+            $("#deleteServerTxt_"+hostId).show()
+            $("#loadingServer_"+hostId).hide()
+        }
+    }
 
     $('#deleteServerOk').on('click',function(){
         var serverId = $('#deleteConfirmation').data('serverid');
         var serverData = {
            "id": serverId
         }
+        toggleServer(editStates.ShowLoading,serverId)
+
         VdmService.DeleteServer(function(connection){
             VdmService.GetServerList(function(connection){
                 VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
@@ -351,11 +395,12 @@ var loadPage = function() {
                 htmlList += '<tr>' +
                             '<td>' + hostName + '</td>' +
                             '<td data-id="' + hostId + '" data-info=\''+ infos +'\'><a class="btnUpdateServer" href="javascript:void(0);"data-toggle="modal" data-target="#addServer" >' +
-                            '<div class="editServer"></div>' +
-                            '</a> <span class="editServerTxt">Edit</span></td>' +
+                            '<div class="editServer" id="editServer_'+hostId+'"></div></a>' +
+                            '<div class="loading-small" id="loadingServer_'+hostId+'" style="display:none"></div>' +
+                            '<span class="editServerTxt" id="editServerTxt_'+hostId+'">Edit</span></td>' +
                             '<td data-id="' + hostId + '" ><a class="btnDeleteServer" href="javascript:void(0);"data-toggle="modal" data-target="#deleteConfirmation" >' +
-                            '<div class="deleteServer"></div>' +
-                            '</a> <span class="deleteServerTxt">Delete</span></td>' +
+                            '<div class="deleteServer" id="deleteServer_'+hostId+'"></div></a>' +
+                            '<span class="deleteServerTxt" id="deleteServerTxt_'+hostId+'">Delete</span></td>' +
                         '</tr>';
                 VdmUI.CurrentServerList.push(serverName);
                 VdmUI.CurrentHostList.push(hostName)
@@ -393,6 +438,7 @@ var loadPage = function() {
                 $('#errorServerName').hide();
                 $('#errorHostName').hide();
                 $('#errorDescription').hide();
+                //toggleServer(editStates.ShowOkCancel,serverInfo['id']);
             });
 
             $('#btnAddServer').on('click', function(){

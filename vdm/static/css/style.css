@@ -174,7 +174,7 @@ label.error {
 .editServer {
 	width: 40px;
 	height: 30px;
-	background-position: 4px -166px;
+	background-position: 4px -170px;
 	cursor: pointer;
 }
 .clusterName {
@@ -443,6 +443,7 @@ ul.addServerList li:nth-child(1) {
 }
 .tblCluster tr td {
 	padding: 5px 10px 3px 10px;
+	vertical-align:middle;
 }
 .stopServerTxt {
 	padding: 0 0 0 10px;
@@ -455,6 +456,8 @@ ul.addServerList li:nth-child(1) {
 .editServerTxt {
 	padding: 0 0 0 0px;
 	font-size: 12px;
+	position:relative;
+	top:-2px;
 }
 .clusterConfigWrapper {
 	background-color: #f5f6f6;
@@ -905,6 +908,12 @@ a.clustBtn:hover {
 	float: left;
 }
 
+.loading-small {
+    background: #fff url(../images/loader-small.GIF) no-repeat center center;
+    height: 20px;
+    width: 20px;
+}
+
 
 /**************Button start/Stop ends******************/
 
@@ -1000,8 +1009,3 @@ ul.drList {
 }
 }
 
-/*ie hack*/
-@media screen\0 {
-.tblCluster tr td:nth-child(1) {
-}
-}

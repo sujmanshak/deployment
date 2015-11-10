@@ -228,6 +228,7 @@ jQuery.extend({
             type: 'GET',
             url: url,
             dataType: 'json',
+            cache: false,
             success: callback,
             error: function (e) {
                 console.log(e.message);
