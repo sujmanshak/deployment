@@ -230,9 +230,9 @@ var loadPage = function() {
     );
 
     setInterval(function () {
-    VdmService.GetServerList(function(connection){
-        VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
-    })
+        VdmService.GetServerList(function(connection){
+            VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
+        })
     }, 5000);
 
     $("#frmCreateServer").validate({
@@ -241,8 +241,6 @@ var loadPage = function() {
             txtHostName: validationRules.HostNameRule,
             txtClientPort:validationRules.PortRule,
             txtAdminPort:validationRules.PortRule,
-            txtHttpPort:validationRules.PortRule,
-            txtInternalPort:validationRules.PortRule,
             txtZookeeper:validationRules.PortRule,
             txtReplicationPort:validationRules.PortRule,
             txtInternalInterface:validationRules.IpRule,
@@ -254,8 +252,6 @@ var loadPage = function() {
             txtHostName: validationRules.HostNameMessage,
             txtClientPort:validationRules.PortMessage,
             txtAdminPort:validationRules.PortMessage,
-            txtHttpPort:validationRules.PortMessage,
-            txtInternalPort:validationRules.PortMessage,
             txtZookeeper:validationRules.PortMessage,
             txtReplicationPort:validationRules.PortMessage,
             txtInternalInterface:validationRules.IpMessage,
@@ -275,8 +271,6 @@ var loadPage = function() {
         var description = $('#txtDescription').val()
         var clientPort = $('#txtClientPort').val()
         var adminPort = $('#txtAdminPort').val()
-        var httpPort = $('#txtHttpPort').val()
-        var internalPort = $('#txtInternalPort').val()
         var zookeeperPort = $('#txtZookeeper').val()
         var replicationPort = $('#txtReplicationPort').val()
         var internalInterface = $('#txtInternalInterface').val()
@@ -287,12 +281,10 @@ var loadPage = function() {
                 "name" : serverName,
                 "hostname" : hostName,
                 "description" : description,
-                "portname" : clientPort,
-                "adminport" : adminPort,
-                "http" : httpPort,
-                "internalport" : internalPort,
-                "zookeeper" : zookeeperPort,
-                "replicationport" : replicationPort,
+                "clientlistener" : clientPort,
+                "adminlistener" : adminPort,
+                "zookeeperlistener" : zookeeperPort,
+                "replicationlistener" : replicationPort,
                 "internalinterface" : internalInterface,
                 "externalinterface" : externalInterface,
                 "publicinterface" : publicInterface
@@ -430,12 +422,10 @@ var loadPage = function() {
                 $('#serverName').val(serverInfo['name']);
                 $('#txtHostName').val(serverInfo['hostname']);
                 $('#txtDescription').val(serverInfo['description']);
-                $('#txtClientPort').val(serverInfo['portname']);
-                $('#txtAdminPort').val(serverInfo['adminport']);
-                $('#txtHttpPort').val(serverInfo['http']);
-                $('#txtInternalPort').val(serverInfo['internalport']);
-                $('#txtZookeeper').val(serverInfo['zookeeper']);
-                $('#txtReplicationPort').val(serverInfo['replicationport']);
+                $('#txtClientPort').val(serverInfo['clientlistener']);
+                $('#txtAdminPort').val(serverInfo['adminlistener']);
+                $('#txtZookeeper').val(serverInfo['zookeeperlistener']);
+                $('#txtReplicationPort').val(serverInfo['replicationlistener']);
                 $('#txtInternalInterface').val(serverInfo['internalinterface'])
                 $('#txtExternalInterface').val(serverInfo['externalinterface'])
                 $('#txtPublicInterface').val(serverInfo['publicinterface'])
@@ -461,10 +451,6 @@ var loadPage = function() {
                 $('#errorClientPort').hide();
                 $('#txtAdminPort').val('');
                 $('#errorAdminPort').hide();
-                $('#txtHttpPort').val('');
-                $('#errorHttpPort').hide();
-                $('#txtInternalPort').val('');
-                $('#errorInternalPort').hide();
                 $('#txtZookeeper').val('');
                 $('#errorZookeeper').hide();
                 $('#txtReplicationPort').val('');

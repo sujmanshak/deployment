@@ -28,11 +28,11 @@
 
 from flask import Flask, render_template, jsonify, abort, make_response, request
 from flask.views import MethodView
-import socket
 
 import socket
 import fcntl
 import struct
+import re
 
 app = Flask(__name__, template_folder ="../templates", static_folder="../static")
 
@@ -87,15 +87,18 @@ class ServerAPI(MethodView):
                         'hostname': hostname,
                         'description': "",
                         'enabled': True,
-                        'adminport': "21211",
                         'externalinterface': "",
-                        'http': "8080",
                         'internalinterface': "",
                         'publicinterface':"",
-                        'internalport': "3021",
-                        'portname': "21223",
-                        'replicationport': "5555",
-                        'zookeeper': "2181"
+                        "clientlistener":"",
+                        "adminlistener":"",
+                        "replicationlistener":"",
+                        "zookeeperlistener":"",
+                        # 'http': "8080",
+                        # 'internalport': "3021",
+                        # 'portname': "21223",
+                        # 'replicationport': "5555",
+                        # 'zookeeper': "2181"
                     }
                     )
 
@@ -126,71 +129,145 @@ class ServerAPI(MethodView):
         if len(server)!=0:
             return make_response(jsonify({'error': 'Host name already exists'}), 404)
 
-        if 'portname' in request.json:
-            if(request.json['portname']!=""):
-                try:
-                    val = int(request.json['portname'])
-                    if val<0:
-                        return make_response(jsonify({'error': 'Port name must be a positive number'}), 404)
-                    elif val<1 or val>65535:
-                        return make_response(jsonify({'error': 'Port name must be greater than 1 and less than 65535'}), 404)
-                except ValueError:
-                        return make_response(jsonify({'error': 'Port name must be a positive number'}), 404)
+        if 'adminlistener' in request.json:
+            if(request.json['adminlistener']!=""):
+                if(":" in request.json['adminlistener']):
+                    count =  request.json['adminlistener'].count(":")
+                    print "test" + str(count)
+                    if(count>1):
+                       return make_response(jsonify({'error': 'Invalid admin listener'}), 404)
+                    #validate both ip as well as port
+                    array =  request.json['adminlistener'].split(":")
+                    try:
+                        socket.inet_aton(array[0])
+                    # legal
+                    except socket.error:
+                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
 
-        if 'adminport' in request.json:
-            if(request.json['adminport']!=""):
-                try:
-                    val = int(request.json['adminport'])
-                    if val<0:
-                        return make_response(jsonify({'error': 'Admin port must be a positive number'}), 404)
-                    elif val<1 or val>=65535:
-                        return make_response(jsonify({'error': 'Admin port must be greater than 1 and less than 65535'}), 404)
-                except ValueError:
-                    return make_response(jsonify({'error': 'Admin port must be a positive number'}), 404)
+                    #validate port only
+                    try:
+                        val = int(array[1])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Admin Listener must be a positive number'}), 404)
+                        elif val<1 or val>=65535:
+                            return make_response(jsonify({'error': 'Admin Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Admin Listener must be a positive number'}), 404)
 
-        if 'http' in request.json:
-            if(request.json['http']!=""):
-                try:
-                    val = int(request.json['http'])
-                    if val<0:
-                        return make_response(jsonify({'error': 'Http must be a positive number'}), 404)
-                    elif val<1 or val>65535:
-                        return make_response(jsonify({'error': 'Http must be greater than 1 and less than 65535'}), 404)
-                except ValueError:
-                    return make_response(jsonify({'error': 'Http must be a positive number'}), 404)
+                else:
+                    try:
+                        val = int(request.json['adminlistener'])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Admin Listener must be a positive number'}), 404)
+                        elif val<1 or val>65536:
+                            return make_response(jsonify({'error': 'Admin Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Admin Listener must be a positive number'}), 404)
 
-        if 'internalport' in request.json:
-            if(request.json['internalport']!=""):
-                try:
-                    val = int(request.json['internalport'])
-                    if val<0:
-                        return make_response(jsonify({'error': 'Internal port must be a positive number'}), 404)
-                    elif val<1 or val>65535:
-                        return make_response(jsonify({'error': 'Internal port must be greater than 1 and less than 65535'}), 404)
-                except ValueError:
-                    return make_response(jsonify({'error': 'Internal port must be a positive number'}), 404)
+        if 'zookeeperlistener' in request.json:
+            if(request.json['zookeeperlistener']!=""):
+                if(":" in request.json['zookeeperlistener']):
+                    count =  request.json['zookeeperlistener'].count(":")
+                    print "test" + str(count)
+                    if(count>1):
+                       return make_response(jsonify({'error': 'Invalid Zookeeper listener'}), 404)
+                    #validate both ip as well as port
+                    array =  request.json['zookeeperlistener'].split(":")
+                    try:
+                        socket.inet_aton(array[0])
+                    # legal
+                    except socket.error:
+                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
 
-        if 'zookeeper' in request.json:
-            if(request.json['zookeeper']!=""):
-                try:
-                    val = int(request.json['zookeeper'])
-                    if val<0:
-                        return make_response(jsonify({'error': 'Zookeeper must be a positive number'}), 404)
-                    elif val<1 or val>65535:
-                        return make_response(jsonify({'error': 'Zookeeper must be greater than 1 and less than 65535'}), 404)
-                except ValueError:
-                    return make_response(jsonify({'error': 'Zookeeper must be a positive number'}), 404)
+                    #validate port only
+                    try:
+                        val = int(array[1])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Zookeeper Listener must be a positive number'}), 404)
+                        elif val<1 or val>=65535:
+                            return make_response(jsonify({'error': 'Zookeeper Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Zookeeper Listener must be a positive number'}), 404)
 
-        if 'replicationport' in request.json:
-            if(request.json['replicationport']!=""):
-                try:
-                    val = int(request.json['replicationport'])
-                    if val<0:
-                        return make_response(jsonify({'error': 'Replication port must be a positive number'}), 404)
-                    elif val<1 or val>65535:
-                        return make_response(jsonify({'error': 'Replication port must be greater than 1 and less than 65535'}), 404)
-                except ValueError:
-                    return make_response(jsonify({'error': 'Replication port must be a positive number'}), 404)
+                else:
+                    try:
+                        val = int(request.json['zookeeperlistener'])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Zookeeper Listener must be a positive number'}), 404)
+                        elif val<1 or val>65536:
+                            return make_response(jsonify({'error': 'Zookeeper Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Zookeeper Listener must be a positive number'}), 404)
+
+        if 'replicationlistener' in request.json:
+            if(request.json['replicationlistener']!=""):
+                if(":" in request.json['replicationlistener']):
+                    count =  request.json['replicationlistener'].count(":")
+                    print "test" + str(count)
+                    if(count>1):
+                       return make_response(jsonify({'error': 'Invalid Replicationlistener'}), 404)
+                    #validate both ip as well as port
+                    array =  request.json['replicationlistener'].split(":")
+                    try:
+                        socket.inet_aton(array[0])
+                    # legal
+                    except socket.error:
+                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+
+                    #validate port only
+                    try:
+                        val = int(array[1])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Replication Listener must be a positive number'}), 404)
+                        elif val<1 or val>=65535:
+                            return make_response(jsonify({'error': 'Replication Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Replication Listener must be a positive number'}), 404)
+
+                else:
+                    try:
+                        val = int(request.json['replicationlistener'])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Replication Listener must be a positive number'}), 404)
+                        elif val<1 or val>65536:
+                            return make_response(jsonify({'error': 'Replication Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Replication Listener must be a positive number'}), 404)
+
+        if 'clientlistener' in request.json:
+            if(request.json['clientlistener']!=""):
+                if(":" in request.json['clientlistener']):
+                    count =  request.json['clientlistener'].count(":")
+                    print "test" + str(count)
+                    if(count>1):
+                       return make_response(jsonify({'error': 'Invalid Client listener'}), 404)
+                    #validate both ip as well as port
+                    array =  request.json['clientlistener'].split(":")
+                    try:
+                        socket.inet_aton(array[0])
+                    # legal
+                    except socket.error:
+                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+
+                    #validate port only
+                    try:
+                        val = int(array[1])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Client Listener must be a positive number'}), 404)
+                        elif val<1 or val>=65535:
+                            return make_response(jsonify({'error': 'Client Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Client Listener must be a positive number'}), 404)
+
+                else:
+                    try:
+                        val = int(request.json['clientlistener'])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Client Listener must be a positive number'}), 404)
+                        elif val<1 or val>65536:
+                            return make_response(jsonify({'error': 'Client Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Client Listener must be a positive number'}), 404)
 
         if 'internalinterface' in request.json:
             if (request.json['internalinterface']!=""):
@@ -225,12 +302,10 @@ class ServerAPI(MethodView):
         'description': request.json.get('description', ""),
         'hostname': request.json.get('hostname', ""),
         'enabled': True,
-        'portname': request.json.get('portname',""),
-        'adminport': request.json.get('adminport',""),
-        'http': request.json.get('http',""),
-        'internalport': request.json.get('internalport',""),
-        'zookeeper': request.json.get('zookeeper',""),
-        'replicationport': request.json.get('replicationport',""),
+        'adminlistener': request.json.get('adminlistener',""),
+        'zookeeperlistener': request.json.get('zookeeperlistener',""),
+        'replicationlistener': request.json.get('replicationlistener',""),
+        'clientlistener': request.json.get('clientlistener',""),
         'internalinterface': request.json.get('internalinterface',""),
         'externalinterface': request.json.get('externalinterface',""),
         'publicinterface': request.json.get('publicinterface',"")
@@ -268,81 +343,155 @@ class ServerAPI(MethodView):
 
             if request.json['name']!= currentserver[0]['name']:
                 server = filter(lambda t: t['name'] == request.json['name'], servers)
-                if len(server)!=0:
-                    return make_response(jsonify({'error': 'Server name already exists'}), 404)
+                # if len(server)!=0:
+                #     return make_response(jsonify({'error': 'Server name already exists'}), 404)
 
         if 'hostname' in request.json:
             if request.json['hostname']==   "":
                 return make_response(jsonify({'error':'Host name is required'}),404)
             server = filter(lambda t: t['hostname'] == request.json['hostname'], servers)
-            if len(server)!=0:
-                return make_response(jsonify({'error': 'Host name already exists'}), 404)
+            # if len(server)!=0:
+            #     return make_response(jsonify({'error': 'Host name already exists'}), 404)
 
-        if 'portname' in request.json:
-            if(request.json['portname']!=""):
-                try:
-                    val = int(request.json['portname'])
-                    if val<0:
-                        return make_response(jsonify({'error': 'Port name must be a positive number'}), 404)
-                    elif val<1 or val>65535:
-                        return make_response(jsonify({'error': 'Port name must be greater than 1 and less than 65535'}), 404)
-                except ValueError:
-                        return make_response(jsonify({'error': 'Port name must be a positive number'}), 404)
+        if 'adminlistener' in request.json:
+            if(request.json['adminlistener']!=""):
+                if(":" in request.json['adminlistener']):
+                    count =  request.json['adminlistener'].count(":")
+                    print "test" + str(count)
+                    if(count>1):
+                       return make_response(jsonify({'error': 'Invalid admin listener'}), 404)
+                    #validate both ip as well as port
+                    array =  request.json['adminlistener'].split(":")
+                    try:
+                        socket.inet_aton(array[0])
+                    # legal
+                    except socket.error:
+                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
 
-        if 'adminport' in request.json:
-            if(request.json['adminport']!=""):
-                try:
-                    val = int(request.json['adminport'])
-                    if val<0:
-                        return make_response(jsonify({'error': 'Admin port must be a positive number'}), 404)
-                    elif val<1 or val>=65535:
-                        return make_response(jsonify({'error': 'Admin port must be greater than 1 and less than 65535'}), 404)
-                except ValueError:
-                    return make_response(jsonify({'error': 'Admin port must be a positive number'}), 404)
+                    #validate port only
+                    try:
+                        val = int(array[1])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Admin Listener must be a positive number'}), 404)
+                        elif val<1 or val>=65535:
+                            return make_response(jsonify({'error': 'Admin Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Admin Listener must be a positive number'}), 404)
 
-        if 'http' in request.json:
-            if(request.json['http']!=""):
-                try:
-                    val = int(request.json['http'])
-                    if val<0:
-                        return make_response(jsonify({'error': 'Http must be a positive number'}), 404)
-                    elif val<1 or val>65535:
-                        return make_response(jsonify({'error': 'Http must be greater than 1 and less than 65535'}), 404)
-                except ValueError:
-                    return make_response(jsonify({'error': 'Http must be a positive number'}), 404)
+                else:
+                    try:
+                        val = int(request.json['adminlistener'])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Admin Listener must be a positive number'}), 404)
+                        elif val<1 or val>65536:
+                            return make_response(jsonify({'error': 'Admin Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Admin Listener must be a positive number'}), 404)
 
-        if 'internalport' in request.json:
-            if(request.json['internalport']!=""):
-                try:
-                    val = int(request.json['internalport'])
-                    if val<0:
-                        return make_response(jsonify({'error': 'Internal port must be a positive number'}), 404)
-                    elif val<1 or val>65535:
-                        return make_response(jsonify({'error': 'Internal port must be greater than 1 and less than 65535'}), 404)
-                except ValueError:
-                    return make_response(jsonify({'error': 'Internal port must be a positive number'}), 404)
+        if 'zookeeperlistener' in request.json:
+            if(request.json['zookeeperlistener']!=""):
+                if(":" in request.json['zookeeperlistener']):
+                    count =  request.json['zookeeperlistener'].count(":")
+                    print "test" + str(count)
+                    if(count>1):
+                       return make_response(jsonify({'error': 'Invalid Zookeeper listener'}), 404)
+                    #validate both ip as well as port
+                    array =  request.json['zookeeperlistener'].split(":")
+                    try:
+                        socket.inet_aton(array[0])
+                    # legal
+                    except socket.error:
+                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
 
-        if 'zookeeper' in request.json:
-            if(request.json['zookeeper']!=""):
-                try:
-                    val = int(request.json['zookeeper'])
-                    if val<0:
-                        return make_response(jsonify({'error': 'Zookeeper must be a positive number'}), 404)
-                    elif val<1 or val>65535:
-                        return make_response(jsonify({'error': 'Zookeeper must be greater than 1 and less than 65535'}), 404)
-                except ValueError:
-                    return make_response(jsonify({'error': 'Zookeeper must be a positive number'}), 404)
+                    #validate port only
+                    try:
+                        val = int(array[1])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Zookeeper Listener must be a positive number'}), 404)
+                        elif val<1 or val>=65535:
+                            return make_response(jsonify({'error': 'Zookeeper Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Zookeeper Listener must be a positive number'}), 404)
 
-        if 'replicationport' in request.json:
-            if(request.json['replicationport']!=""):
-                try:
-                    val = int(request.json['replicationport'])
-                    if val<0:
-                        return make_response(jsonify({'error': 'Replication port must be a positive number'}), 404)
-                    elif val<1 or val>65535:
-                        return make_response(jsonify({'error': 'Replication port must be greater than 1 and less than 65535'}), 404)
-                except ValueError:
-                    return make_response(jsonify({'error': 'Replication port must be a positive number'}), 404)
+                else:
+                    try:
+                        val = int(request.json['zookeeperlistener'])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Zookeeper Listener must be a positive number'}), 404)
+                        elif val<1 or val>65536:
+                            return make_response(jsonify({'error': 'Zookeeper Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Zookeeper Listener must be a positive number'}), 404)
+
+        if 'replicationlistener' in request.json:
+            if(request.json['replicationlistener']!=""):
+                if(":" in request.json['replicationlistener']):
+                    count =  request.json['replicationlistener'].count(":")
+                    print "test" + str(count)
+                    if(count>1):
+                       return make_response(jsonify({'error': 'Invalid Replicationlistener'}), 404)
+                    #validate both ip as well as port
+                    array =  request.json['replicationlistener'].split(":")
+                    try:
+                        socket.inet_aton(array[0])
+                    # legal
+                    except socket.error:
+                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+
+                    #validate port only
+                    try:
+                        val = int(array[1])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Replication Listener must be a positive number'}), 404)
+                        elif val<1 or val>=65535:
+                            return make_response(jsonify({'error': 'Replication Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Replication Listener must be a positive number'}), 404)
+
+                else:
+                    try:
+                        val = int(request.json['replicationlistener'])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Replication Listener must be a positive number'}), 404)
+                        elif val<1 or val>65536:
+                            return make_response(jsonify({'error': 'Replication Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Replication Listener must be a positive number'}), 404)
+
+        if 'clientlistener' in request.json:
+            if(request.json['clientlistener']!=""):
+                if(":" in request.json['clientlistener']):
+                    count =  request.json['clientlistener'].count(":")
+                    print "test" + str(count)
+                    if(count>1):
+                       return make_response(jsonify({'error': 'Invalid Client listener'}), 404)
+                    #validate both ip as well as port
+                    array =  request.json['clientlistener'].split(":")
+                    try:
+                        socket.inet_aton(array[0])
+                    # legal
+                    except socket.error:
+                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+
+                    #validate port only
+                    try:
+                        val = int(array[1])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Client Listener must be a positive number'}), 404)
+                        elif val<1 or val>=65535:
+                            return make_response(jsonify({'error': 'Client Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Client Listener must be a positive number'}), 404)
+
+                else:
+                    try:
+                        val = int(request.json['clientlistener'])
+                        if val<0:
+                            return make_response(jsonify({'error': 'Client Listener must be a positive number'}), 404)
+                        elif val<1 or val>65536:
+                            return make_response(jsonify({'error': 'Client Listener must be greater than 1 and less than 65535'}), 404)
+                    except ValueError:
+                        return make_response(jsonify({'error': 'Client Listener must be a positive number'}), 404)
 
         if 'internalinterface' in request.json:
             if (request.json['internalinterface']!=""):
@@ -371,12 +520,10 @@ class ServerAPI(MethodView):
         currentserver[0]['hostname'] = request.json.get('hostname', currentserver[0]['hostname'])
         currentserver[0]['description'] = request.json.get('description', currentserver[0]['description'])
         currentserver[0]['enabled'] = request.json.get('enabled', currentserver[0]['enabled'])
-        currentserver[0]['portname'] = request.json.get('portname', currentserver[0]['portname'])
-        currentserver[0]['adminport'] = request.json.get('adminport', currentserver[0]['adminport'])
-        currentserver[0]['http'] = request.json.get('http', currentserver[0]['http'])
-        currentserver[0]['internalport'] = request.json.get('internalport', currentserver[0]['internalport'])
-        currentserver[0]['zookeeper'] = request.json.get('zookeeper', currentserver[0]['zookeeper'])
-        currentserver[0]['replicationport'] = request.json.get('replicationport', currentserver[0]['replicationport'])
+        currentserver[0]['adminlistener'] = request.json.get('adminlistener', currentserver[0]['adminlistener'])
+        currentserver[0]['zookeeperlistener'] = request.json.get('zookeeperlistener', currentserver[0]['zookeeperlistener'])
+        currentserver[0]['replicationlistener'] = request.json.get('replicationlistener', currentserver[0]['replicationlistener'])
+        currentserver[0]['clientlistener'] = request.json.get('clientlistener', currentserver[0]['clientlistener'])
         currentserver[0]['internalinterface'] = request.json.get('internalinterface', currentserver[0]['internalinterface'])
         currentserver[0]['externalinterface'] = request.json.get('externalinterface', currentserver[0]['externalinterface'])
         currentserver[0]['publicinterface'] = request.json.get('publicinterface', currentserver[0]['publicinterface'])
