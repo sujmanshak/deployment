@@ -133,7 +133,6 @@ class ServerAPI(MethodView):
             if(request.json['adminlistener']!=""):
                 if(":" in request.json['adminlistener']):
                     count =  request.json['adminlistener'].count(":")
-                    print "test" + str(count)
                     if(count>1):
                        return make_response(jsonify({'error': 'Invalid admin listener'}), 404)
                     #validate both ip as well as port
@@ -168,7 +167,6 @@ class ServerAPI(MethodView):
             if(request.json['zookeeperlistener']!=""):
                 if(":" in request.json['zookeeperlistener']):
                     count =  request.json['zookeeperlistener'].count(":")
-                    print "test" + str(count)
                     if(count>1):
                        return make_response(jsonify({'error': 'Invalid Zookeeper listener'}), 404)
                     #validate both ip as well as port
@@ -203,7 +201,6 @@ class ServerAPI(MethodView):
             if(request.json['replicationlistener']!=""):
                 if(":" in request.json['replicationlistener']):
                     count =  request.json['replicationlistener'].count(":")
-                    print "test" + str(count)
                     if(count>1):
                        return make_response(jsonify({'error': 'Invalid Replicationlistener'}), 404)
                     #validate both ip as well as port
@@ -238,7 +235,6 @@ class ServerAPI(MethodView):
             if(request.json['clientlistener']!=""):
                 if(":" in request.json['clientlistener']):
                     count =  request.json['clientlistener'].count(":")
-                    print "test" + str(count)
                     if(count>1):
                        return make_response(jsonify({'error': 'Invalid Client listener'}), 404)
                     #validate both ip as well as port
@@ -272,6 +268,7 @@ class ServerAPI(MethodView):
         if 'internalinterface' in request.json:
             if (request.json['internalinterface']!=""):
                 try:
+                    print "test" + str(request.json['internalinterface'])
                     socket.inet_aton(request.json['internalinterface'])
                 except socket.error:
                     return make_response(jsonify({'error': 'Invalid IP address'}), 404)
@@ -427,7 +424,6 @@ class ServerAPI(MethodView):
             if(request.json['replicationlistener']!=""):
                 if(":" in request.json['replicationlistener']):
                     count =  request.json['replicationlistener'].count(":")
-                    print "test" + str(count)
                     if(count>1):
                        return make_response(jsonify({'error': 'Invalid Replicationlistener'}), 404)
                     #validate both ip as well as port
@@ -462,7 +458,6 @@ class ServerAPI(MethodView):
             if(request.json['clientlistener']!=""):
                 if(":" in request.json['clientlistener']):
                     count =  request.json['clientlistener'].count(":")
-                    print "test" + str(count)
                     if(count>1):
                        return make_response(jsonify({'error': 'Invalid Client listener'}), 404)
                     #validate both ip as well as port

@@ -143,6 +143,28 @@ class CreateServer(Server):
             self.assertEqual(value['error'],'Host name already exists')
             print value['error']
 
+    def test_ValidatePort(self):
+        headers = {'Content-Type': 'application/json; charset=utf-8'}
+        data={'description':'test','hostname':'test4567','name':'test12345','adminlistener':'88888'}
+        response = requests.post(URL,json=data, headers = headers)
+        value=response.json()
+        if response.status_code==201:
+            self.assertEqual(response.status_code, 201)
+        else:
+            self.assertEqual(response.status_code, 404)
+            self.assertEqual(value['error'],'Admin Listener must be greater than 1 and less than 65535')
+
+    def test_ValidateIPAddress(self):
+        headers = {'Content-Type': 'application/json; charset=utf-8'}
+        data={'description':'test','hostname':'test4567','name':'test12345','internalinterface':'127.0.0.12345'}
+        response = requests.post(URL,json=data, headers = headers)
+        value=response.json()
+        if response.status_code==201:
+            self.assertEqual(response.status_code, 201)
+        else:
+            self.assertEqual(response.status_code, 404)
+            self.assertEqual(value['error'],'Invalid IP address')
+
 class UpdateServer(Server):
     #ensure GET server list
     def test_06GetServers(self):
@@ -169,9 +191,6 @@ class UpdateServer(Server):
         value=response.json()
         self.assertEqual(value['error'],'Host name is required')
         self.assertEqual(response.status_code, 404)
-
-
-
 
     def test_09UpdateServers(self):
         #get a serverId
