@@ -229,11 +229,11 @@ var loadPage = function() {
         "Please enter only valid character."
     );
 
-    //setInterval(function () {
+    setInterval(function () {
     VdmService.GetServerList(function(connection){
         VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
     })
-   // }, 5000);
+    }, 5000);
 
     $("#frmCreateServer").validate({
         rules: {
@@ -246,7 +246,8 @@ var loadPage = function() {
             txtZookeeper:validationRules.PortRule,
             txtReplicationPort:validationRules.PortRule,
             txtInternalInterface:validationRules.IpRule,
-            txtExternalInterface:validationRules.IpRule
+            txtExternalInterface:validationRules.IpRule,
+            txtPublicInterface:validationRules.IpRule
         },
         messages: {
             serverName: validationRules.ServerNameMessage,
@@ -258,7 +259,8 @@ var loadPage = function() {
             txtZookeeper:validationRules.PortMessage,
             txtReplicationPort:validationRules.PortMessage,
             txtInternalInterface:validationRules.IpMessage,
-            txtExternalInterface:validationRules.IpMessage
+            txtExternalInterface:validationRules.IpMessage,
+            txtPublicInterface:validationRules.IpMessage
         }
     });
 
@@ -279,6 +281,7 @@ var loadPage = function() {
         var replicationPort = $('#txtReplicationPort').val()
         var internalInterface = $('#txtInternalInterface').val()
         var externalInterface = $('#txtExternalInterface').val()
+        var publicInterface = $('#txtPublicInterface').val()
         var serverInfo ={
             serverData:{
                 "name" : serverName,
@@ -291,7 +294,8 @@ var loadPage = function() {
                 "zookeeper" : zookeeperPort,
                 "replicationport" : replicationPort,
                 "internalinterface" : internalInterface,
-                "externalinterface" : externalInterface
+                "externalinterface" : externalInterface,
+                "publicinterface" : publicInterface
             },
             id:$('#addServer').data('serverid')
         }
@@ -434,11 +438,11 @@ var loadPage = function() {
                 $('#txtReplicationPort').val(serverInfo['replicationport']);
                 $('#txtInternalInterface').val(serverInfo['internalinterface'])
                 $('#txtExternalInterface').val(serverInfo['externalinterface'])
+                $('#txtPublicInterface').val(serverInfo['publicinterface'])
                 $('#addServerTitle').html('Update Server');
                 $('#errorServerName').hide();
                 $('#errorHostName').hide();
                 $('#errorDescription').hide();
-                //toggleServer(editStates.ShowOkCancel,serverInfo['id']);
             });
 
             $('#btnAddServer').on('click', function(){
@@ -467,11 +471,13 @@ var loadPage = function() {
                 $('#errorReplicationPort').hide();
                 $('#txtInternalInterface').val('')
                 $('#txtExternalInterface').val('')
+                $('#txtPublicInterface').val('')
                 $('#errorServerName').hide();
                 $('#errorHostName').hide();
                 $('#errorDescription').hide();
                 $('#errorInternalInterface').hide();
                 $('#errorExternalInterface').hide();
+                $('#errorPublicInterface').hide();
             }
         };
     });

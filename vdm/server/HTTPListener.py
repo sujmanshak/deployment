@@ -88,9 +88,10 @@ class ServerAPI(MethodView):
                         'description': "",
                         'enabled': True,
                         'adminport': "21211",
-                        'externalinterface': "10.10.1.52",
+                        'externalinterface': "",
                         'http': "8080",
-                        'internalinterface': "10.10.1.51",
+                        'internalinterface': "",
+                        'publicinterface':"",
                         'internalport': "3021",
                         'portname': "21223",
                         'replicationport': "5555",
@@ -195,14 +196,20 @@ class ServerAPI(MethodView):
             if (request.json['internalinterface']!=""):
                 try:
                     socket.inet_aton(request.json['internalinterface'])
-                    # legal
                 except socket.error:
                     return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+
         if 'externalinterface' in request.json:
             if (request.json['externalinterface']!=""):
                 try:
                     socket.inet_aton(request.json['externalinterface'])
-                    # legal
+                except socket.error:
+                    return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+
+        if 'publicinterface' in request.json:
+            if (request.json['publicinterface']!=""):
+                try:
+                    socket.inet_aton(request.json['publicinterface'])
                 except socket.error:
                     return make_response(jsonify({'error': 'Invalid IP address'}), 404)
 
@@ -225,7 +232,8 @@ class ServerAPI(MethodView):
         'zookeeper': request.json.get('zookeeper',""),
         'replicationport': request.json.get('replicationport',""),
         'internalinterface': request.json.get('internalinterface',""),
-        'externalinterface': request.json.get('externalinterface',"")
+        'externalinterface': request.json.get('externalinterface',""),
+        'publicinterface': request.json.get('publicinterface',"")
         }
         servers.append(server)
         return jsonify( { 'server': server, 'status':1 } ),201
@@ -343,11 +351,19 @@ class ServerAPI(MethodView):
                     # legal
                 except socket.error:
                     return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+
         if 'externalinterface' in request.json:
             if (request.json['externalinterface']!=""):
                 try:
                     socket.inet_aton(request.json['externalinterface'])
                     # legal
+                except socket.error:
+                    return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+
+        if 'publicinterface' in request.json:
+            if (request.json['publicinterface']!=""):
+                try:
+                    socket.inet_aton(request.json['publicinterface'])
                 except socket.error:
                     return make_response(jsonify({'error': 'Invalid IP address'}), 404)
 
@@ -363,6 +379,7 @@ class ServerAPI(MethodView):
         currentserver[0]['replicationport'] = request.json.get('replicationport', currentserver[0]['replicationport'])
         currentserver[0]['internalinterface'] = request.json.get('internalinterface', currentserver[0]['internalinterface'])
         currentserver[0]['externalinterface'] = request.json.get('externalinterface', currentserver[0]['externalinterface'])
+        currentserver[0]['publicinterface'] = request.json.get('publicinterface', currentserver[0]['publicinterface'])
         return jsonify( { 'server': currentserver[0], 'status': 1} )
 
 
