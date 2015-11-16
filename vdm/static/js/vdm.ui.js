@@ -229,6 +229,10 @@ var loadPage = function() {
         "Please enter only valid character."
     );
 
+    VdmService.GetServerList(function(connection){
+        VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
+    })
+
     setInterval(function () {
         VdmService.GetServerList(function(connection){
             VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
@@ -325,6 +329,7 @@ var loadPage = function() {
                 } else{
                     $('#errorMsg').html('Unable to update server.')
                     $('#errorDialog').modal('show');
+                    toggleServer(editStates.ShowEdit,hostId);
                 }
             },serverInfo);
 
