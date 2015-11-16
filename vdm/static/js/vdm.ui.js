@@ -325,6 +325,7 @@ var loadPage = function() {
                 } else{
                     $('#errorMsg').html('Unable to update server.')
                     $('#errorDialog').modal('show');
+                    toggleServer(editStates.ShowEdit,hostId);
                 }
             },serverInfo);
 
