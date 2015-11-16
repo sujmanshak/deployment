@@ -43,20 +43,12 @@ from flask.ext.testing import TestCase
 import requests
 import xmlrunner
 import socket
-import fcntl
-import struct
+
 
 ############VARS
 
 URL = 'http://localhost:8000/api/1.0/servers/'
 
-def get_ip_address(ifname):
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        return socket.inet_ntoa(fcntl.ioctl(
-        s.fileno(),
-        0x8915,  # SIOCGIFADDR
-        struct.pack('256s', ifname[:15])
-        )[20:24])
 
 class Server(unittest.TestCase):
     def setUp(self):
@@ -218,8 +210,9 @@ class UpdateServer(Server):
             lastServerId =  value['servers'][serverLength-1]['id']
             print "ServerId to be updated is " + str(lastServerId)
             url = URL + str(lastServerId)
+            myhostname = socket.gethostname()
 
-        response = requests.put(url,json={"description":"test","hostname":"test12345","name":get_ip_address('eth0')})
+        response = requests.put(url,json={"description":"test","hostname":"test12345","name":myhostname})
         value = response.json()
         if response.status_code==200:
             self.assertEqual(response.status_code, 200)
@@ -238,8 +231,9 @@ class UpdateServer(Server):
             lastServerId =  value['servers'][serverLength-1]['id']
             print "ServerId to be updated is " + str(lastServerId)
             url = URL + str(lastServerId)
-
-        response = requests.put(url,json={'description':'test','hostname':get_ip_address('eth0'),'name':'test12345'})
+            myhostname = socket.gethostname()
+            myhostorip = socket.gethostbyname(myhostname)
+        response = requests.put(url,json={'description':'test','hostname':myhostorip,'name':'test12345'})
         value=response.json()
         if response.status_code==200:
             self.assertEqual(response.status_code, 200)
