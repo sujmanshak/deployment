@@ -16,15 +16,16 @@ class ClusterSettingsPage extends Page {
         popupAddServerNameField                 { $("#serverName") }
         popupAddServerHostNameField             { $("#txtHostName") }
         popupAddServerDescriptionField          { $("#txtDescription") }
-        popupAddServerClientPortField           { $("#txtClientPort") }
-        popupAddServerAdminPortField            { $("#txtAdminPort") }
-        popupAddServerHttpField                 { $("#txtHttpPort") }
-        popupAddServerInternalPortField         { $("#txtInternalPort") }
-        popupAddServerZookeeperField            { $("#txtZookeeper") }
-        popupAddServerReplicationPortField      { $("#txtReplicationPort") }
+        popupAddServerClientListenerField       { $("#txtClientPort") }
+        popupAddServerAdminListenerField        { $("#txtAdminPort") }
+        popupAddServerHttpListenerField         { $("#txtHttpPort") }
+        popupAddServerInternalListenerField     { $("#txtInternalPort") }
+        popupAddServerZookeeperListenerField    { $("#txtZookeeper") }
+        popupAddServerReplicationListenerField { $("#txtReplicationPort") }
         popupAddServerInternalInterfaceField    { $("#txtInternalInterface") }
         popupAddServerExternalInterfaceField    { $("#txtExternalInterface") }
         popupAddServerPublicInterfaceField      { $("#txtPublicInterface") }
+        popupAddServerPlacementGroupField       { $("#txtPlacementGroup") }
 
         popupAddServerButtonOk          { $("#btnCreateServerOk") }
         popupAddServerButtonCancel      { $("#addServer > div > div > div.modal-footer > button.btn.btn-gray") }
@@ -35,6 +36,14 @@ class ClusterSettingsPage extends Page {
         popupDeleteServerButtonOk       { $("#deleteServerOk") }
 
         testingPath    (required:false) { $("#serverList > tbody > tr:nth-child(5) > td:nth-child(1)") }
+
+        errorServerName {$("#errorServerName")}
+
+        errorHostName {$("#errorHostName")}
+
+        errorClientPort {$("#errorClientPort")}
+
+        errorInternalInterface {$("#errorInternalInterface")}
     }
 
     static at = {
@@ -42,7 +51,17 @@ class ClusterSettingsPage extends Page {
   //      waitFor(30) { serverSettingsTab.isDisplayed() }
     }
 
+    /*
+     *  Return the id of delete button with index as input
+     */
     String getIdOfDeleteButton(int index) {
         return ("deleteServer_" + String.valueOf(index))
+    }
+
+    /*
+     *  Return the id of edit button with index as input
+     */
+    String getIdOfEditButton(int index) {
+        return ("editServer_" + String.valueOf(index))
     }
 }

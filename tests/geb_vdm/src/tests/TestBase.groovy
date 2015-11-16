@@ -45,8 +45,8 @@ import org.junit.rules.TestName
 import org.openqa.selenium.Dimension
 
 class TestBase extends GebReportingSpec {
-    static int numberOfTrials = 20
-    static int waitTime = 20
+    static int numberOfTrials = 5
+    static int waitTime = 10
     int count
     static final boolean DEFAULT_DEBUG_PRINT = false
     static final int DEFAULT_WINDOW_WIDTH  = 1500
