@@ -229,6 +229,10 @@ var loadPage = function() {
         "Please enter only valid character."
     );
 
+    VdmService.GetServerList(function(connection){
+        VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
+    })
+
     setInterval(function () {
         VdmService.GetServerList(function(connection){
             VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
