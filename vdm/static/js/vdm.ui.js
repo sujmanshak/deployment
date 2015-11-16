@@ -245,7 +245,9 @@ var loadPage = function() {
             txtReplicationPort:validationRules.PortRule,
             txtInternalInterface:validationRules.IpRule,
             txtExternalInterface:validationRules.IpRule,
-            txtPublicInterface:validationRules.IpRule
+            txtPublicInterface:validationRules.IpRule,
+            txtInternalPort:validationRules.PortRule,
+            txtHttpPort:validationRules.PortRule,
         },
         messages: {
             serverName: validationRules.ServerNameMessage,
@@ -256,7 +258,9 @@ var loadPage = function() {
             txtReplicationPort:validationRules.PortMessage,
             txtInternalInterface:validationRules.IpMessage,
             txtExternalInterface:validationRules.IpMessage,
-            txtPublicInterface:validationRules.IpMessage
+            txtPublicInterface:validationRules.IpMessage,
+            txtInternalPort:validationRules.PortMessage,
+            txtHttpPort:validationRules.PortMessage,
         }
     });
 
@@ -271,23 +275,29 @@ var loadPage = function() {
         var description = $('#txtDescription').val()
         var clientPort = $('#txtClientPort').val()
         var adminPort = $('#txtAdminPort').val()
+        var internalPort = $('#txtInternalPort').val()
+        var httpPort = $('#txtHttpPort').val()
         var zookeeperPort = $('#txtZookeeper').val()
         var replicationPort = $('#txtReplicationPort').val()
         var internalInterface = $('#txtInternalInterface').val()
         var externalInterface = $('#txtExternalInterface').val()
         var publicInterface = $('#txtPublicInterface').val()
+        var placementGroup = $('#txtPlacementGroup').val()
         var serverInfo ={
             serverData:{
                 "name" : serverName,
                 "hostname" : hostName,
                 "description" : description,
-                "clientlistener" : clientPort,
-                "adminlistener" : adminPort,
-                "zookeeperlistener" : zookeeperPort,
-                "replicationlistener" : replicationPort,
-                "internalinterface" : internalInterface,
-                "externalinterface" : externalInterface,
-                "publicinterface" : publicInterface
+                "client-listener" : clientPort,
+                "admin-listener" : adminPort,
+                "internal-listener" : internalPort,
+                "http-listener" : httpPort,
+                "zookeeper-listener" : zookeeperPort,
+                "replication-listener" : replicationPort,
+                "internal-interface" : internalInterface,
+                "external-interface" : externalInterface,
+                "public-interface" : publicInterface,
+                "placement-group" : placementGroup,
             },
             id:$('#addServer').data('serverid')
         }
@@ -422,13 +432,16 @@ var loadPage = function() {
                 $('#serverName').val(serverInfo['name']);
                 $('#txtHostName').val(serverInfo['hostname']);
                 $('#txtDescription').val(serverInfo['description']);
-                $('#txtClientPort').val(serverInfo['clientlistener']);
-                $('#txtAdminPort').val(serverInfo['adminlistener']);
-                $('#txtZookeeper').val(serverInfo['zookeeperlistener']);
-                $('#txtReplicationPort').val(serverInfo['replicationlistener']);
-                $('#txtInternalInterface').val(serverInfo['internalinterface'])
-                $('#txtExternalInterface').val(serverInfo['externalinterface'])
-                $('#txtPublicInterface').val(serverInfo['publicinterface'])
+                $('#txtClientPort').val(serverInfo['client-listener']);
+                $('#txtAdminPort').val(serverInfo['admin-listener']);
+                $('#txtInternalPort').val(serverInfo['internal-listener']);
+                $('#txtHttpPort').val(serverInfo['http-listener']);
+                $('#txtZookeeper').val(serverInfo['zookeeper-listener']);
+                $('#txtReplicationPort').val(serverInfo['replication-listener']);
+                $('#txtInternalInterface').val(serverInfo['internal-interface'])
+                $('#txtExternalInterface').val(serverInfo['external-interface'])
+                $('#txtPublicInterface').val(serverInfo['public-interface']);
+                $('#txtPlacementGroup').val(serverInfo['placement-group']);
                 $('#addServerTitle').html('Update Server');
                 $('#errorServerName').hide();
                 $('#errorHostName').hide();
@@ -455,15 +468,20 @@ var loadPage = function() {
                 $('#errorZookeeper').hide();
                 $('#txtReplicationPort').val('');
                 $('#errorReplicationPort').hide();
-                $('#txtInternalInterface').val('')
-                $('#txtExternalInterface').val('')
-                $('#txtPublicInterface').val('')
+                $('#txtInternalInterface').val('');
+                $('#txtExternalInterface').val('');
+                $('#txtPublicInterface').val('');
+                $('#txtInternalPort').val('');
+                $('#txtHttpPort').val('');
+                $('#txtPlacementGroup').val('');
                 $('#errorServerName').hide();
                 $('#errorHostName').hide();
                 $('#errorDescription').hide();
                 $('#errorInternalInterface').hide();
                 $('#errorExternalInterface').hide();
                 $('#errorPublicInterface').hide();
+                $('#errorInternalPort').hide();
+                $('#errorHttpPort').hide();
             }
         };
     });

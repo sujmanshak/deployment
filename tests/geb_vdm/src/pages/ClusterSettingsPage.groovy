@@ -12,10 +12,20 @@ class ClusterSettingsPage extends Page {
         buttonAddServer                 { $("#btnAddServer") }
 
         // Add Server Popup
-        popupAddServer                  { $("#addServer > div > div") }
-        popupAddServerNameField         { $("#serverName") }
-        popupAddServerHostNameField     { $("#txtHostName") }
-        popupAddServerDescriptionField  { $("#txtDescription") }
+        popupAddServer                          { $("#addServer > div > div") }
+        popupAddServerNameField                 { $("#serverName") }
+        popupAddServerHostNameField             { $("#txtHostName") }
+        popupAddServerDescriptionField          { $("#txtDescription") }
+        popupAddServerClientPortField           { $("#txtClientPort") }
+        popupAddServerAdminPortField            { $("#txtAdminPort") }
+        popupAddServerHttpField                 { $("#txtHttpPort") }
+        popupAddServerInternalPortField         { $("#txtInternalPort") }
+        popupAddServerZookeeperField            { $("#txtZookeeper") }
+        popupAddServerReplicationPortField      { $("#txtReplicationPort") }
+        popupAddServerInternalInterfaceField    { $("#txtInternalInterface") }
+        popupAddServerExternalInterfaceField    { $("#txtExternalInterface") }
+        popupAddServerPublicInterfaceField      { $("#txtPublicInterface") }
+
         popupAddServerButtonOk          { $("#btnCreateServerOk") }
         popupAddServerButtonCancel      { $("#addServer > div > div > div.modal-footer > button.btn.btn-gray") }
         
@@ -28,7 +38,11 @@ class ClusterSettingsPage extends Page {
     }
 
     static at = {
-        waitFor(30) { clusterSettingsTab.isDisplayed() }
-        waitFor(30) { serverSettingsTab.isDisplayed() }
+//        waitFor(30) { clusterSettingsTab.isDisplayed() }
+  //      waitFor(30) { serverSettingsTab.isDisplayed() }
+    }
+
+    String getIdOfDeleteButton(int index) {
+        return ("deleteServer_" + String.valueOf(index))
     }
 }
