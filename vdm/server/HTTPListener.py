@@ -36,6 +36,17 @@ app = Flask(__name__, template_folder ="../templates", static_folder="../static"
 
 servers = []
 
+clusters = [{
+    'id': 1,
+    "name": "cluster1",
+    "deployment" : "default",
+    "members": {
+        'id' :1,
+      "member": { "name": "server1" }
+    }
+  }
+]
+
 
 
 @app.errorhandler(400)
@@ -55,6 +66,12 @@ def make_public_server(servers):
     for field in servers:
         new_server[field] = servers[field]
     return new_server
+
+def make_public_cluster(clusters):
+    new_cluster = {}
+    for field in clusters:
+        new_cluster[field]= clusters[field]
+    return new_cluster
 
 isCurrentNodeAdded = False
 
@@ -656,16 +673,58 @@ class ServerAPI(MethodView):
         currentserver[0]['placement-group'] = request.json.get('placement-group', currentserver[0]['placement-group'])
         return jsonify( { 'server': currentserver[0], 'status': 1} )
 
+class ClusterAPI(MethodView):
+    def get (self,cluster_id):
+        global isCurrentNodeAdded
+
+        if cluster_id is None:
+
+            if not clusters and isCurrentNodeAdded==False:
+                #add default server
+                isCurrentNodeAdded = True
+                clusters.append(
+                    {
+                        'id': 1,
+                        'name': "cluster1",
+                        'deployment': "default",
+                        "members": {
+                                "id": 1,
+                                "member": { "name": "server1" }
+                            }
+                    }
+                    )
+
+            # return a list of users
+            return jsonify( { 'clusters': map(make_public_cluster, clusters) } )
+        else:
+            # expose a single user
+            cluster = filter(lambda t: t['id'] == cluster_id, clusters)
+            if len(cluster) == 0:
+                abort(404)
+            return jsonify( { 'server': make_public_cluster(cluster[0]) } )
+
 
 if __name__ == '__main__':
     app.config.update(
         DEBUG=True,
     );
     server_view = ServerAPI.as_view('server_api')
+    cluster_view = ClusterAPI.as_view('cluster_api')
     app.add_url_rule('/api/1.0/servers/', defaults={'server_id': None},
                      view_func=server_view, methods=['GET',])
     app.add_url_rule('/api/1.0/servers/', view_func=server_view, methods=['POST',])
     app.add_url_rule('/api/1.0/servers/<int:server_id>', view_func=server_view,
                      methods=['GET', 'PUT', 'DELETE'])
+
+    app.add_url_rule('/api/1.0/cluster/', defaults={'cluster_id': None},
+                     view_func=cluster_view, methods=['GET',])
+    app.add_url_rule('/api/1.0/cluster/<int:cluster_id>', view_func=cluster_view,
+                     methods=['GET','PUT', 'DELETE'])
+    app.add_url_rule('/api/1.0/cluster/', view_func=cluster_view, methods=['POST',])
+    app.add_url_rule('/api/1.0/cluster/member', view_func=cluster_view,
+                     methods=['POST',])
+    app.add_url_rule('/api/1.0/cluster/member/<int:member_id>', view_func=cluster_view,
+                     methods=['GET', 'PUT', 'DELETE'])
+
 
     app.run(threaded=True, host='0.0.0.0', port=8000)
