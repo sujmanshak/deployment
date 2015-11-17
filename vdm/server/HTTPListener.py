@@ -40,10 +40,9 @@ databases = [{
     'id': 1,
     "name": "database1",
     "deployment" : "default",
-    "members": {
-        'id' :1,
-      "member": { "name": "server1" }
-    }
+    "members": [
+      { 'id' :1,"name": "server1" }
+    ]
   }
 ]
 
@@ -687,10 +686,9 @@ class DatabaseAPI(MethodView):
                         'id': 1,
                         'name': "database1",
                         'deployment': "default",
-                        "members": {
-                                "id": 1,
-                                "member": { "name": "server1" }
-                            }
+                        "members": [
+                                { "id": 1,"name": "server1" }
+                            ]
                     }
                     )
 
@@ -701,7 +699,7 @@ class DatabaseAPI(MethodView):
             database = filter(lambda t: t['id'] == database_id, databases)
             if len(database) == 0:
                 abort(404)
-            return jsonify( { 'server': make_public_database(database[0]) } )
+            return jsonify( { 'database': make_public_database(database[0]) } )
 
     def post(self):
         if not request.json or not 'name' in request.json:
@@ -716,7 +714,7 @@ class DatabaseAPI(MethodView):
 
 
         databaseId = 0
-        if not servers:
+        if not databases:
             databaseId = 1
         else:
             databaseId = databases[-1]['id'] + 1
@@ -729,39 +727,64 @@ class DatabaseAPI(MethodView):
         databases.append(database)
         return jsonify( { 'database': database, 'status':1 } ),201
 
+    def put(self,database_id):
+         # update a single server
+        currentdatabase = filter(lambda t: t['id'] == database_id, databases)
+        if len(currentdatabase) == 0:
+            abort(404)
+        if not request.json:
+            abort(400)
+        if 'name' in request.json and type(request.json['name']) != unicode:
+            abort(400)
 
-#class databaseMemberAPI(MethodView):
+        if 'name' in request.json:
+            if request.json['name']=="":
+                return make_response(jsonify({'error':'Database name is required'}),404)
+
+        currentdatabase[0]['name'] = request.json.get('name', currentdatabase[0]['name'])
+        currentdatabase[0]['deployment'] = request.json.get('deployment', currentdatabase[0]['deployment'])
+        return jsonify( { 'database': currentdatabase[0], 'status': 1} )
+
+class databaseMemberAPI(MethodView):
     
-    # def get (self, member_id):
-    #     global isCurrentNodeAdded
+    def get (self, database_id):
+        # expose a single user
+        database = filter(lambda t: t['id'] == database_id, databases)
+        if len(database) == 0:
+            abort(404)
+
+        return jsonify( { 'members': database[0]['members'] } )
+
+    # def post (self, database_id):
+    #     #add a member to the database
     #
-    #     if member_id is None:
+    #     database = filter(lambda t: t['id'] == database_id, databases)
+    #     if len(database) == 0:
+    #         abort(404)
     #
-    #         if not members and isCurrentNodeAdded==False:
-    #             #add default server
-    #             isCurrentNodeAdded = True
-    #             databases.append(
-    #                 {
-    #                     "members": {
-    #                             "id": 1,
-    #                             "member": { "name": "server1" }
-    #                         }
-    #                 }
-    #                 )
+    #     if not request.json or not 'name' in request.json:
+    #         abort(400)
     #
-    #         # return a list of users
-    #         return jsonify( { 'databases': map(make_public_database, databases) } )
+    #     if request.json['name']=="":
+    #         return make_response(jsonify({'error':'member name is required'}),404)
+    #
+    #     database = filter(lambda t: t['name'] == request.json['name'], databases)
+    #     if len(database)!=0:
+    #         return make_response(jsonify({'error': 'member name already exists'}), 404)
+    #
+    #
+    #     memberId = 0
+    #     if not servers:
+    #         memberId = 1
     #     else:
-    #         # expose a single user
-    #         database = filter(lambda t: t['id'] == database_id, databases)
-    #         if len(database) == 0:
-    #             abort(404)
-    #         return jsonify( { 'server': make_public_database(database[0]) } )
-    # def post(self):
-    #
-    # def put(self,member_id):
-    #
-    # def delete(self,member_id):
+    #         memberId = databases[-1]['id'] + 1
+    #     database = {
+    #     'id': memberId,
+    #     'name': request.json['name'],
+    #     }
+    #     databases.append(database)
+    #     return jsonify( { 'database': database, 'status':1 } ),201
+
 
 if __name__ == '__main__':
     app.config.update(
@@ -769,7 +792,7 @@ if __name__ == '__main__':
     );
     server_view = ServerAPI.as_view('server_api')
     database_view = DatabaseAPI.as_view('database_api')
-    # databasemember_view = databaseMemberAPI.as_view('databasemember_api')
+    databasemember_view = databaseMemberAPI.as_view('databasemember_api')
     app.add_url_rule('/api/1.0/servers/', defaults={'server_id': None},
                      view_func=server_view, methods=['GET',])
     app.add_url_rule('/api/1.0/servers/', view_func=server_view, methods=['POST',])
@@ -781,10 +804,10 @@ if __name__ == '__main__':
     app.add_url_rule('/api/1.0/database/<int:database_id>', view_func=database_view,
                      methods=['GET','PUT', 'DELETE'])
     app.add_url_rule('/api/1.0/database/', view_func=database_view, methods=['POST',])
-    # app.add_url_rule('/api/1.0/database/member', view_func=databasemember_view,
-    #                  methods=['POST',])
-    # app.add_url_rule('/api/1.0/database/member/<int:member_id>', view_func=databasemember_view,
-    #                  methods=['GET', 'PUT', 'DELETE'])
+    app.add_url_rule('/api/1.0/database/member/<int:database_id>', view_func=databasemember_view, methods=['POST','GET'])
+
+
+
 
 
     app.run(threaded=True, host='0.0.0.0', port=8000)
