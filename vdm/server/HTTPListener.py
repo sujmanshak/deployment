@@ -36,9 +36,9 @@ app = Flask(__name__, template_folder ="../templates", static_folder="../static"
 
 servers = []
 
-clusters = [{
+databases = [{
     'id': 1,
-    "name": "cluster1",
+    "name": "database1",
     "deployment" : "default",
     "members": {
         'id' :1,
@@ -46,6 +46,7 @@ clusters = [{
     }
   }
 ]
+
 
 
 
@@ -67,11 +68,11 @@ def make_public_server(servers):
         new_server[field] = servers[field]
     return new_server
 
-def make_public_cluster(clusters):
-    new_cluster = {}
-    for field in clusters:
-        new_cluster[field]= clusters[field]
-    return new_cluster
+def make_public_database(databases):
+    new_database = {}
+    for field in databases:
+        new_database[field]= databases[field]
+    return new_database
 
 isCurrentNodeAdded = False
 
@@ -673,19 +674,18 @@ class ServerAPI(MethodView):
         currentserver[0]['placement-group'] = request.json.get('placement-group', currentserver[0]['placement-group'])
         return jsonify( { 'server': currentserver[0], 'status': 1} )
 
-class ClusterAPI(MethodView):
-    def get (self,cluster_id):
-        global isCurrentNodeAdded
+class DatabaseAPI(MethodView):
+    def get (self,database_id):
 
-        if cluster_id is None:
+        if database_id is None:
 
-            if not clusters and isCurrentNodeAdded==False:
+            if not databases:
                 #add default server
-                isCurrentNodeAdded = True
-                clusters.append(
+               # isCurrentNodeAdded = True
+                databases.append(
                     {
                         'id': 1,
-                        'name': "cluster1",
+                        'name': "database1",
                         'deployment': "default",
                         "members": {
                                 "id": 1,
@@ -695,36 +695,96 @@ class ClusterAPI(MethodView):
                     )
 
             # return a list of users
-            return jsonify( { 'clusters': map(make_public_cluster, clusters) } )
+            return jsonify( { 'databases': map(make_public_database, databases) } )
         else:
             # expose a single user
-            cluster = filter(lambda t: t['id'] == cluster_id, clusters)
-            if len(cluster) == 0:
+            database = filter(lambda t: t['id'] == database_id, databases)
+            if len(database) == 0:
                 abort(404)
-            return jsonify( { 'server': make_public_cluster(cluster[0]) } )
+            return jsonify( { 'server': make_public_database(database[0]) } )
 
+    def post(self):
+        if not request.json or not 'name' in request.json:
+            abort(400)
+
+        if request.json['name']=="":
+            return make_response(jsonify({'error':'database name is required'}),404)
+
+        database = filter(lambda t: t['name'] == request.json['name'], databases)
+        if len(database)!=0:
+            return make_response(jsonify({'error': 'database name already exists'}), 404)
+
+
+        databaseId = 0
+        if not servers:
+            databaseId = 1
+        else:
+            databaseId = databases[-1]['id'] + 1
+        database = {
+        'id': databaseId,
+        'name': request.json['name'],
+        'deployment': request.json.get('deployment', ""),
+        'members':{}
+        }
+        databases.append(database)
+        return jsonify( { 'database': database, 'status':1 } ),201
+
+
+#class databaseMemberAPI(MethodView):
+    
+    # def get (self, member_id):
+    #     global isCurrentNodeAdded
+    #
+    #     if member_id is None:
+    #
+    #         if not members and isCurrentNodeAdded==False:
+    #             #add default server
+    #             isCurrentNodeAdded = True
+    #             databases.append(
+    #                 {
+    #                     "members": {
+    #                             "id": 1,
+    #                             "member": { "name": "server1" }
+    #                         }
+    #                 }
+    #                 )
+    #
+    #         # return a list of users
+    #         return jsonify( { 'databases': map(make_public_database, databases) } )
+    #     else:
+    #         # expose a single user
+    #         database = filter(lambda t: t['id'] == database_id, databases)
+    #         if len(database) == 0:
+    #             abort(404)
+    #         return jsonify( { 'server': make_public_database(database[0]) } )
+    # def post(self):
+    #
+    # def put(self,member_id):
+    #
+    # def delete(self,member_id):
 
 if __name__ == '__main__':
     app.config.update(
         DEBUG=True,
     );
     server_view = ServerAPI.as_view('server_api')
-    cluster_view = ClusterAPI.as_view('cluster_api')
+    database_view = DatabaseAPI.as_view('database_api')
+    # databasemember_view = databaseMemberAPI.as_view('databasemember_api')
     app.add_url_rule('/api/1.0/servers/', defaults={'server_id': None},
                      view_func=server_view, methods=['GET',])
     app.add_url_rule('/api/1.0/servers/', view_func=server_view, methods=['POST',])
     app.add_url_rule('/api/1.0/servers/<int:server_id>', view_func=server_view,
                      methods=['GET', 'PUT', 'DELETE'])
 
-    app.add_url_rule('/api/1.0/cluster/', defaults={'cluster_id': None},
-                     view_func=cluster_view, methods=['GET',])
-    app.add_url_rule('/api/1.0/cluster/<int:cluster_id>', view_func=cluster_view,
+    app.add_url_rule('/api/1.0/database/', defaults={'database_id': None},
+                     view_func=database_view, methods=['GET',])
+    app.add_url_rule('/api/1.0/database/<int:database_id>', view_func=database_view,
                      methods=['GET','PUT', 'DELETE'])
-    app.add_url_rule('/api/1.0/cluster/', view_func=cluster_view, methods=['POST',])
-    app.add_url_rule('/api/1.0/cluster/member', view_func=cluster_view,
-                     methods=['POST',])
-    app.add_url_rule('/api/1.0/cluster/member/<int:member_id>', view_func=cluster_view,
-                     methods=['GET', 'PUT', 'DELETE'])
+    app.add_url_rule('/api/1.0/database/', view_func=database_view, methods=['POST',])
+    # app.add_url_rule('/api/1.0/database/member', view_func=databasemember_view,
+    #                  methods=['POST',])
+    # app.add_url_rule('/api/1.0/database/member/<int:member_id>', view_func=databasemember_view,
+    #                  methods=['GET', 'PUT', 'DELETE'])
 
 
     app.run(threaded=True, host='0.0.0.0', port=8000)
