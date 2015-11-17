@@ -36,15 +36,7 @@ app = Flask(__name__, template_folder ="../templates", static_folder="../static"
 
 servers = []
 
-databases = [{
-    'id': 1,
-    "name": "database1",
-    "deployment" : "default",
-    "members": [
-      { 'id' :1,"name": "server1" }
-    ]
-  }
-]
+databases = []
 
 
 
@@ -74,6 +66,7 @@ def make_public_database(databases):
     return new_database
 
 isCurrentNodeAdded = False
+isCurrentDatabaseAdded = False
 
 class ServerAPI(MethodView):
 
@@ -675,19 +668,19 @@ class ServerAPI(MethodView):
 
 class DatabaseAPI(MethodView):
     def get (self,database_id):
-
+        global isCurrentDatabaseAdded
         if database_id is None:
 
-            if not databases:
+            if not databases and isCurrentDatabaseAdded==False:
                 #add default server
-               # isCurrentNodeAdded = True
+                isCurrentDatabaseAdded = True
                 databases.append(
                     {
                         'id': 1,
-                        'name': "database1",
-                        'deployment': "default",
+                        'name': "local",
+                        'deployment': "",
                         "members": [
-                                { "id": 1,"name": "server1" }
+                                { "id": 1,"name": socket.gethostname() }
                             ]
                     }
                     )
