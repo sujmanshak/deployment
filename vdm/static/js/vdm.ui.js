@@ -35,6 +35,13 @@
      $(this).parent().parent().next().text(onOffText);
     });
 
+    //multi-select
+    var s = $('#my-select');
+    s.multiSelect({
+        selectableHeader: "<div class='custom-header'>All Database</div>",
+        selectionHeader: "<div class='custom-header'>Selected Database</div>"
+    });
+
     loadPage();
 });
 
@@ -140,6 +147,16 @@ var loadPage = function() {
         },
         IpMessage:{
             regex: 'Please enter a valid IP address.'
+        },
+        DatabaseNameRule:{
+            required: true,
+            checkDuplicateDb: [],
+            regex: /^[a-zA-Z0-9_.]+$/
+        },
+        DatabaseNameMessage:{
+            required: "This field is required.",
+            checkDuplicateDb: 'This database already exists.',
+            regex: 'Only alphabets, numbers, _ and . are allowed.'
         }
     }
 
@@ -190,6 +207,29 @@ var loadPage = function() {
     );
 
     $.validator.addMethod(
+        "checkDuplicateDb",
+        function (value) {
+            var arr = VdmUI.CurrentDbList;
+            if (VdmUI.isDbCreate == false) {
+                if ($.inArray(value, arr) != -1) {
+                    if (value == VdmUI.dbToUpdate)
+                        return true;
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                if ($.inArray(value, arr) != -1) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        },
+        "Database already exists."
+    );
+
+    $.validator.addMethod(
         "regex",
         function (value, element, regexp) {
             var re = new RegExp(regexp);
@@ -232,6 +272,10 @@ var loadPage = function() {
     VdmService.GetServerList(function(connection){
         VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
     })
+
+    VdmService.GetDatabaseList(function(connection){
+        VdmUI.displayDatabases(connection.Metadata['DATABASE_LISTING'])
+    });
 
     setInterval(function () {
         VdmService.GetServerList(function(connection){
@@ -288,7 +332,7 @@ var loadPage = function() {
         var publicInterface = $('#txtPublicInterface').val()
         var placementGroup = $('#txtPlacementGroup').val()
         var serverInfo ={
-            serverData:{
+            data:{
                 "name" : serverName,
                 "hostname" : hostName,
                 "description" : description,
@@ -337,6 +381,58 @@ var loadPage = function() {
         VdmUI.resetTextBox();
     });
 
+    $('#frmCreateDB').validate({
+        rules: {
+            txtDbName: validationRules.DatabaseNameRule
+        },
+        messages: {
+            txtDbName: validationRules.DatabaseNameMessage
+        }
+
+    });
+
+    $('#btnAddDatabaseOk').on('click', function(e){
+        if (!$("#frmCreateDB").valid()) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+
+        var dbName = $('#txtDbName').val();
+        var deployment = $('#txtDeployment').val();
+        var dbInfo = {
+            data:{
+                name: dbName,
+                deployment: deployment
+            },
+            id:$('#addDatabase').data('id')
+        }
+        if(VdmUI.isDbCreate){
+            VdmService.CreateDatabase(function(connection){
+                if(connection.Metadata['DATABASE_CREATE'].status == 1){
+                    VdmService.GetDatabaseList(function(connection){
+                        VdmUI.displayDatabases(connection.Metadata['DATABASE_LISTING'])
+                    })
+                } else{
+                    $('#errorMsg').html('Unable to create database.')
+                    $('#errorDialog').modal('show');
+                }
+            }, dbInfo);
+        } else {
+            VdmService.UpdateDatabase(function(connection){
+                if(connection.Metadata['DATABASE_UPDATE'].status == 1){
+                    VdmService.GetDatabaseList(function(connection){
+                        VdmUI.displayDatabases(connection.Metadata['DATABASE_LISTING'])
+                    })
+                } else {
+                    $('#errorMsg').html('Unable to update database.')
+                    $('#errorDialog').modal('show');
+                }
+            }, dbInfo);
+        }
+
+    });
+
     var toggleServer = function (state,hostId){
 
         if(state == editStates.ShowLoading)
@@ -377,6 +473,25 @@ var loadPage = function() {
             })
         }, serverData);
     })
+
+    $('#btnAddDatabase').on('click', function(){
+        VdmUI.resetDbForm();
+        VdmUI.isDbCreate = true;
+        VdmUI.dbToUpdate = '';
+        $('#dbTitle').html('Add Database');
+    });
+
+    $('#btnDeleteDatabaseOk').on('click', function(){
+        var dbId = $('#deleteDatabase').data('id');
+        var dbData = {
+            id: dbId
+        }
+        VdmService.DeleteDatabase(function(connection){
+            VdmService.GetDatabaseList(function(connection){
+                VdmUI.displayDatabases(connection.Metadata['DATABASE_LISTING'])
+            })
+        }, dbData);
+    });
 };
 
 (function (window) {
@@ -384,9 +499,13 @@ var loadPage = function() {
         this.CurrentTab = NavigationTabs.DBMonitor;
         this.CurrentServerList = [];
         this.CurrentHostList = [];
+        this.CurrentDbList = [];
         this.isServerCreate = true;
+        this.isDbCreate = true;
         this.serverToUpdate = '';
         this.hostToUpdate = '';
+        this.dbToUpdate = '';
+        this.members = [];
         this.getCookie = function(name) {
             return $.cookie(name + "_" + VdmConfig.GetPortId());
         };
@@ -395,73 +514,83 @@ var loadPage = function() {
             if (serverList == undefined) {
                 return;
             }
-            var htmlList = "";
-            VdmUI.CurrentServerList = [];
-            VdmUI.CurrentHostList = [];
-            serverList.servers.forEach(function (info) {
-                var hostName = info["hostname"];
-                var serverName = info["name"]
-                var hostId = info["id"];
-                var infos = JSON.stringify(info)
-                htmlList += '<tr>' +
-                            '<td>' + hostName + '</td>' +
-                            '<td data-id="' + hostId + '" data-info=\''+ infos +'\'><a class="btnUpdateServer" href="javascript:void(0);"data-toggle="modal" data-target="#addServer" >' +
-                            '<div class="editServer" id="editServer_'+hostId+'"></div></a>' +
-                            '<div class="loading-small" id="loadingServer_'+hostId+'" style="display:none"></div>' +
-                            '<span class="editServerTxt" id="editServerTxt_'+hostId+'">Edit</span></td>' +
-                            '<td data-id="' + hostId + '" ><a class="btnDeleteServer" href="javascript:void(0);"data-toggle="modal" data-target="#deleteConfirmation" >' +
-                            '<div class="deleteServer" id="deleteServer_'+hostId+'"></div></a>' +
-                            '<span class="deleteServerTxt" id="deleteServerTxt_'+hostId+'">Delete</span></td>' +
-                        '</tr>';
-                VdmUI.CurrentServerList.push(serverName);
-                VdmUI.CurrentHostList.push(hostName)
-            });
-            if(htmlList == ""){
-                $('#serverList').html('<tr><td style="top:-1px !important">No servers Available.</td><td></td></tr>')
-            }else{
-                $('#serverList').html(htmlList)
+            var dbId = VdmUI.getCurrentDbCookie();
+            VdmUI.members = []
+            var dbData = {
+                id: dbId
             }
 
-            $('.btnDeleteServer').on('click', function(){
-                var serverId = $(this.parentElement).data('id');
-                $('#deleteConfirmation').data('serverid',serverId);
-            });
+            VdmService.GetMemberList(function(connection){
+                VdmUI.members = connection['Metadata']['MEMBER_LISTING'].members;
 
-            $('.btnUpdateServer').on('click', function(){
-                VdmUI.resetTextBox();
-                VdmUI.isServerCreate = false;
-                var serverInfo = $(this.parentElement).data('info');
-                VdmUI.serverToUpdate = serverInfo['name'];
-                VdmUI.hostToUpdate = serverInfo['hostname'];
-                $('#addServer').data('serverid',serverInfo['id']);
-                $('#serverName').val(serverInfo['name']);
-                $('#txtHostName').val(serverInfo['hostname']);
-                $('#txtDescription').val(serverInfo['description']);
-                $('#txtClientPort').val(serverInfo['client-listener']);
-                $('#txtAdminPort').val(serverInfo['admin-listener']);
-                $('#txtInternalPort').val(serverInfo['internal-listener']);
-                $('#txtHttpPort').val(serverInfo['http-listener']);
-                $('#txtZookeeper').val(serverInfo['zookeeper-listener']);
-                $('#txtReplicationPort').val(serverInfo['replication-listener']);
-                $('#txtInternalInterface').val(serverInfo['internal-interface'])
-                $('#txtExternalInterface').val(serverInfo['external-interface'])
-                $('#txtPublicInterface').val(serverInfo['public-interface']);
-                $('#txtPlacementGroup').val(serverInfo['placement-group']);
-                $('#addServerTitle').html('Update Server');
-                $('#errorServerName').hide();
-                $('#errorHostName').hide();
-                $('#errorDescription').hide();
-            });
+                var htmlList = "";
+                VdmUI.CurrentServerList = [];
+                VdmUI.CurrentHostList = [];
+                serverList.servers.forEach(function (info) {
+                    var hostName = info["hostname"];
+                    var serverName = info["name"]
+                    var hostId = info["id"];
+                    var infos = JSON.stringify(info)
+                    if($.inArray(hostId, VdmUI.members) != -1){
+                        htmlList += '<tr>' +
+                                    '<td>' + hostName + '</td>' +
+                                    '<td data-id="' + hostId + '" data-info=\''+ infos +'\'><a class="btnUpdateServer" href="javascript:void(0);"data-toggle="modal" data-target="#addServer" >' +
+                                    '<div class="editServer" id="editServer_'+hostId+'"></div></a>' +
+                                    '<div class="loading-small" id="loadingServer_'+hostId+'" style="display:none"></div>' +
+                                    '<span class="editServerTxt" id="editServerTxt_'+hostId+'">Edit</span></td>' +
+                                    '<td data-id="' + hostId + '" ><a class="btnDeleteServer" href="javascript:void(0);"data-toggle="modal" data-target="#deleteConfirmation" >' +
+                                    '<div class="deleteServer" id="deleteServer_'+hostId+'"></div></a>' +
+                                    '<span class="deleteServerTxt" id="deleteServerTxt_'+hostId+'">Delete</span></td>' +
+                                '</tr>';
+                    }
+                    VdmUI.CurrentServerList.push(serverName);
+                    VdmUI.CurrentHostList.push(hostName)
+                });
+                if(htmlList == ""){
+                    $('#serverList').html('<tr><td style="top:-1px !important">No servers Available.</td><td></td></tr>')
+                }else{
+                    $('#serverList').html(htmlList)
+                }
 
-            $('#btnAddServer').on('click', function(){
-                VdmUI.isServerCreate = true;
-                VdmUI.serverToUpdate = '';
-                VdmUI.hostToUpdate = '';
-                $('#addServerTitle').html('Add Server');
-                VdmUI.resetTextBox();
-            });
+                $('.btnDeleteServer').on('click', function(){
+                    var serverId = $(this.parentElement).data('id');
+                    $('#deleteConfirmation').data('serverid',serverId);
+                });
 
-            this.resetTextBox = function(){
+                $('.btnUpdateServer').on('click', function(){
+                    VdmUI.resetTextBox();
+                    VdmUI.isServerCreate = false;
+                    var serverInfo = $(this.parentElement).data('info');
+                    VdmUI.serverToUpdate = serverInfo['name'];
+                    VdmUI.hostToUpdate = serverInfo['hostname'];
+                    $('#addServer').data('serverid',serverInfo['id']);
+                    $('#serverName').val(serverInfo['name']);
+                    $('#txtHostName').val(serverInfo['hostname']);
+                    $('#txtDescription').val(serverInfo['description']);
+                    $('#txtClientPort').val(serverInfo['client-listener']);
+                    $('#txtAdminPort').val(serverInfo['admin-listener']);
+                    $('#txtInternalPort').val(serverInfo['internal-listener']);
+                    $('#txtHttpPort').val(serverInfo['http-listener']);
+                    $('#txtZookeeper').val(serverInfo['zookeeper-listener']);
+                    $('#txtReplicationPort').val(serverInfo['replication-listener']);
+                    $('#txtInternalInterface').val(serverInfo['internal-interface'])
+                    $('#txtExternalInterface').val(serverInfo['external-interface'])
+                    $('#txtPublicInterface').val(serverInfo['public-interface']);
+                    $('#txtPlacementGroup').val(serverInfo['placement-group']);
+                    $('#addServerTitle').html('Update Server');
+                });
+
+                $('#btnAddServer').on('click', function(){
+                    VdmUI.isServerCreate = true;
+                    VdmUI.serverToUpdate = '';
+                    VdmUI.hostToUpdate = '';
+                    $('#addServerTitle').html('Add Server');
+                    VdmUI.resetTextBox();
+                });
+            }, dbData);
+        };
+
+        this.resetTextBox = function(){
                 $('#serverName').val('');
                 $('#txtHostName').val('');
                 $('#txtDescription').val('');
@@ -488,6 +617,104 @@ var loadPage = function() {
                 $('#errorInternalPort').hide();
                 $('#errorHttpPort').hide();
             }
+
+        this.resetDbForm = function() {
+                $('#txtDbName').val('');
+                $('#txtDeployment').val('');
+                $('#errorDbName').hide();
+            };
+
+        this.displayDatabases = function(databaseList){
+            if(databaseList == undefined)
+                return;
+            var htmlList = '';
+            var count = 0;
+            VdmUI.CurrentDbList = [];
+            var currentDbId = VdmUI.getCurrentDbCookie();
+            databaseList.databases.forEach(function (info) {
+                var dbName = info['name'];
+                var dbId = info['id']
+                var dbInfo = JSON.stringify(info);
+                if(dbId == currentDbId){
+                    htmlList += '<tr>' +
+                                '<td data-id="' + dbId + '"><a class="btnDbList selected" href="javascript:void(0)">'+ dbName +'</a></td>' +
+                                '<td data-id="' + dbId + '" data-info=\''+ dbInfo +'\' width="2%"><a class="btnUpdateDatabase" href="javascript:void(0);"data-toggle="modal" data-target="#addDatabase" >' +
+                                '<div class="editServerDatabase"></div>' +
+                                '</a> <span class="editServerDatabaseTxt">Edit</span></td>' +
+                                '<td data-id="' + dbId + '" width="2%"><a class="btnDeleteDatabase" href="javascript:void(0);"data-toggle="modal" data-target="#deleteDatabase" >' +
+                                '<div class="deleteDisableDS"></div>' +
+                                '</a> <span class="deleteDisableDSTxt">Delete</span></td>' +
+                                '</tr>';
+                } else {
+                    htmlList += '<tr>' +
+                                '<td data-id="' + dbId + '"><a class="btnDbList" href="javascript:void(0)">'+ dbName +'</a></td>' +
+                                '<td data-id="' + dbId + '" data-info=\''+ dbInfo +'\' width="2%"><a class="btnUpdateDatabase" href="javascript:void(0);"data-toggle="modal" data-target="#addDatabase" >' +
+                                '<div class="editServerDatabase"></div>' +
+                                '</a> <span class="editServerDatabaseTxt">Edit</span></td>' +
+                                '<td data-id="' + dbId + '" width="2%"><a class="btnDeleteDatabase" href="javascript:void(0);"data-toggle="modal" data-target="#deleteDatabase" >' +
+                                '<div class="deleteDatabaseServer"></div>' +
+                                '</a> <span class="deleteServerDatabaseTxt">Delete</span></td>' +
+                                '</tr>';
+                }
+                VdmUI.CurrentDbList.push(dbName);
+            });
+
+            if(htmlList == ""){
+                $('#tblDatabaseList').html('<tr><td style="top:-1px !important">No servers Available.</td><td></td></tr>')
+            }else{
+                $('#tblDatabaseList').html(htmlList)
+            }
+
+            $('.btnUpdateDatabase').on('click', function(){
+                VdmUI.resetDbForm();
+                VdmUI.isDbCreate = false;
+                var dbInfo = $(this.parentElement).data('info');
+                VdmUI.dbToUpdate = dbInfo['name'];
+                $('#addDatabase').data('id',dbInfo['id']);
+                $('#txtDbName').val(dbInfo['name']);
+                $('#txtDeployment').val(dbInfo['deployment']);
+                $('#dbTitle').html('Update Database');
+            });
+
+            $('.btnDeleteDatabase').on('click', function(){
+                var dbId = $(this.parentElement).data('id');
+                $('#deleteDatabase').data('id', dbId);
+            })
+
+            $('.btnDbList').on('click', function(){
+                //$('.preload').show();
+                var dbId = $(this.parentElement).data('id');
+                VdmUI.saveCurrentDbCookie(dbId);
+                $(this).addClass('selected');
+                VdmService.GetDatabaseList(function(connection){
+                    VdmUI.displayDatabases(connection.Metadata['DATABASE_LISTING'])
+                    //$('.preload').fadeOut(4000);
+                })
+            })
+
+        };
+
+        this.saveCurrentDbCookie = function(dbId){
+             saveCookie("current-db", dbId);
+        };
+
+        this.getCurrentDbCookie = function(){
+            var dbId = -1;
+            var count = 0;
+            try {
+                dbId = $.parseJSON(VdmUI.getCookie("current-db"));
+            } catch (e) {
+                VdmService.GetDatabaseList(function(connection){
+                    var obj =connection.Metadata['DATABASE_LISTING'].databases[0];
+                    dbId = obj.id;
+                    VdmUI.saveCurrentDbCookie(dbId);
+                })
+            }
+            return dbId;
+        };
+
+        this.getNonMemberServerList = function(){
+
         };
     });
     window.VdmUI = VdmUI = new iVdmUi();

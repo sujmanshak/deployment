@@ -27,28 +27,43 @@
                 return (new iQueue(this));
             };
 
-            this.BuildParamSet = function (requestMethod, serverDetails) {
-                param = "servers/"
-                if (requestMethod.toLowerCase() == "delete" || requestMethod.toLowerCase() == "put")
-                    param += serverDetails.serverData.id.toString();
+            this.BuildParamSet = function (requestMethod, details) {
+                param = ''
+                var apiName = details.apiName;
+                switch(apiName) {
+                    case 'SERVER':
+                        param = 'servers/'
+                        break;
+                    case 'DATABASE':
+                        param = 'database/'
+                        break;
+                    case 'MEMBER':
+                        param = 'database/member/'
+                        break;
+                    default:
+                        param = 'servers/'
+                }
+                if (requestMethod.toLowerCase() == "delete" || requestMethod.toLowerCase() == "put"
+                    || apiName == 'MEMBER')
+                    param += details.dataObj.id.toString();
                 return param;
             };
 
-            this.CallExecute = function (callback, requestMethod, serverDetails) {
+            this.CallExecute = function (callback, requestMethod, details) {
                 var uri;
                 uri = 'http://' + this.server + ':' + this.port + '/api/1.0/';
                 var params = '';
-                params = this.BuildParamSet(requestMethod, serverDetails);
+                params = this.BuildParamSet(requestMethod, details);
                 uri = uri + params;
                 if (typeof (params) == 'string') {
                    if (requestMethod.toLowerCase() == "get") {
                         jQuery.getJSON(uri, callback);
                     } else if (requestMethod.toLowerCase() == "put") {
-                        jQuery.putJSON(uri, serverDetails.serverData.serverData, callback);
+                        jQuery.putJSON(uri, details.dataObj.data, callback);
                     } else if (requestMethod.toLowerCase() == "delete") {
                         jQuery.deleteJSON(uri, callback);
                     } else if (requestMethod.toLowerCase() == "post") {
-                        jQuery.postJSON(uri, serverDetails.serverData.serverData, callback);
+                        jQuery.postJSON(uri, details.dataObj.data, callback);
                     }
                 } else if (callback != null)
                     callback({ "status": -1, "statusstring": "PrepareStatement error: " + params[0], "results": [] });

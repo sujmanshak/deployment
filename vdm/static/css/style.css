@@ -139,7 +139,7 @@ label.error {
 	margin: 0 0 6px 0;
 	height: 10px;
 }
-.clusterIcon, .plus, .stop, .stopServer, .deleteServer, .editServer, .uploadIcon, .downloadIcon, .drArrow, .popup_close, .popup_close:hover, .clusterConfigIcon, .serverIcon, .plusIcon, .secCrossIcon {
+.clusterIcon, .plus, .stop, .stopServer, .deleteServer,.editServerDatabase,.deleteDatabaseServer,.deleteDisableDS,.editServer, .uploadIcon, .downloadIcon, .drArrow, .popup_close, .popup_close:hover, .clusterConfigIcon, .serverIcon, .plusIcon, .secCrossIcon {
 	background-image: url(../images/icons.png);
 	background-repeat: no-repeat;
 }
@@ -171,6 +171,33 @@ label.error {
 	background-position: -4px -95px;
 	cursor: pointer;
 }
+.editServerDatabase {
+    height: 30px;
+    background-position: 39px -165px;
+    cursor: pointer;
+}
+.editServerDatabaseTxt {
+    padding: 0 0 0 41px;
+    font-size: 12px;
+}
+.preload { width:100px;
+    height: 100px;
+    position: fixed;
+    top: 50%;
+    left: 50%;}
+
+.deleteDatabaseServer {
+    height: 26px;
+    background-position: -6px -95px;
+    cursor: pointer;
+}
+.deleteDisableDS{
+    height: 26px;
+    background-position: -6px -488px;
+    cursor: pointer;}
+.deleteDisableDSTxt {
+    padding: 0 0 0 0px; color:#aaa;
+    font-size: 12px;}
 .editServer {
 	width: 40px;
 	height: 30px;
@@ -309,9 +336,70 @@ ul.nav li a:hover, ul.nav li a.active, ul.nav li.active a {
 	height: 45px;
 }
 /******navigation ends****/
+.database {
+	margin: 70px 0 20px 0;
+}
+.databaseContainer { background:#fff; border-left:1px solid #ccc;border-right:1px solid #ccc; padding:0px 0 0 0;}
+.tblDatabase {
+	margin: 0;
+	padding: 0;
+
+}
+.tblDatabase tr {
+	border-bottom: 1px solid #CCCCCC;
+}
+.tblDatabase tr td a.selected {
+	color:#68A81A;}
+
+.tblDatabase tr th {
+	background-color: #fbfbfb;
+}
+.tblDatabase tr td a { margin:0; display:block;}
+.tblDatabase tr th:nth-child(1) {
+	padding: 0 0 0 15px;
+}
+.tblDatabase tr:nth-child(5) {
+	border-bottom: none;
+}
+.tblDatabase tr td:nth-child(1) {
+	width: 80%;
+	position: relative;
+	top: -13px;
+	padding-left:20px;
+	font-weight: bold;
+}
+.tblDatabase tr td:nth-child(2) {
+	text-align: center;
+}
+.tblDatabase tr td:nth-child(2), .tblCluster tr td:nth-child(3), .tblCluster tr td:nth-child(4) {
+	width: 5%;
+}
+.tblDatabase tr td {
+	padding: 5px 10px 3px 10px;
+}
+
+.addDatabase {
+	float:right;
+	background: #cccccc none repeat scroll 0 0;
+	cursor: pointer;
+	display: block;
+	font-weight: bold;
+	padding: 0 10px 5px 0;
+	width: 130px;
+}
+.databaseName {
+    position: relative;
+    top: 8px;
+    left: 38px;
+    font-weight: bold;
+    font-size: 16px;
+}
+.DatabaseContent { float:left;}
+
+
 .clusterWrapTop {
-	/*margin: 95px 0 0 0;*/
-	margin: 70px 0 0 0;
+	/*margin: 95px 0 0 0;
+	margin: 70px 0 0 0;*/
 }
 .clusterHeading {
 	background-color: #f5f6f6;
@@ -382,13 +470,21 @@ ul.nav li a:hover, ul.nav li a.active, ul.nav li.active a {
 	display: block;
 	font-weight: bold;
 	height: 34px;
-	margin: 10px 20px;
-	padding: 0 10px 5px 0;
+	margin: 10px 32px 10px 20px;
+	padding: 0 0px 5px 0;
 	width: 111px;
 }
 .addServer a:hover, .addServer a:active, .addServer a:focus {
 	color: #000000;
 }
+
+
+.btnAddServer {padding: 0px 10px 6px 1px; background:#ccc; color:#222; font-weight:bold; border:none;white-space: nowrap; display:inline-block;}
+.btnAddServer:hover, .btnAddServer:active, .btnAddServer:focus {background:#ccc; color:#222; border:none;}
+.addServer a:hover, .addServer a:active, .addServer a:focus {
+	color: #000000;
+}
+
 ul.addServerList {
 	margin: 0;
 	padding: 0;
@@ -447,6 +543,10 @@ ul.addServerList li:nth-child(1) {
 }
 .stopServerTxt {
 	padding: 0 0 0 10px;
+	font-size: 12px;
+}
+.deleteServerDatabaseTxt {
+    padding: 0 0 0 0px;
 	font-size: 12px;
 }
 .deleteServerTxt {
@@ -718,6 +818,9 @@ table.tblPopup {
 	padding: 10px 25px 10px 10px;
 }
 .formServer input[type="text"] {
+	width: 80%;
+}
+.formDB input[type="text"] {
 	width: 80%;
 }
 .formServer textarea {

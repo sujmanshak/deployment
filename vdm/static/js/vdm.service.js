@@ -43,16 +43,19 @@
             try {
                 var processName = "SERVER_LISTING";
                 var requestMethod = "get"
+                var serverDetails = {
+                    apiName: "SERVER"
+                }
                 _connection = VdmCore.HasConnection(server, port, admin, user, processName);
                 if (_connection == null){
                     VdmCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
                         onConnectionAdded(connection, status);
-                    }, requestMethod);
+                    }, requestMethod, serverDetails);
 
                 } else {
                     VdmCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
                         onConnectionAdded(connection, status);
-                    }, requestMethod);
+                    }, requestMethod, serverDetails);
                 }
             } catch (e) {
                 console.log(e.message);
@@ -64,7 +67,8 @@
                 var processName = "SERVER_CREATE";
                 var requestMethod = "POST"
                 var serverDetails = {
-                    "serverData" :serverData
+                    dataObj: serverData,
+                    apiName: "SERVER"
                 }
                 _connection = VdmCore.HasConnection(server, port, admin, user, processName);
                 if (_connection == null){
@@ -86,7 +90,8 @@
                 var processName = "SERVER_DELETE";
                 var requestMethod = "DELETE"
                 var serverDetails = {
-                    serverData:serverData
+                    dataObj: serverData,
+                    apiName: "SERVER"
                 };
                 _connection = VdmCore.HasConnection(server, port, admin, user, processName);
                 if (_connection == null){
@@ -108,7 +113,8 @@
                 var processName = "SERVER_UPDATE";
                 var requestMethod = "PUT"
                 var serverDetails = {
-                    "serverData" :serverInfo
+                    dataObj: serverInfo,
+                    apiName: "SERVER"
                 }
                 _connection = VdmCore.HasConnection(server, port, admin, user, processName);
                 if (_connection == null){
@@ -125,6 +131,122 @@
             }
         };
 
+        this.GetDatabaseList = function (onConnectionAdded) {
+            try {
+                var processName = "DATABASE_LISTING";
+                var requestMethod = "get"
+                var dbDetails = {
+                    apiName: "DATABASE"
+                }
+                _connection = VdmCore.HasConnection(server, port, admin, user, processName);
+                if (_connection == null){
+                    VdmCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod, dbDetails);
+
+                } else {
+                    VdmCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod, dbDetails);
+                }
+            } catch (e) {
+                console.log(e.message);
+            }
+        };
+
+        this.CreateDatabase = function (onConnectionAdded, dbData) {
+            try {
+                var processName = "DATABASE_CREATE";
+                var requestMethod = "POST"
+                var dbDetails = {
+                    dataObj: dbData,
+                    apiName: "DATABASE"
+                }
+                _connection = VdmCore.HasConnection(server, port, admin, user, processName);
+                if (_connection == null){
+                    VdmCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod,dbDetails);
+                } else {
+                    VdmCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod,dbDetails);
+                }
+            } catch (e) {
+                console.log(e.message);
+            }
+        };
+
+        this.UpdateDatabase = function (onConnectionAdded, dbInfo) {
+            try {
+                var processName = "DATABASE_UPDATE";
+                var requestMethod = "PUT"
+                var dbDetails = {
+                    dataObj: dbInfo,
+                    apiName: "DATABASE"
+                }
+                _connection = VdmCore.HasConnection(server, port, admin, user, processName);
+                if (_connection == null){
+                    VdmCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod,dbDetails);
+                } else {
+                    VdmCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod,dbDetails);
+                }
+            } catch (e) {
+                console.log(e.message);
+            }
+        };
+
+        this.DeleteDatabase = function (onConnectionAdded,dbData){
+            try {
+                var processName = "DATABASE_DELETE";
+                var requestMethod = "DELETE"
+                var dbDetails = {
+                    dataObj: dbData,
+                    apiName: "DATABASE"
+                };
+                _connection = VdmCore.HasConnection(server, port, admin, user, processName);
+                if (_connection == null){
+                    VdmCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod,dbDetails);
+                } else {
+                    VdmCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod,dbDetails);
+                }
+            } catch (e) {
+                console.log(e.message);
+            }
+        }
+
+
+        this.GetMemberList = function (onConnectionAdded, memberData) {
+            try {
+                var processName = "MEMBER_LISTING";
+                var requestMethod = "get"
+                var memberDetails = {
+                    apiName: "MEMBER",
+                    dataObj: memberData
+                }
+                _connection = VdmCore.HasConnection(server, port, admin, user, processName);
+                if (_connection == null){
+                    VdmCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod, memberDetails);
+
+                } else {
+                    VdmCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod, memberDetails);
+                }
+            } catch (e) {
+                console.log(e.message);
+            }
+        };
     });
     window.VdmService = VdmService = new iVdmService();
 })(window);
