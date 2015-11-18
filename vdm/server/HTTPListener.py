@@ -109,7 +109,7 @@ class ServerAPI(MethodView):
                 abort(404)
             return jsonify( { 'server': make_public_server(server[0]) } )
 
-    def post(self):
+    def post(self, database_id):
         if not request.json or not 'name' in request.json or not 'hostname' in request.json:
             abort(400)
 
@@ -378,7 +378,16 @@ class ServerAPI(MethodView):
 
         }
         servers.append(server)
-        return jsonify( { 'server': server, 'status':1 } ),201
+
+        # Add server to the current database
+        currentdatabase = filter(lambda t: t['id'] == database_id, databases)
+        if len(currentdatabase) == 0:
+            abort(404)
+        if not request.json:
+            abort(400)
+        currentdatabase[0]['members'].append(serverId)
+
+        return jsonify( { 'server': server, 'status':1,'members': currentdatabase[0]['members']} ),201
 
     def delete(self, server_id):
         # delete a single server
@@ -787,6 +796,7 @@ class databaseMemberAPI(MethodView):
 
 
 
+
 if __name__ == '__main__':
     app.config.update(
         DEBUG=True,
@@ -796,7 +806,7 @@ if __name__ == '__main__':
     databasemember_view = databaseMemberAPI.as_view('databasemember_api')
     app.add_url_rule('/api/1.0/servers/', defaults={'server_id': None},
                      view_func=server_view, methods=['GET',])
-    app.add_url_rule('/api/1.0/servers/', view_func=server_view, methods=['POST',])
+    app.add_url_rule('/api/1.0/servers/<int:database_id>', view_func=server_view, methods=['POST',])
     app.add_url_rule('/api/1.0/servers/<int:server_id>', view_func=server_view,
                      methods=['GET', 'PUT', 'DELETE'])
 
