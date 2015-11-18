@@ -385,6 +385,13 @@ class ServerAPI(MethodView):
         server = filter(lambda t: t['id'] == server_id, servers)
         if len(server) == 0:
             abort(404)
+
+        #Check if server is referenced by database
+
+        for database in databases:
+            if server_id in database["members"]:
+                return jsonify({'error':"server_id cannot be deleted since it is referred by database"})
+
         servers.remove(server[0])
         return jsonify( { 'result': True } )
 
@@ -424,7 +431,6 @@ class ServerAPI(MethodView):
             if(request.json['admin-listener']!=""):
                 if(":" in request.json['admin-listener']):
                     count =  request.json['admin-listener'].count(":")
-                    print "test" + str(count)
                     if(count>1):
                        return make_response(jsonify({'error': 'Invalid admin listener'}), 404)
                     #validate both ip as well as port
@@ -679,9 +685,7 @@ class DatabaseAPI(MethodView):
                         'id': 1,
                         'name': "local",
                         'deployment': "",
-                        "members": [
-                                { "id": 1,"name": socket.gethostname() }
-                            ]
+                        "members": [1]
                     }
                     )
 
@@ -715,7 +719,7 @@ class DatabaseAPI(MethodView):
         'id': databaseId,
         'name': request.json['name'],
         'deployment': request.json.get('deployment', ""),
-        'members':{}
+        'members':[]
         }
         databases.append(database)
         return jsonify( { 'database': database, 'status':1 } ),201
@@ -738,6 +742,17 @@ class DatabaseAPI(MethodView):
         currentdatabase[0]['deployment'] = request.json.get('deployment', currentdatabase[0]['deployment'])
         return jsonify( { 'database': currentdatabase[0], 'status': 1} )
 
+    def delete (self,database_id):
+         # delete a single database
+        database = filter(lambda t: t['id'] == database_id, databases)
+        if len(database) == 0:
+            abort(404)
+
+        #Check if server is referenced by database
+
+        databases.remove(database[0])
+        return jsonify( { 'result': True } )
+
 class databaseMemberAPI(MethodView):
     
     def get (self, database_id):
@@ -748,35 +763,28 @@ class databaseMemberAPI(MethodView):
 
         return jsonify( { 'members': database[0]['members'] } )
 
-    # def post (self, database_id):
-    #     #add a member to the database
-    #
-    #     database = filter(lambda t: t['id'] == database_id, databases)
-    #     if len(database) == 0:
-    #         abort(404)
-    #
-    #     if not request.json or not 'name' in request.json:
-    #         abort(400)
-    #
-    #     if request.json['name']=="":
-    #         return make_response(jsonify({'error':'member name is required'}),404)
-    #
-    #     database = filter(lambda t: t['name'] == request.json['name'], databases)
-    #     if len(database)!=0:
-    #         return make_response(jsonify({'error': 'member name already exists'}), 404)
-    #
-    #
-    #     memberId = 0
-    #     if not servers:
-    #         memberId = 1
-    #     else:
-    #         memberId = databases[-1]['id'] + 1
-    #     database = {
-    #     'id': memberId,
-    #     'name': request.json['name'],
-    #     }
-    #     databases.append(database)
-    #     return jsonify( { 'database': database, 'status':1 } ),201
+
+    # Add members to Database
+
+    def put (self, database_id):
+        currentdatabase = filter(lambda t: t['id'] == database_id, databases)
+        if len(currentdatabase) == 0:
+            abort(404)
+        if not request.json:
+            abort(400)
+
+        # if 'members' not in request.json:
+
+        for member_id in request.json['members']:
+            currentServer = filter(lambda t: t['id']== member_id, servers)
+            if len(currentServer) == 0:
+                return jsonify({'error':'Server id %d doesnot exists' %member_id})
+
+            if member_id not in currentdatabase[0]["members"]:
+                currentdatabase[0]['members'].append(member_id)
+
+        return jsonify({'members': currentdatabase[0]['members']})
+
 
 
 if __name__ == '__main__':
@@ -797,7 +805,7 @@ if __name__ == '__main__':
     app.add_url_rule('/api/1.0/database/<int:database_id>', view_func=database_view,
                      methods=['GET','PUT', 'DELETE'])
     app.add_url_rule('/api/1.0/database/', view_func=database_view, methods=['POST',])
-    app.add_url_rule('/api/1.0/database/member/<int:database_id>', view_func=databasemember_view, methods=['POST','GET'])
+    app.add_url_rule('/api/1.0/database/member/<int:database_id>', view_func=databasemember_view, methods=['GET','PUT','DELETE'])
 
 
 
