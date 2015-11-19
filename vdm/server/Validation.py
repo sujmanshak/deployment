@@ -79,6 +79,7 @@ class Validation(object):
     @staticmethod
     def validate_ports_info(request_info):
         """Validate port and IP addresses"""
+        response = {'status': 1}
         if 'admin-listener' in request_info.json:
             if request_info.json['admin-listener'] != "":
                 response = Validation.validate_port(request_info.json['admin-listener'],
@@ -141,5 +142,4 @@ class Validation(object):
                     socket.inet_aton(request_info.json['public-interface'])
                 except socket.error:
                     return response
-        else:
-            return {'status': 1}
+        return response
