@@ -30,6 +30,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 from flask import Flask, render_template, jsonify, abort, make_response, request
 from flask.views import MethodView
 import socket
+from Validation import *
 
 APP = Flask(__name__, template_folder="../templates", static_folder="../static")
 
@@ -121,248 +122,18 @@ class ServerAPI(MethodView):
         if request.json['hostname'].strip() == "":
             return make_response(jsonify({'error': 'Host name is required'}), 404)
 
-        # server = filter(lambda t: t['name'] == request.json['name'], SERVERS)
-
-        server = [server for server in SERVERS if server.name == request.json['name']]
+        server = [server for server in SERVERS if server['name'] == request.json['name']]
         if len(server) != 0:
             return make_response(jsonify({'error': 'Server name already exists'}), 404)
 
-        # server = filter(lambda t: t['hostname'] == request.json['hostname'], SERVERS)
-        server = [server for server in SERVERS if server.hostname == request.json['hostname']]
+        server = [server for server in SERVERS if server['hostname'] == request.json['hostname']]
         if len(server) != 0:
             return make_response(jsonify({'error': 'Host name already exists'}), 404)
 
-        if 'admin-listener' in request.json:
-            strip_admin_listener = request.json['admin-listener'].strip()
-            if strip_admin_listener != "":
-                if ":" in strip_admin_listener:
-                    count = strip_admin_listener.count(":")
-                    if count > 1:
-                        return make_response(jsonify({'error': 'Invalid admin listener'}), 404)
 
-                    array = strip_admin_listener.split(":")
-                    try:
-                        socket.inet_aton(array[0])
-                    except socket.error:
-                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-                    try:
-                        val = int(array[1])
-                        if val < 1 or val >= 65535:
-                            return make_response(
-                                jsonify({'error': 'Admin Listener must be greater than 1'
-                                                  ' and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Admin Listener must be '
-                                                               'a positive number'}), 404)
-
-                else:
-                    try:
-                        val = int(strip_admin_listener)
-                        if val < 1 or val > 65536:
-                            return make_response(
-                                jsonify({'error': 'Admin Listener must be greater than 1 and'
-                                                  ' less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Admin Listener must be a '
-                                                               'positive number'}), 404)
-
-        if 'internal-listener' in request.json:
-            strip_internal_listener = request.json['internal-listener'].strip()
-            if strip_internal_listener != "":
-                if ":" in strip_internal_listener:
-                    count = strip_internal_listener.count(":")
-                    if count > 1:
-                        return make_response(jsonify({'error': 'Invalid internal listener'}), 404)
-                    array = strip_internal_listener.split(":")
-                    try:
-                        socket.inet_aton(array[0])
-                    except socket.error:
-                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-                    try:
-                        val = int(array[1])
-                        if val < 1 or val >= 65535:
-                            return make_response(
-                                jsonify({'error': 'Internal Listener must be greater than 1 '
-                                                  'and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Internal Listener must be '
-                                                               'a positive number'}), 404)
-
-                else:
-                    try:
-                        val = int(strip_internal_listener)
-                        if val < 1 or val > 65536:
-                            return make_response(
-                                jsonify({'error': 'Internal Listener must be greater than 1 '
-                                                  'and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Internal Listener must be a '
-                                                               'positive number'}), 404)
-
-        if 'http-listener' in request.json:
-            strip_http_listener = request.json['http-listener'].strip()
-            if strip_http_listener != "":
-                if ":" in strip_http_listener:
-                    count = strip_http_listener.count(":")
-                    if count > 1:
-                        return make_response(jsonify({'error': 'Invalid http listener'}), 404)
-                    array = strip_http_listener.split(":")
-                    try:
-                        socket.inet_aton(array[0])
-                    except socket.error:
-                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-                    try:
-                        val = int(array[1])
-                        if val < 1 or val >= 65535:
-                            return make_response(
-                                jsonify({'error': 'Http Listener must be greater than 1 and '
-                                                  'less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Http Listener must be a '
-                                                               'positive number'}), 404)
-
-                else:
-                    try:
-                        val = int(strip_http_listener)
-                        if val < 1 or val > 65536:
-                            return make_response(
-                                jsonify({'error': 'Http Listener must be greater than 1'
-                                                  ' and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Http Listener must be '
-                                                               'a positive number'}), 404)
-
-        if 'zookeeper-listener' in request.json:
-            strip_zookeeper_listener = request.json['zookeeper-listener'].strip()
-            if strip_zookeeper_listener != "":
-                if ":" in strip_zookeeper_listener:
-                    count = strip_zookeeper_listener.count(":")
-                    if count > 1:
-                        return make_response(jsonify({'error': 'Invalid Zookeeper listener'}), 404)
-                    array = strip_zookeeper_listener.split(":")
-                    try:
-                        socket.inet_aton(array[0])
-                    except socket.error:
-                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-                    try:
-                        val = int(array[1])
-                        if val < 1 or val >= 65535:
-                            return make_response(
-                                jsonify({'error': 'Zookeeper Listener must be greater than '
-                                                  '1 and less than 65535'}),
-                                404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Zookeeper Listener must '
-                                                               'be a positive number'}), 404)
-
-                else:
-                    try:
-                        val = int(strip_zookeeper_listener)
-                        if val < 1 or val > 65536:
-                            return make_response(
-                                jsonify({'error': 'Zookeeper Listener must be greater than '
-                                                  '1 and less than 65535'}),
-                                404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Zookeeper Listener must '
-                                                               'be a positive number'}), 404)
-
-        if 'replication-listener' in request.json:
-            strip_replication_listener = request.json['replication-listener'].strip()
-            if strip_replication_listener != "":
-                if ":" in strip_replication_listener:
-                    count = strip_replication_listener.count(":")
-                    if count > 1:
-                        return make_response(jsonify({'error': 'Invalid Replicationlistener'}), 404)
-                    array = strip_replication_listener.split(":")
-                    try:
-                        socket.inet_aton(array[0])
-                    except socket.error:
-                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-                    try:
-                        val = int(array[1])
-                        if val < 1 or val >= 65535:
-                            return make_response(
-                                jsonify({'error': 'Replication Listener must be greater than '
-                                                  '1 and less than 65535'}),
-                                404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Replication Listener must '
-                                                               'be a positive number'}), 404)
-
-                else:
-                    try:
-                        val = int(strip_replication_listener)
-                        if val < 1 or val > 65536:
-                            return make_response(
-                                jsonify({'error': 'Replication Listener must be greater than '
-                                                  '1 and less than 65535'}),
-                                404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Replication Listener must '
-                                                               'be a positive number'}), 404)
-
-        if 'client-listener' in request.json:
-            strip_client_listener = request.json['client-listener'].strip()
-            if strip_client_listener != "":
-                if ":" in strip_client_listener:
-                    count = strip_client_listener.count(":")
-                    if count > 1:
-                        return make_response(jsonify({'error': 'Invalid Client listener'}), 404)
-                    array = strip_client_listener.split(":")
-                    try:
-                        socket.inet_aton(array[0])
-                    except socket.error:
-                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-                    try:
-                        val = int(array[1])
-                        if val < 1 or val >= 65535:
-                            return make_response(
-                                jsonify({'error': 'Client Listener must be greater than 1 '
-                                                  'and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Client Listener must '
-                                                               'be a positive number'}), 404)
-
-                else:
-                    try:
-                        val = int(strip_client_listener)
-                        if val < 1 or val > 65536:
-                            return make_response(
-                                jsonify({'error': 'Client Listener must be greater than 1'
-                                                  ' and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Client Listener must be '
-                                                               'a positive number'}), 404)
-
-        if 'internal-interface' in request.json:
-            strip_internal_interface = request.json['internal-interface'].strip()
-            if strip_internal_interface != "":
-                try:
-                    socket.inet_aton(strip_internal_interface)
-                except socket.error:
-                    return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-        if 'external-interface' in request.json:
-            strip_external_interface = request.json['external-interface'].strip()
-            if strip_external_interface != "":
-                try:
-                    socket.inet_aton(strip_external_interface)
-                except socket.error:
-                    return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-        if 'public-interface' in request.json:
-            strip_public_interface = request.json['public-interface'].strip()
-            if strip_public_interface != "":
-                try:
-                    socket.inet_aton(strip_public_interface)
-                except socket.error:
-                    return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+        response = Validation.validate_ports_info(request)
+        if response['status'] == -1:
+            return make_response(jsonify({'error': response['error']}), 404)
 
         if not SERVERS:
             serverid = 1
@@ -392,8 +163,7 @@ class ServerAPI(MethodView):
     @staticmethod
     def delete(server_id):
         """Delete Server"""
-        # server = filter(lambda t: t['id'] == server_id, SERVERS)
-        server = [server for server in SERVERS if server.id == server_id]
+        server = [server for server in SERVERS if server['id'] == server_id]
         if len(server) == 0:
             abort(404)
         SERVERS.remove(server[0])
@@ -402,8 +172,8 @@ class ServerAPI(MethodView):
     @staticmethod
     def put(server_id):
         """Put Server"""
-        # current_server = filter(lambda t: t['id'] == server_id, SERVERS)
-        current_server = [server for server in SERVERS if server.id == server_id]
+
+        current_server = [server for server in SERVERS if server['id'] == server_id]
         if len(current_server) == 0:
             abort(404)
         if not request.json:
@@ -425,238 +195,9 @@ class ServerAPI(MethodView):
             if request.json['hostname'].strip() == "":
                 return make_response(jsonify({'error': 'Host name is required'}), 404)
 
-        if 'admin-listener' in request.json:
-            strip_admin_listener = request.json['admin-listener'].strip()
-            if strip_admin_listener != "":
-                if ":" in strip_admin_listener:
-                    count = strip_admin_listener.count(":")
-                    if count > 1:
-                        return make_response(jsonify({'error': 'Invalid admin listener'}), 404)
-                    array = strip_admin_listener.split(":")
-                    try:
-                        socket.inet_aton(array[0])
-                    except socket.error:
-                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-                    try:
-                        val = int(array[1])
-                        if val < 1 or val >= 65535:
-                            return make_response(
-                                jsonify({'error': 'Admin Listener must be greater than '
-                                                  '1 and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Admin Listener must be '
-                                                               'a positive number'}), 404)
-
-                else:
-                    try:
-                        val = int(strip_admin_listener)
-                        if val < 1 or val > 65536:
-                            return make_response(
-                                jsonify({'error': 'Admin Listener must be greater than '
-                                                  '1 and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Admin Listener must be '
-                                                               'a positive number'}), 404)
-
-        if 'internal-listener' in request.json:
-            strip_internal_listener = request.json['internal-listener'].strip()
-            if strip_internal_listener != "":
-                if ":" in strip_internal_listener:
-                    count = strip_internal_listener.count(":")
-                    if count > 1:
-                        return make_response(jsonify({'error': 'Invalid internal listener'}), 404)
-                    array = strip_internal_listener.split(":")
-                    try:
-                        socket.inet_aton(array[0])
-                    except socket.error:
-                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-                    try:
-                        val = int(array[1])
-                        if val < 1 or val >= 65535:
-                            return make_response(
-                                jsonify({'error': 'Internal Listener must be greater '
-                                                  'than 1 and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Internal Listener must '
-                                                               'be a positive number'}), 404)
-
-                else:
-                    try:
-                        val = int(strip_internal_listener)
-                        if val < 1 or val > 65536:
-                            return make_response(
-                                jsonify({'error': 'Internal Listener must be greater than '
-                                                  '1 and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Internal Listener must be '
-                                                               'a positive number'}), 404)
-
-        if 'http-listener' in request.json:
-            strip_http_listener = request.json['http-listener'].strip()
-            if strip_http_listener != "":
-                if ":" in strip_http_listener:
-                    count = strip_http_listener.count(":")
-                    if count > 1:
-                        return make_response(jsonify({'error': 'Invalid http listener'}), 404)
-                    array = strip_http_listener.split(":")
-                    try:
-                        socket.inet_aton(array[0])
-                    except socket.error:
-                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-                    try:
-                        val = int(array[1])
-                        if val < 1 or val >= 65535:
-                            return make_response(
-                                jsonify({'error': 'Http Listener must be greater than 1 '
-                                                  'and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Http Listener must be a '
-                                                               'positive number'}), 404)
-
-                else:
-                    try:
-                        val = int(strip_http_listener)
-                        if val < 1 or val > 65536:
-                            return make_response(
-                                jsonify({'error': 'Http Listener must be greater than 1 '
-                                                  'and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Http Listener must be a '
-                                                               'positive number'}), 404)
-
-        if 'zookeeper-listener' in request.json:
-            strip_zookeeper_listener = request.json['zookeeper-listener'].strip()
-            if strip_zookeeper_listener != "":
-                if ":" in strip_zookeeper_listener:
-                    count = strip_zookeeper_listener.count(":")
-                    if count > 1:
-                        return make_response(jsonify({'error': 'Invalid Zookeeper listener'}), 404)
-                    array = strip_zookeeper_listener.split(":")
-                    try:
-                        socket.inet_aton(array[0])
-                    except socket.error:
-                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-                    try:
-                        val = int(array[1])
-                        if val < 1 or val >= 65535:
-                            return make_response(
-                                jsonify({'error': 'Zookeeper Listener must be greater '
-                                                  'than 1 and less than 65535'}),
-                                404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Zookeeper Listener must '
-                                                               'be a positive number'}), 404)
-
-                else:
-                    try:
-                        val = int(strip_zookeeper_listener)
-                        if val < 1 or val > 65536:
-                            return make_response(
-                                jsonify({'error': 'Zookeeper Listener must be greater '
-                                                  'than 1 and less than 65535'}),
-                                404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Zookeeper Listener must '
-                                                               'be a positive number'}), 404)
-
-        if 'replication-listener' in request.json:
-            strip_replication_listener = request.json['replication-listener'].strip()
-            if strip_replication_listener != "":
-                if ":" in strip_replication_listener:
-                    count = strip_replication_listener.count(":")
-                    if count > 1:
-                        return make_response(jsonify({'error': 'Invalid Replication '
-                                                               'listener'}), 404)
-                    array = strip_replication_listener.split(":")
-                    try:
-                        socket.inet_aton(array[0])
-                    except socket.error:
-                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-                    try:
-                        val = int(array[1])
-                        if val < 1 or val >= 65535:
-                            return make_response(
-                                jsonify({'error': 'Replication Listener must be greater than '
-                                                  '1 and less than 65535'}),
-                                404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Replication Listener must be'
-                                                               ' a positive number'}), 404)
-
-                else:
-                    try:
-                        val = int(strip_replication_listener)
-                        if val < 1 or val > 65536:
-                            return make_response(
-                                jsonify({'error': 'Replication Listener must be greater than '
-                                                  '1 and less than 65535'}),
-                                404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Replication Listener must '
-                                                               'be a positive number'}), 404)
-
-        if 'client-listener' in request.json:
-            strip_client_listener = request.json['client-listener'].strip()
-            if strip_client_listener != "":
-                if ":" in strip_client_listener:
-                    count = strip_client_listener.count(":")
-                    if count > 1:
-                        return make_response(jsonify({'error': 'Invalid Client listener'}), 404)
-                    array = strip_client_listener.split(":")
-                    try:
-                        socket.inet_aton(array[0])
-                    except socket.error:
-                        return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-                    try:
-                        val = int(array[1])
-                        if val < 1 or val >= 65535:
-                            return make_response(
-                                jsonify({'error': 'Client Listener must be greater than 1 '
-                                                  'and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Client Listener must be a '
-                                                               'positive number'}), 404)
-
-                else:
-                    try:
-                        val = int(strip_client_listener)
-                        if val < 1 or val > 65536:
-                            return make_response(
-                                jsonify({'error': 'Client Listener must be greater than 1 '
-                                                  'and less than 65535'}), 404)
-                    except ValueError:
-                        return make_response(jsonify({'error': 'Client Listener must be a '
-                                                               'positive number'}), 404)
-
-        if 'internal-interface' in request.json:
-            strip_internal_interface = request.json['internal-interface'].strip()
-            if strip_internal_interface != "":
-                try:
-                    socket.inet_aton(strip_internal_interface)
-                except socket.error:
-                    return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-        if 'external-interface' in request.json:
-            strip_external_interface = request.json['external-interface'].strip()
-            if strip_external_interface != "":
-                try:
-                    socket.inet_aton(strip_external_interface)
-                except socket.error:
-                    return make_response(jsonify({'error': 'Invalid IP address'}), 404)
-
-        if 'public-interface' in request.json:
-            strip_public_interface = request.json['public-interface'].strip()
-            if strip_public_interface != "":
-                try:
-                    socket.inet_aton(strip_public_interface)
-                except socket.error:
-                    return make_response(jsonify({'error': 'Invalid IP address'}), 404)
+        response = Validation.validate_ports_info(request)
+        if response['status'] == -1:
+            return make_response(jsonify({'error': response['error']}), 404)
 
         current_server[0]['name'] = request.json.get('name',
                                                      current_server[0]['name']).strip()
