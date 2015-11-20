@@ -98,12 +98,12 @@
                           <div class="addServer ContentServerRight">
                           <!--<a class="addServer" id="btnAddServer" href="javascript:void(0);"data-toggle="modal" data-target="#addServer"> <span class="plus"></span>Add Server</a> </div>-->
                           <div class="dropdown">
-                              <button id="btnAddServer" class="btnAddServer dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                              <button class="btnAddServer dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                               <span class="plus"></span> Add Server <span class="caret"></span>
                               </button>
                               <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                              <li><a  href="javascript:void(0);"data-toggle="modal" data-target="#addServer">Add New Server</a></li>
-                              <li><a href="javascript:void(0);"data-toggle="modal" data-target="#addExitingServer">Add Exiting Server</a></li>
+                              <li><a id="btnAddServer"  href="javascript:void(0);"data-toggle="modal" data-target="#addServer">Add New Server</a></li>
+                              <li><a id="btnAddExistingServer" href="javascript:void(0);"data-toggle="modal" data-target="#addExitingServer">Add Exiting Server</a></li>
                               </ul>
                           </div>
                           <div class="clear"></div>
@@ -857,32 +857,31 @@ $("[rel=bottom]").tooltip({ placement: 'bottom'});
       </div>
       <div class="modal-body">
         <form action="">
-          <select multiple="multiple" id="my-select" name="my-select[]">
-            <option value='elem_1'>elem 1</option>
-            <option value='elem_2'>elem 2</option>
-            <option value='elem_3'>elem 3</option>
-            <option value='elem_4'>elem 4</option>
-            <option value='elem_5'>elem 5</option>
-            <option value='elem_6'>elem 6</option>
-            <option value='elem_7'>elem 7</option>
-            <option value='elem_8'>elem 8</option>
-            <option value='elem_9'>elem 9</option>
-            <option value='elem_10'>elem 10</option>
-            <option value='elem_11'>elem 11</option>
+          <select multiple="multiple" id="selectServers" name="selectServers[]">
+            <!--<option value='elem_1'>elem 1</option>-->
+            <!--<option value='elem_2'>elem 2</option>-->
+            <!--<option value='elem_3'>elem 3</option>-->
+            <!--<option value='elem_4'>elem 4</option>-->
+            <!--<option value='elem_5'>elem 5</option>-->
+            <!--<option value='elem_6'>elem 6</option>-->
+            <!--<option value='elem_7'>elem 7</option>-->
+            <!--<option value='elem_8'>elem 8</option>-->
+            <!--<option value='elem_9'>elem 9</option>-->
+            <!--<option value='elem_10'>elem 10</option>-->
+            <!--<option value='elem_11'>elem 11</option>-->
 
           </select>
         </form>
        </div>
       <div class="modal-footer">
-        <button type="button" class="btn" data-dismiss="modal">Ok</button>
+        <button id="btnSelectDbOk" type="button" class="btn" data-dismiss="modal">Ok</button>
         <button type="button" class="btn btn-gray" data-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
 </div>
 <!-- addExitingServer End -->
-<div class="preload" style="display:none">
-<img src="http://i.imgur.com/KUJoe.gif">
+<div class="loader" ></div>
 </div>
 </body>
 </html>

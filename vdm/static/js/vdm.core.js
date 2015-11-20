@@ -44,7 +44,7 @@
                         param = 'servers/'
                 }
                 if (requestMethod.toLowerCase() == "delete" || requestMethod.toLowerCase() == "put"
-                    || apiName == 'MEMBER')
+                    || apiName == 'MEMBER' ||(requestMethod.toLowerCase() == "post" && apiName == 'SERVER'))
                     param += details.dataObj.id.toString();
                 return param;
             };

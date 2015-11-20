@@ -247,6 +247,30 @@
                 console.log(e.message);
             }
         };
+
+        this.UpdateMembers = function (onConnectionAdded, memberData) {
+            try {
+                var processName = "MEMBER_UPDATE";
+                var requestMethod = "put"
+                var memberDetails = {
+                    apiName: "MEMBER",
+                    dataObj: memberData
+                }
+                _connection = VdmCore.HasConnection(server, port, admin, user, processName);
+                if (_connection == null){
+                    VdmCore.AddConnection(server, port, admin, user, password, isHashedPassword, processName, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod, memberDetails);
+
+                } else {
+                    VdmCore.updateConnection(server, port, admin, user, password, isHashedPassword, processName, _connection, function (connection, status) {
+                        onConnectionAdded(connection, status);
+                    }, requestMethod, memberDetails);
+                }
+            } catch (e) {
+                console.log(e.message);
+            }
+        };
     });
     window.VdmService = VdmService = new iVdmService();
 })(window);

@@ -247,7 +247,7 @@ label.error {
 .plusIcon {
 	width: 120px;
 	padding: 4px 0 7px 40px;
-	background-position: 0 -483px;
+	background-position: 0 -202px;
 	font-size: 16px;
 	cursor: pointer;
 }
@@ -304,6 +304,18 @@ label.error {
 	margin: 10% auto;/*add what you want here*/
 }
 /***********global css Ends ***********/
+/************loader**********/
+
+.loader {
+    display:none;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url('../images/loader.gif') 50% 50% no-repeat rgba(0,0,0,.6);
+    }
 /******navigation****/
 ul.nav li a {
 	display: block;
@@ -376,6 +388,8 @@ ul.nav li a:hover, ul.nav li a.active, ul.nav li.active a {
 }
 .tblDatabase tr td {
 	padding: 5px 10px 3px 10px;
+
+
 }
 
 .addDatabase {
@@ -1015,7 +1029,17 @@ a.clustBtn:hover {
     background: #fff url(../images/loader-small.GIF) no-repeat center center;
     height: 20px;
     width: 20px;
+
 }
+.loading-small-DB {
+    background: #fff url(../images/loader-small.GIF) no-repeat center center;
+    height: 44px;
+    width: 20px;
+     position: relative;
+    left: 45px;
+}
+
+
 
 
 /**************Button start/Stop ends******************/
