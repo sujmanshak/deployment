@@ -1,3 +1,4 @@
+
 # This file is part of VoltDB.
 
 # Copyright (C) 2008-2015 VoltDB Inc.
@@ -26,4 +27,6 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 
-flask
+xmlrunner==1.7.7
+Flask==0.11.dev0
+requests==2.8.1
