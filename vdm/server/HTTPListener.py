@@ -91,20 +91,18 @@ class ServerAPI(MethodView):
                         'external-interface': "",
                         'internal-interface': "",
                         'public-interface': "",
-                        "client-listener": "",
-                        "internal-listener": "",
-                        "admin-listener": "",
-                        "http-listener": "",
-                        "replication-listener": "",
-                        "zookeeper-listener": "",
-                        "placement-group": ""
+                        'client-listener': "",
+                        'internal-listener': "",
+                        'admin-listener': "",
+                        'http-listener': "",
+                        'replication-listener': "",
+                        'zookeeper-listener': "",
+                        'placement-group': ""
                     }
                 )
 
-            # return jsonify({'servers': map(make_public_server, SERVERS)})
             return jsonify({'servers': [make_public_server(x) for x in SERVERS]})
         else:
-            # server = filter(lambda t: t['id'] == server_id, SERVERS)
             server = [server for server in SERVERS if server.id == server_id]
             if len(server) == 0:
                 abort(404)
@@ -123,24 +121,23 @@ class ServerAPI(MethodView):
             return make_response(jsonify({'error': 'Host name is required'}), 404)
 
         server = [server for server in SERVERS if server['name'] == request.json['name']]
-        if len(server) != 0:
+        if len(server) > 0:
             return make_response(jsonify({'error': 'Server name already exists'}), 404)
 
         server = [server for server in SERVERS if server['hostname'] == request.json['hostname']]
-        if len(server) != 0:
+        if len(server) > 0:
             return make_response(jsonify({'error': 'Host name already exists'}), 404)
-
 
         response = Validation.validate_ports_info(request)
         if response['status'] == -1:
             return make_response(jsonify({'error': response['error']}), 404)
 
         if not SERVERS:
-            serverid = 1
+            server_id = 1
         else:
-            serverid = SERVERS[-1]['id'] + 1
+            server_id = SERVERS[-1]['id'] + 1
         server = {
-            'id': serverid,
+            'id': server_id,
             'name': request.json['name'].strip(),
             'description': request.json.get('description', "").strip(),
             'hostname': request.json.get('hostname', "").strip(),
@@ -154,7 +151,7 @@ class ServerAPI(MethodView):
             'public-interface': request.json.get('public-interface', "").strip(),
             'internal-listener': request.json.get('internal-listener', "").strip(),
             'http-listener': request.json.get('http-listener', "").strip(),
-            "placement-group": request.json.get('placement-group', "").strip(),
+            'placement-group': request.json.get('placement-group', "").strip(),
 
         }
         SERVERS.append(server)

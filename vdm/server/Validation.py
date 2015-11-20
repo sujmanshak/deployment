@@ -45,30 +45,40 @@ class Validation(object):
             if count > 1:
                 response_result = {'status': -1, 'error': 'Invalid ' + listener_type}
             array = listener.split(":")
-            try:
-                socket.inet_aton(array[0])
-            except socket.error:
-                response_result = {'status': -1, 'error': 'Invalid IP address'}
-            try:
-                val = int(array[1])
-                if val < 0:
+            if len(array) == 2:
+                try:
+                    socket.inet_pton(socket.AF_INET, array[0])
+                except AttributeError:
+                    try:
+                        socket.inet_aton(array[0])
+                    except socket.error:
+                        response_result = {'status': -1, 'error': 'Invalid IP address in ' + listener_type}
+                    return array[0].count('.') == 3
+                except socket.error:
+                    response_result = {'status': -1, 'error': 'Invalid IP address in ' + listener_type}
+
+                try:
+                    val = int(array[1])
+                    if val < 0:
+                        response_result = {'status': -1, 'error': listener_type + ' must be a '
+                                                                                  'positive number'}
+                    elif val < 1 or val >= 65535:
+                        response_result = {'status': -1, 'error': listener_type + ' port must be '
+                                                                                  'greater than 1 '
+                                                                                  'and less than 65535'}
+                except ValueError:
                     response_result = {'status': -1, 'error': listener_type + ' must be a '
                                                                               'positive number'}
-                elif val < 1 or val >= 65535:
-                    response_result = {'status': -1, 'error': listener_type + ' must be '
-                                                                              'greater than 1 '
-                                                                              'and less than 65535'}
-            except ValueError:
-                response_result = {'status': -1, 'error': listener_type + ' must be a '
-                                                                          'positive number'}
+            else:
+                response_result = {'status': -1, 'error': 'Invalid ' + listener_type}
         else:
             try:
-                val = int(request.json['admin-listener'])
+                val = int(request.json[listener_type])
                 if val < 0:
                     response_result = {'status': -1, 'error': listener_type + ' must be a '
                                                                               'positive number'}
                 elif val < 1 or val > 65536:
-                    response_result = {'status': -1, 'error': listener_type + ' must be '
+                    response_result = {'status': -1, 'error': listener_type + ' port must be '
                                                                               'greater than 1 and'
                                                                               ' less than 65535'}
             except ValueError:
