@@ -77,7 +77,6 @@ class ClusterSettingsTest extends TestBase {
         and:   
         for(count=0; count<numberOfTrials; count++) {
             try {
-               
                 waitFor { popupAddServerNameField.value("new_server") }
                 waitFor { popupAddServerHostNameField.value("new_host") }
                 waitFor { popupAddServerDescriptionField.value("") }
@@ -424,9 +423,9 @@ class ClusterSettingsTest extends TestBase {
         }
 
         when:"Click Add Server button"
-            waitFor { page.buttonAddServer.click() }
+        waitFor { page.buttonAddServer.click() }
         then:
-            waitFor { page.popupAddServer.isDisplayed() }
+        waitFor { page.popupAddServer.isDisplayed() }
 
         when: "click the Ok button"
         popupAddServerButtonOk.click()
@@ -554,6 +553,44 @@ class ClusterSettingsTest extends TestBase {
                 }
             }
         }
+    }
 
+    def cleanupSpec() {
+        to ClusterSettingsPage
+
+        println("CleanupSpec: Cleaning up any residue")
+        int count = 1
+        int newValue = 1
+        for(count=1; count<numberOfTrials; count++) {
+            try {
+                waitFor { $(id:page.getIdOfDeleteButton(count)).isDisplayed() }
+                println("Found")
+                break
+            } catch(geb.waiting.WaitTimeoutException e) {
+            }
+        }
+        newValue = count+1
+        println("The count is " + newValue)
+
+        for(count=1; count<numberOfTrials; count++) {
+            try {
+                $(id:page.getIdOfDeleteButton(newValue)).click()
+                waitFor { popupDeleteServerButtonOk.isDisplayed() }
+                println("Deleted")
+                break
+            } catch(geb.waiting.WaitTimeoutException e) {
+                println("Unable to find the delete server button - Retrying")
+            }
+        }
+
+        for(count=1; count<numberOfTrials; count++) {
+            try {
+                popupDeleteServerButtonOk.click()
+                waitFor { !$(id:page.getIdOfDeleteButton(count)).isDisplayed() }
+            } catch(geb.waiting.WaitTimeoutException e) {
+                println("Deleted")
+                break
+            }
+        }
     }
 }
