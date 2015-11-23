@@ -473,11 +473,23 @@ var loadPage = function() {
     $('#deleteServerOk').on('click',function(){
         var serverId = $('#deleteConfirmation').data('serverid');
         var serverData = {
+           data:{
+               dbId: VdmUI.getCurrentDbCookie()
+           },
            "id": serverId
         }
         toggleServer(editStates.ShowLoading,serverId)
 
         VdmService.DeleteServer(function(connection){
+            if(connection.Metadata['SERVER_DELETE'].hasOwnProperty('success')){
+                $('#successMsg').html(connection.Metadata['SERVER_DELETE']['success'])
+                $('#successDialog').modal('show');
+                toggleServer(editStates.ShowEdit,hostId);
+            } else if(connection.Metadata['SERVER_DELETE'].hasOwnProperty('error')){
+                $('#errorMsg').html(connection.Metadata['SERVER_DELETE']['error'])
+                $('#errorDialog').modal('show');
+                toggleServer(editStates.ShowEdit,hostId);
+            }
             VdmService.GetServerList(function(connection){
                 VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
             })
@@ -498,7 +510,7 @@ var loadPage = function() {
         }
         toggleDatabase(editStates.ShowLoading, dbId)
         VdmService.DeleteDatabase(function(connection){
-            if(connection.Metadata['MEMBER_UPDATE'].status == 1){
+            if(!connection.Metadata['DATABASE_DELETE'].hasOwnProperty('error')){
                 VdmService.GetDatabaseList(function(connection){
                     VdmUI.displayDatabases(connection.Metadata['DATABASE_LISTING'])
                 })
@@ -527,8 +539,8 @@ var loadPage = function() {
             id: VdmUI.getCurrentDbCookie()
         }
         VdmService.UpdateMembers(function(connection){
-            VdmService.GetDatabaseList(function(connection){
-                VdmUI.displayDatabases(connection.Metadata['DATABASE_LISTING'])
+            VdmService.GetServerList(function(connection){
+                VdmUI.displayServers(connection.Metadata['SERVER_LISTING'])
             })
         }, memberInfo);
     });

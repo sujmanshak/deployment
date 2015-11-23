@@ -98,8 +98,8 @@ class ServerAPI(MethodView):
                         "zookeeper-listener":"",
                         "placement-group":""
                     }
-                    )
 
+                    )
             # return a list of users
             return jsonify( { 'servers': map(make_public_server, servers) } )
         else:
@@ -390,19 +390,27 @@ class ServerAPI(MethodView):
         return jsonify( { 'server': server, 'status':1,'members': currentdatabase[0]['members']} ),201
 
     def delete(self, server_id):
+        if not request.json or not 'dbId' in request.json:
+            abort(400)
+        database_id = request.json['dbId']
         # delete a single server
         server = filter(lambda t: t['id'] == server_id, servers)
         if len(server) == 0:
             abort(404)
-
-        #Check if server is referenced by database
-
+        # remove the server from given database member list
+        current_database = filter(lambda t: t['id'] == int(database_id), databases)
+        current_database[0]['members'].remove(server_id)
+        # Check if server is referenced by database
         for database in databases:
+            if database["id"] == database_id:
+                continue
             if server_id in database["members"]:
-                return jsonify({'error':"server_id cannot be deleted since it is referred by database"})
+                return jsonify({'success': "Server deleted from given member list only. Server cannot be"
+                                           " deleted completely "
+                                           "since it is referred by database."})
 
         servers.remove(server[0])
-        return jsonify( { 'result': True } )
+        return jsonify({'result': True})
 
     def put(self, server_id):
         # update a single server
@@ -792,7 +800,7 @@ class databaseMemberAPI(MethodView):
             if member_id not in currentdatabase[0]["members"]:
                 currentdatabase[0]['members'].append(member_id)
 
-        return jsonify({'members': currentdatabase[0]['members']})
+        return jsonify({'members': currentdatabase[0]['members'], 'status': 1})
 
 
 

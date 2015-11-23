@@ -61,7 +61,7 @@
                     } else if (requestMethod.toLowerCase() == "put") {
                         jQuery.putJSON(uri, details.dataObj.data, callback);
                     } else if (requestMethod.toLowerCase() == "delete") {
-                        jQuery.deleteJSON(uri, callback);
+                        jQuery.deleteJSON(uri, details.dataObj.data, callback);
                     } else if (requestMethod.toLowerCase() == "post") {
                         jQuery.postJSON(uri, details.dataObj.data, callback);
                     }
@@ -270,10 +270,13 @@ jQuery.extend({
 });
 
 jQuery.extend({
-    deleteJSON: function (url, callback) {
+    deleteJSON: function (url, formData, callback) {
+        formData = formData == undefined ? {} : formData;
         jQuery.ajax({
             type: 'DELETE',
             url: url,
+            data: JSON.stringify(formData),
+            contentType: "application/json; charset=utf-8",
             dataType: 'json',
             success: callback,
             error: function (e) {
