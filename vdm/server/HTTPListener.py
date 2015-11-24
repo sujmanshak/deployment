@@ -759,16 +759,32 @@ class DatabaseAPI(MethodView):
         currentdatabase[0]['deployment'] = request.json.get('deployment', currentdatabase[0]['deployment'])
         return jsonify( { 'database': currentdatabase[0], 'status': 1} )
 
-    def delete (self,database_id):
-         # delete a single database
-        database = filter(lambda t: t['id'] == database_id, databases)
-        if len(database) == 0:
+    def delete(self,database_id):
+        # delete a single database
+        members = []
+        current_database = filter(lambda t: t['id'] == database_id, databases)
+        if len(current_database) == 0:
             abort(404)
+        else:
+            members = current_database[0]['members']
 
-        #Check if server is referenced by database
+        for server in members:
+            is_server_associated = False
+            # Check if server is referenced by database
+            for database in databases:
+                if database["id"] == database_id:
+                    continue
+                if server in database["members"]:
+                    is_server_associated = True
+            # if server is not referenced by other database then delete it
+            if not is_server_associated:
+                server = filter(lambda t: t['id'] == server, servers)
+                if len(server) == 0:
+                    continue
+                servers.remove(server[0])
 
-        databases.remove(database[0])
-        return jsonify( { 'result': True } )
+        databases.remove(current_database[0])
+        return jsonify({'result': True})
 
 class databaseMemberAPI(MethodView):
     
