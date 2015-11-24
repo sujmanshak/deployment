@@ -48,31 +48,61 @@ import socket
 ############VARS
 
 URL = 'http://localhost:8000/api/1.0/servers/'
+dbURL = 'http://localhost:8000/api/1.0/database/'
 
 
 class Server(unittest.TestCase):
     def setUp(self):
-        #Create a server
+        # Create a db
         headers = {'Content-Type': 'application/json; charset=utf-8'}
-        data={'description':'test','hostname':'test','name':'test'}
-        response = requests.post(URL,json=data, headers = headers)
-        if response.status_code==201:
+        db_data = {'name': 'testDB'}
+        response = requests.post(dbURL, json=db_data, headers=headers)
+        if response.status_code == 201:
             self.assertEqual(response.status_code, 201)
         else:
             self.assertEqual(response.status_code, 404)
-    def tearDown(self):
-        #Delete the server
-        response= requests.get(URL)
-        value= response.json()
+        # Create a server
+        response = requests.get(dbURL)
+        value = response.json()
         if value:
-            serverLength = len(value['servers'])
-            lastServerId =  value['servers'][serverLength-1]['id']
-            print "ServerId to be deleted is " + str(lastServerId)
-            url = URL + str(lastServerId)
-            response = requests.delete(url)
-            self.assertEqual(response.status_code,200)
+            db_length = len(value['databases'])
+            last_db_id = value['databases'][db_length-1]['id']
+            url = URL + str(last_db_id)
+            data = {'description': 'test', 'hostname': 'test', 'name': 'test'}
+            response = requests.post(url, json=data, headers=headers)
+            if response.status_code == 201:
+                self.assertEqual(response.status_code, 201)
+            else:
+                self.assertEqual(response.status_code, 404)
         else:
-            print "The Server list is empty"
+            print "The database list is empty"
+
+    def tearDown(self):
+        # Delete the server
+        headers = {'Content-Type': 'application/json; charset=utf-8'}
+        response = requests.get(dbURL)
+        value = response.json()
+        if value:
+            db_length = len(value['databases'])
+            last_db_id = value['databases'][db_length-1]['id']
+            db_data = {'dbId': last_db_id}
+            response = requests.get(URL)
+            value = response.json()
+            if value:
+                serverLength = len(value['servers'])
+                lastServerId = value['servers'][serverLength-1]['id']
+                print "ServerId to be deleted is " + str(lastServerId)
+                url = URL + str(lastServerId)
+                response = requests.delete(url, json=db_data, headers=headers)
+                self.assertEqual(response.status_code, 200)
+                # Delete database
+                db_url = dbURL + str(last_db_id)
+                response = requests.delete(db_url)
+                self.assertEqual(response.status_code, 200)
+            else:
+                print "The Server list is empty"
+        else:
+            print "The database list is empty"
 
 
 class CreateServer(Server):
@@ -93,8 +123,14 @@ class CreateServer(Server):
     #ensure server name is not empty
     def test_02ValidateServername(self):
         headers = {'Content-Type': 'application/json; charset=utf-8'}
-        data={'description':'test','hostname':'test','name':''}
-        response = requests.post(URL,json=data, headers = headers)
+        response = requests.get(dbURL)
+        value = response.json()
+        if value:
+            db_length = len(value['databases'])
+            last_db_id = value['databases'][db_length-1]['id']
+        url = URL + str(last_db_id)
+        data = {'description': 'test', 'hostname': 'test', 'name': ''}
+        response = requests.post(url, json=data, headers=headers)
         value=response.json()
         self.assertEqual(value['error'],'Server name is required')
         self.assertEqual(response.status_code, 404)
@@ -102,17 +138,29 @@ class CreateServer(Server):
     #ensure server name is not empty
     def test_03ValidateHostname(self):
         headers = {'Content-Type': 'application/json; charset=utf-8'}
-        data={'description':'test','hostname':'','name':'test'}
-        response = requests.post(URL,json=data, headers = headers)
-        value=response.json()
-        self.assertEqual(value['error'],'Host name is required')
+        response = requests.get(dbURL)
+        value = response.json()
+        if value:
+            db_length = len(value['databases'])
+            last_db_id = value['databases'][db_length-1]['id']
+        url = URL + str(last_db_id)
+        data = {'description': 'test', 'hostname': '', 'name': 'test'}
+        response = requests.post(url, json=data, headers=headers)
+        value = response.json()
+        self.assertEqual(value['error'], 'Host name is required')
         self.assertEqual(response.status_code, 404)
 
     #ensure Duplicate Server name is not added
     def test_04ValidateDuplicateServerName(self):
         headers = {'Content-Type': 'application/json; charset=utf-8'}
-        data={'description':'test','hostname':'test12345','name':'test'}
-        response = requests.post(URL,json=data, headers = headers)
+        response = requests.get(dbURL)
+        value = response.json()
+        if value:
+            db_length = len(value['databases'])
+            last_db_id = value['databases'][db_length-1]['id']
+        url = URL + str(last_db_id)
+        data = {'description': 'test', 'hostname': 'test12345', 'name': 'test'}
+        response = requests.post(url,json=data, headers=headers)
         value=response.json()
         if response.status_code==201:
             print "new server created"
@@ -125,8 +173,14 @@ class CreateServer(Server):
     #ensure Duplicate Host name is not added
     def test_05ValidateDuplicateHostName(self):
         headers = {'Content-Type': 'application/json; charset=utf-8'}
-        data={'description':'test','hostname':'test','name':'test12345'}
-        response = requests.post(URL,json=data, headers = headers)
+        response = requests.get(dbURL)
+        value = response.json()
+        if value:
+            db_length = len(value['databases'])
+            last_db_id = value['databases'][db_length-1]['id']
+        url = URL + str(last_db_id)
+        data = {'description': 'test', 'hostname': 'test', 'name': 'test12345'}
+        response = requests.post(url, json=data, headers=headers)
         value=response.json()
         if response.status_code==201:
             self.assertEqual(response.status_code, 201)
@@ -137,8 +191,14 @@ class CreateServer(Server):
 
     def test_ValidatePort(self):
         headers = {'Content-Type': 'application/json; charset=utf-8'}
-        data={'description':'test','hostname':'test4567','name':'test12345','adminlistener':'88888'}
-        response = requests.post(URL,json=data, headers = headers)
+        response = requests.get(dbURL)
+        value = response.json()
+        if value:
+            db_length = len(value['databases'])
+            last_db_id = value['databases'][db_length-1]['id']
+        url = URL + str(last_db_id)
+        data={'description': 'test', 'hostname': 'test4567','name': 'test12345', 'admin-listener': '88888'}
+        response = requests.post(url, json=data, headers=headers)
         value=response.json()
         if response.status_code==201:
             self.assertEqual(response.status_code, 201)
@@ -148,8 +208,14 @@ class CreateServer(Server):
 
     def test_ValidateIPAddress(self):
         headers = {'Content-Type': 'application/json; charset=utf-8'}
-        data={'description':'test','hostname':'test4567','name':'test12345','internalinterface':'127.0.0.12345'}
-        response = requests.post(URL,json=data, headers = headers)
+        response = requests.get(dbURL)
+        value = response.json()
+        if value:
+            db_length = len(value['databases'])
+            last_db_id = value['databases'][db_length-1]['id']
+        url = URL + str(last_db_id)
+        data = {'description': 'test', 'hostname': 'test4567','name': 'test12345', 'internal-interface': '127.0.0.12345'}
+        response = requests.post(url, json=data, headers = headers)
         value=response.json()
         if response.status_code==201:
             self.assertEqual(response.status_code, 201)
@@ -169,8 +235,14 @@ class UpdateServer(Server):
     #ensure server name is not empty
     def test_07ValidateServername(self):
         headers = {'Content-Type': 'application/json; charset=utf-8'}
-        data={'description':'test','hostname':'test','name':''}
-        response = requests.post(URL,json=data, headers = headers)
+        response = requests.get(dbURL)
+        value = response.json()
+        if value:
+            db_length = len(value['databases'])
+            last_db_id = value['databases'][db_length-1]['id']
+        url = URL + str(last_db_id)
+        data = {'description': 'test', 'hostname': 'test', 'name': ''}
+        response = requests.post(url, json=data, headers=headers)
         value=response.json()
         self.assertEqual(value['error'],'Server name is required')
         self.assertEqual(response.status_code, 404)
@@ -178,8 +250,14 @@ class UpdateServer(Server):
     #ensure server name is not empty
     def test_08ValidateHostname(self):
         headers = {'Content-Type': 'application/json; charset=utf-8'}
-        data={'description':'test','hostname':'','name':'test'}
-        response = requests.post(URL,json=data, headers = headers)
+        response = requests.get(dbURL)
+        value = response.json()
+        if value:
+            db_length = len(value['databases'])
+            last_db_id = value['databases'][db_length-1]['id']
+        url = URL + str(last_db_id)
+        data = {'description': 'test', 'hostname': '', 'name': 'test'}
+        response = requests.post(url, json=data, headers=headers)
         value=response.json()
         self.assertEqual(value['error'],'Host name is required')
         self.assertEqual(response.status_code, 404)
@@ -241,6 +319,52 @@ class UpdateServer(Server):
             self.assertEqual(response.status_code, 404)
             self.assertEqual(value['error'],'Host name already exists')
 
+
+class DeleteServer(unittest.TestCase):
+    def test_Delete_Server(self):
+        # Create a db
+        headers = {'Content-Type': 'application/json; charset=utf-8'}
+        db_data = {'name': 'testDB'}
+        response = requests.post(dbURL, json=db_data, headers=headers)
+        if response.status_code == 201:
+            self.assertEqual(response.status_code, 201)
+        else:
+            self.assertEqual(response.status_code, 404)
+        # Create a server
+        response = requests.get(dbURL)
+        value = response.json()
+        if value:
+            db_length = len(value['databases'])
+            last_db_id = value['databases'][db_length-1]['id']
+            url = URL + str(last_db_id)
+            data = {'description': 'test', 'hostname': 'test', 'name': 'test'}
+            response = requests.post(url, json=data, headers=headers)
+            if response.status_code == 201:
+                self.assertEqual(response.status_code, 201)
+            else:
+                self.assertEqual(response.status_code, 404)
+
+        response= requests.get(dbURL)
+        value= response.json()
+        if value:
+            db_length = len(value['databases'])
+            last_db_id = value['databases'][db_length-1]['id']
+            db_data = {'dbId': last_db_id}
+            response = requests.get(URL)
+            value = response.json()
+            if value:
+                server_length = len(value['servers'])
+                last_server_id = value['servers'][server_length-1]['id']
+                print "ServerId to be deleted is " + str(last_server_id)
+                url = URL + str(last_server_id)
+                response = requests.delete(url, json=db_data, headers=headers)
+                self.assertEqual(response.status_code, 200)
+
+                db_url = dbURL + str(last_db_id)
+                response = requests.delete(db_url)
+                self.assertEqual(response.status_code, 200)
+            else:
+                print "The Server list is empty"
 
 if __name__ == '__main__':
     unittest.main(testRunner=xmlrunner.XMLTestRunner(output='test-reports'))
