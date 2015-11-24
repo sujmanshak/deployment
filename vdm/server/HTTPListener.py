@@ -26,35 +26,52 @@ OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
+import json
 
-from flask import Flask, render_template, jsonify, abort, make_response, request
-from flask.views import MethodView
+from flask import Flask, jsonify, abort, render_template, make_response
+from flask_restful import reqparse, Api, Resource, marshal, fields, request
 import socket
 from Validation import *
 
+
 APP = Flask(__name__, template_folder="../templates", static_folder="../static")
+api = Api(APP)
+
 
 SERVERS = []
+IS_CURRENT_NODE_ADDED = False
 
+server_fields = {
+    'id': fields.Integer,
+    'name': fields.String,
+    'hostname': fields.String,
+    'description': fields.String,
+    'enabled': fields.Boolean,
+    'external-interface': fields.String,
+    'internal-interface': fields.String,
+    'public-interface': fields.String,
+    'client-listener': fields.String,
+    'internal-listener': fields.String,
+    'admin-listener': fields.String,
+    'http-listener': fields.String,
+    'replication-listener': fields.String,
+    'zookeeper-listener': fields.String,
+    'placement-group': fields.String
 
-@APP.errorhandler(400)
-def not_found(error):
-    """Bad Request"""
-    print error
-    return make_response(jsonify({'error': 'Bad request'}), 400)
-
-
-@APP.errorhandler(404)
-def not_found(error):
-    """Not Found"""
-    print error
-    return make_response(jsonify({'error': 'Not found'}), 404)
+}
 
 
 @APP.route("/")
 def index():
     """Main Page"""
     return render_template("index.html")
+
+
+def abort_if_server_doesnt_exist(id):
+    """abort"""
+    server = [server for server in SERVERS if server['id'] == id]
+    if len(server) == 0:
+        abort(404, message="Server {} doesn't exist".format(id))
 
 
 def make_public_server(servers):
@@ -65,66 +82,136 @@ def make_public_server(servers):
     return new_server
 
 
-IS_CURRENT_NODE_ADDED = False
+class Server(Resource):
+    """shows a single Server item and lets you delete a Server item"""
 
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('name', type=str, required=True,
+                                   help='name is required', location='json')
+        self.reqparse.add_argument('hostname', type=str, required=True,
+                                   help='hostname is required', location='json')
+        self.reqparse.add_argument('description', type=str,
+                                   default="", location='json')
+        self.reqparse.add_argument('enabled', type=bool, default=True, location='json')
+        self.reqparse.add_argument('external-interface', type=str, default="", location='json')
+        self.reqparse.add_argument('internal-interface', type=str, default="", location='json')
+        self.reqparse.add_argument('public-interface', type=str, default="", location='json')
+        self.reqparse.add_argument('client-listener', type=str, default="", location='json')
+        self.reqparse.add_argument('internal-listener', type=str, default="", location='json')
+        self.reqparse.add_argument('admin-listener', type=str, default="", location='json')
+        self.reqparse.add_argument('http-listener', type=str, default="", location='json')
+        self.reqparse.add_argument('replication-listener', type=str, default="", location='json')
+        self.reqparse.add_argument('zookeeper-listener', type=str, default="", location='json')
+        self.reqparse.add_argument('placement-group', type=str, default="", location='json')
+        super(Server, self).__init__()
 
-class ServerAPI(MethodView):
-    """Server Requests"""
     @staticmethod
-    def get(server_id):
-        """Get Server"""
+    def get(id):
+        "get server"
+        abort_if_server_doesnt_exist(id)
+        server = [server for server in SERVERS if server['id'] == id]
+        return jsonify({'server': make_public_server(server[0])})
+
+    @staticmethod
+    def delete(id):
+        """Delete Server"""
+        abort_if_server_doesnt_exist(id)
+        server = [server for server in SERVERS if server['id'] == id]
+        if len(server) == 0:
+            abort(404)
+        SERVERS.remove(server[0])
+        return jsonify({'result': True})
+
+    def put(self, id):
+        "Update server"
+        server = [server for server in SERVERS if server['id'] == id]
+        if len(server) == 0:
+            abort(404)
+        server = server[0]
+        response = Validation.validate_ports_info(request)
+        if response['status'] == -1:
+            return make_response(jsonify({'error': response['error']}), 404)
+
+        args = self.reqparse.parse_args()
+        for k, v in args.items():
+            if v is not None:
+                server[k] = v
+        # return {'server': marshal(server, server_fields)}
+        return {'server': server, 'status': 1}
+
+
+class ServerList(Resource):
+    """shows a list of all SERVERS, and lets you POST to add new servers"""
+
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('name', type=str, required=True,
+                                   help='name is required', location='json')
+        self.reqparse.add_argument('hostname', type=str, required=True,
+                                   help='hostname is required', location='json')
+        self.reqparse.add_argument('description', type=str,
+                                   default="", location='json')
+        self.reqparse.add_argument('enabled', type=bool, default=True, location='json')
+        self.reqparse.add_argument('external-interface', type=str, default="", location='json')
+        self.reqparse.add_argument('internal-interface', type=str, default="", location='json')
+        self.reqparse.add_argument('public-interface', type=str, default="", location='json')
+        self.reqparse.add_argument('client-listener', type=str, default="", location='json')
+        self.reqparse.add_argument('internal-listener', type=str, default="", location='json')
+        self.reqparse.add_argument('admin-listener', type=str, default="", location='json')
+        self.reqparse.add_argument('http-listener', type=str, default="", location='json')
+        self.reqparse.add_argument('replication-listener', type=str, default="", location='json')
+        self.reqparse.add_argument('zookeeper-listener', type=str, default="", location='json')
+        self.reqparse.add_argument('placement-group', type=str, default="", location='json')
+        super(ServerList, self).__init__()
+
+    @staticmethod
+    def get():
+        """get server"""
         global IS_CURRENT_NODE_ADDED
         my_host_name = socket.gethostname()
         my_host_or_ip = socket.gethostbyname(my_host_name)
 
-        if server_id is None:
+        if not SERVERS and not IS_CURRENT_NODE_ADDED:
+            IS_CURRENT_NODE_ADDED = True
+            SERVERS.append(
+                {
+                    'id': 1,
+                    'name': my_host_name,
+                    'hostname': my_host_or_ip,
+                    'description': "",
+                    'enabled': True,
+                    'external-interface': "",
+                    'internal-interface': "",
+                    'public-interface': "",
+                    'client-listener': "",
+                    'internal-listener': "",
+                    'admin-listener': "",
+                    'http-listener': "",
+                    'replication-listener': "",
+                    'zookeeper-listener': "",
+                    'placement-group': ""
+                }
+            )
 
-            if not SERVERS and not IS_CURRENT_NODE_ADDED:
-                IS_CURRENT_NODE_ADDED = True
-                SERVERS.append(
-                    {
-                        'id': 1,
-                        'name': my_host_name,
-                        'hostname': my_host_or_ip,
-                        'description': "",
-                        'enabled': True,
-                        'external-interface': "",
-                        'internal-interface': "",
-                        'public-interface': "",
-                        'client-listener': "",
-                        'internal-listener': "",
-                        'admin-listener': "",
-                        'http-listener': "",
-                        'replication-listener': "",
-                        'zookeeper-listener': "",
-                        'placement-group': ""
-                    }
-                )
+        return jsonify({'servers': [make_public_server(x) for x in SERVERS]})
 
-            return jsonify({'servers': [make_public_server(x) for x in SERVERS]})
-        else:
-            server = [server for server in SERVERS if server.id == server_id]
-            if len(server) == 0:
-                abort(404)
-            return jsonify({'server': make_public_server(server[0])})
+    def post(self):
+        """create server"""
 
-    @staticmethod
-    def post():
-        """Post Server"""
-        if not request.json or not 'name' in request.json or not 'hostname' in request.json:
-            abort(400)
+        args = self.reqparse.parse_args()
 
-        if request.json['name'].strip() == "":
+        if args['name'] == "":
             return make_response(jsonify({'error': 'Server name is required'}), 404)
 
-        if request.json['hostname'].strip() == "":
+        if args['hostname'] == "":
             return make_response(jsonify({'error': 'Host name is required'}), 404)
 
-        server = [server for server in SERVERS if server['name'] == request.json['name']]
+        server = [server for server in SERVERS if server['name'] == args['name']]
         if len(server) > 0:
             return make_response(jsonify({'error': 'Server name already exists'}), 404)
 
-        server = [server for server in SERVERS if server['hostname'] == request.json['hostname']]
+        server = [server for server in SERVERS if server['hostname'] == args['hostname']]
         if len(server) > 0:
             return make_response(jsonify({'error': 'Host name already exists'}), 404)
 
@@ -138,104 +225,28 @@ class ServerAPI(MethodView):
             server_id = SERVERS[-1]['id'] + 1
         server = {
             'id': server_id,
-            'name': request.json['name'].strip(),
-            'description': request.json.get('description', "").strip(),
-            'hostname': request.json.get('hostname', "").strip(),
+            'name': args['name'],
+            'description': args['description'],
+            'hostname': args['hostname'],
             'enabled': True,
-            'admin-listener': request.json.get('admin-listener', "").strip(),
-            'zookeeper-listener': request.json.get('zookeeper-listener', "").strip(),
-            'replication-listener': request.json.get('replication-listener', "").strip(),
-            'client-listener': request.json.get('client-listener', "").strip(),
-            'internal-interface': request.json.get('internal-interface', "").strip(),
-            'external-interface': request.json.get('external-interface', "").strip(),
-            'public-interface': request.json.get('public-interface', "").strip(),
-            'internal-listener': request.json.get('internal-listener', "").strip(),
-            'http-listener': request.json.get('http-listener', "").strip(),
-            'placement-group': request.json.get('placement-group', "").strip(),
+            'admin-listener': args['admin-listener'],
+            'zookeeper-listener': args['zookeeper-listener'],
+            'replication-listener': args['replication-listener'],
+            'client-listener': args['client-listener'],
+            'internal-interface': args['internal-interface'],
+            'external-interface': args['external-interface'],
+            'public-interface': args['public-interface'],
+            'internal-listener': args['internal-listener'],
+            'http-listener': args['http-listener'],
+            'placement-group': args['placement-group'],
 
         }
         SERVERS.append(server)
-        return jsonify({'server': server, 'status': 1}), 201
+        return {'server': server, 'status': 1}, 201
 
-    @staticmethod
-    def delete(server_id):
-        """Delete Server"""
-        server = [server for server in SERVERS if server['id'] == server_id]
-        if len(server) == 0:
-            abort(404)
-        SERVERS.remove(server[0])
-        return jsonify({'result': True})
 
-    @staticmethod
-    def put(server_id):
-        """Put Server"""
-
-        current_server = [server for server in SERVERS if server['id'] == server_id]
-        if len(current_server) == 0:
-            abort(404)
-        if not request.json:
-            abort(400)
-        if 'name' in request.json and not isinstance(request.json['name'], unicode):
-            abort(400)
-        if 'description' in request.json and not isinstance(request.json['description'], unicode):
-            abort(400)
-        if 'enabled' in request.json and not isinstance(request.json['enabled'], bool):
-            abort(400)
-        if 'hostname' in request.json and not isinstance(request.json['hostname'], unicode):
-            abort(400)
-
-        if 'name' in request.json:
-            if request.json['name'].strip() == "":
-                return make_response(jsonify({'error': 'Server name is required'}), 404)
-
-        if 'hostname' in request.json:
-            if request.json['hostname'].strip() == "":
-                return make_response(jsonify({'error': 'Host name is required'}), 404)
-
-        response = Validation.validate_ports_info(request)
-        if response['status'] == -1:
-            return make_response(jsonify({'error': response['error']}), 404)
-
-        current_server[0]['name'] = request.json.get('name',
-                                                     current_server[0]['name']).strip()
-        current_server[0]['hostname'] = request.json.get('hostname',
-                                                         current_server[0]['hostname']).strip()
-        current_server[0]['description'] = request.json.get \
-            ('description', current_server[0]['description']).strip()
-        current_server[0]['enabled'] = request.json.get \
-            ('enabled', current_server[0]['enabled'])
-        current_server[0]['admin-listener'] = request.json.get \
-            ('admin-listener', current_server[0]['admin-listener']).strip()
-        current_server[0]['internal-listener'] = request.json.get \
-            ('internal-listener', current_server[0]['internal-listener']).strip()
-        current_server[0]['http-listener'] = request.json.get \
-            ('http-listener', current_server[0]['http-listener']).strip()
-        current_server[0]['zookeeper-listener'] = request.json.get \
-            ('zookeeper-listener', current_server[0]['zookeeper-listener']).strip()
-        current_server[0]['replication-listener'] = request.json.get \
-            ('replication-listener', current_server[0]['replication-listener']).strip()
-        current_server[0]['client-listener'] = request.json.get \
-            ('client-listener', current_server[0]['client-listener']).strip()
-        current_server[0]['internal-interface'] = request.json.get \
-            ('internal-interface', current_server[0]['internal-interface']).strip()
-        current_server[0]['external-interface'] = request.json.get \
-            ('external-interface', current_server[0]['external-interface']).strip()
-        current_server[0]['public-interface'] = request.json.get\
-            ('public-interface', current_server[0]['public-interface']).strip()
-        current_server[0]['placement-group'] = request.json.get\
-            ('placement-group', current_server[0]['placement-group']).strip()
-        return jsonify({'server': current_server[0], 'status': 1})
-
+api.add_resource(ServerList, '/api/1.0/servers/', endpoint='servers')
+api.add_resource(Server, '/api/1.0/servers/<int:id>', endpoint='server')
 
 if __name__ == '__main__':
-    APP.config.update(
-        DEBUG=True,
-    )
-    SERVER_VIEW = ServerAPI.as_view('server_api')
-    APP.add_url_rule('/api/1.0/servers/', defaults={'server_id': None},
-                     view_func=SERVER_VIEW, methods=['GET', ])
-    APP.add_url_rule('/api/1.0/servers/', view_func=SERVER_VIEW, methods=['POST', ])
-    APP.add_url_rule('/api/1.0/servers/<int:server_id>', view_func=SERVER_VIEW,
-                     methods=['GET', 'PUT', 'DELETE'])
-
     APP.run(threaded=True, host='0.0.0.0', port=8000)
