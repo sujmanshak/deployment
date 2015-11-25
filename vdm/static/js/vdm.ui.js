@@ -282,6 +282,12 @@ var loadPage = function() {
         })
     }, 5000);
 
+    setInterval(function () {
+        VdmService.GetDatabaseList(function(connection){
+            VdmUI.displayDatabases(connection.Metadata['DATABASE_LISTING'])
+        });
+    }, 5000);
+
     $("#frmCreateServer").validate({
         rules: {
             serverName: validationRules.ServerNameRule,
