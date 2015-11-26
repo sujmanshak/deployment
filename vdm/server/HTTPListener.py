@@ -27,11 +27,10 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from flask import Flask, render_template, jsonify, abort, make_response
+from flask import Flask, render_template, jsonify, abort, make_response, request
 from flask.views import MethodView
-from Validation import *
-from wtforms.validators import DataRequired, IPAddress, ValidationError, Optional, Regexp
-from flask_inputs import Inputs
+from Validation import ServerInputs
+import socket
 
 APP = Flask(__name__, template_folder="../templates", static_folder="../static")
 
@@ -67,103 +66,6 @@ def make_public_server(servers):
 
 
 IS_CURRENT_NODE_ADDED = False
-
-
-def port_validation(form, field):
-    """Port Validation """
-    response_result = {'status': 1}
-    if ":" in field.data:
-        count = field.data.count(":")
-        if count > 1:
-            raise ValidationError('Invalid value')
-        array = field.data.split(":")
-        if len(array) == 2:
-            try:
-                socket.inet_pton(socket.AF_INET, array[0])
-            except AttributeError:
-                try:
-                    socket.inet_aton(array[0])
-                except socket.error:
-                    raise ValidationError('Invalid IP address')
-                return array[0].count('.') == 3
-            except socket.error:
-                raise ValidationError('Invalid IP address')
-            try:
-                val = int(array[1])
-                if val < 0:
-                    raise ValidationError('Value must be positive.')
-                elif val < 1 or val >= 65535:
-                    raise ValidationError('Port must be greated than 1 and less than 65535')
-
-            except ValueError:
-                raise ValidationError('Value must be positive.')
-        else:
-            raise ValidationError('Invalid value')
-    else:
-        try:
-            val = int(field.data)
-            if val < 0:
-                raise ValidationError('Value must be positive.')
-            elif val < 1 or val > 65536:
-                raise ValidationError('Port must be greated than 1 and less than 65535')
-        except ValueError:
-            raise ValidationError('Value must be positive.')
-    return response_result
-
-
-class ServerInputs(Inputs):
-    """
-    Validation class for inputs
-    """
-    json = {
-        'name': [
-            DataRequired('Name is required.'),
-            Regexp('^[a-zA-Z0-9_.]+$', 0, 'Only alphabets, numbers, _ and . are allowed.')
-        ],
-        'hostname': [
-            DataRequired('Hostname is required.'),
-            Regexp('^[a-zA-Z0-9_.]+$', 0, 'Only alphabets, numbers, _ and . are allowed.')
-        ],
-        'enabled': [
-            Optional(),
-        ],
-        'admin-listener': [
-            Optional(),
-            port_validation
-        ],
-        'internal-listener': [
-            Optional(),
-            port_validation
-        ],
-        'http-listener': [
-            Optional(),
-            port_validation
-        ],
-        'zookeeper-listener': [
-            Optional(),
-            port_validation
-        ],
-        'replication-listener': [
-            Optional(),
-            port_validation
-        ],
-        'client-listener': [
-            Optional(),
-            port_validation
-        ],
-        'internal-interface': [
-            Optional(),
-            IPAddress('Invalid IP address.')
-        ],
-        'external-interface': [
-            Optional(),
-            IPAddress('Invalid IP address.')
-        ],
-        'public-interface': [
-            Optional(),
-            IPAddress('Invalid IP address.')
-        ],
-    }
 
 
 class ServerAPI(MethodView):

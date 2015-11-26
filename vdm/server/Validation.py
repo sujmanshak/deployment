@@ -27,24 +27,22 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from flask import request
+from wtforms.validators import DataRequired, IPAddress, ValidationError, Optional, Regexp
+from flask_inputs import Inputs
 import socket
 
 
 class Validation(object):
     """"Validation Class"""
-    def __init__(self):
-        pass
-
     @staticmethod
-    def validate_port(listener, listener_type):
+    def port_validation(form, field):
         """Port Validation """
         response_result = {'status': 1}
-        if ":" in listener:
-            count = listener.count(":")
+        if ":" in field.data:
+            count = field.data.count(":")
             if count > 1:
-                response_result = {'status': -1, 'error': 'Invalid ' + listener_type}
-            array = listener.split(":")
+                raise ValidationError('Invalid value')
+            array = field.data.split(":")
             if len(array) == 2:
                 try:
                     socket.inet_pton(socket.AF_INET, array[0])
@@ -52,105 +50,79 @@ class Validation(object):
                     try:
                         socket.inet_aton(array[0])
                     except socket.error:
-                        response_result = {'status': -1, 'error': 'Invalid IP address in ' + listener_type}
+                        raise ValidationError('Invalid IP address')
                     return array[0].count('.') == 3
                 except socket.error:
-                    response_result = {'status': -1, 'error': 'Invalid IP address in ' + listener_type}
-
+                    raise ValidationError('Invalid IP address')
                 try:
                     val = int(array[1])
-                    if val < 0:
-                        response_result = {'status': -1, 'error': listener_type + ' must be a '
-                                                                                  'positive number'}
-                    elif val < 1 or val >= 65535:
-                        response_result = {'status': -1, 'error': listener_type + ' port must be '
-                                                                                  'greater than 1 '
-                                                                                  'and less than 65535'}
+                    if val < 1 or val >= 65535:
+                        raise ValidationError('Port must be greater than 1 and less than 65535')
+
                 except ValueError:
-                    response_result = {'status': -1, 'error': listener_type + ' must be a '
-                                                                              'positive number'}
+                    raise ValidationError('Value must be positive.')
             else:
-                response_result = {'status': -1, 'error': 'Invalid ' + listener_type}
+                raise ValidationError('Invalid value')
         else:
             try:
-                val = int(request.json[listener_type])
-                if val < 0:
-                    response_result = {'status': -1, 'error': listener_type + ' must be a '
-                                                                              'positive number'}
-                elif val < 1 or val > 65536:
-                    response_result = {'status': -1, 'error': listener_type + ' port must be '
-                                                                              'greater than 1 and'
-                                                                              ' less than 65535'}
+                val = int(field.data)
+                if val < 1 or val > 65536:
+                    raise ValidationError('Port must be greater than 1 and less than 65535')
             except ValueError:
-                response_result = {'status': -1, 'error': listener_type + ' must be a '
-                                                                          'positive number'}
+                raise ValidationError('Value must be positive.')
         return response_result
 
-    @staticmethod
-    def validate_ports_info(request_info):
-        """Validate port and IP addresses"""
-        response = {'status': 1}
-        if 'admin-listener' in request_info.json:
-            if request_info.json['admin-listener'] != "":
-                response = Validation.validate_port(request_info.json['admin-listener'],
-                                                    'admin-listener')
-                if response['status'] == -1:
-                    return response
 
-        if 'internal-listener' in request_info.json:
-            if request_info.json['internal-listener'] != "":
-                response = Validation.validate_port(request_info.json['internal-listener'],
-                                                    'internal-listener')
-                if response['status'] == -1:
-                    return response
-
-        if 'http-listener' in request_info.json:
-            if request_info.json['http-listener'] != "":
-                response = Validation.validate_port(request_info.json['http-listener'],
-                                                    'http-listener')
-                if response['status'] == -1:
-                    return response
-
-        if 'zookeeper-listener' in request_info.json:
-            if request_info.json['zookeeper-listener'] != "":
-                response = Validation.validate_port(request_info.json['zookeeper-listener'],
-                                                    'zookeeper-listener')
-                if response['status'] == -1:
-                    return response
-
-        if 'replication-listener' in request_info.json:
-            if request_info.json['replication-listener'] != "":
-                response = Validation.validate_port(request_info.json['replication-listener'],
-                                                    'replication-listener')
-                if response['status'] == -1:
-                    return response
-
-        if 'client-listener' in request_info.json:
-            if request_info.json['client-listener'] != "":
-                response = Validation.validate_port(request_info.json['client-listener'],
-                                                    'client-listener')
-                if response['status'] == -1:
-                    return response
-
-        if 'internal-interface' in request_info.json:
-            if request_info.json['internal-interface'] != "":
-                try:
-                    socket.inet_aton(request_info.json['internal-interface'])
-                except socket.error:
-                    return response
-
-        if 'external-interface' in request_info.json:
-            if request_info.json['external-interface'] != "":
-                try:
-                    socket.inet_aton(request_info.json['external-interface'])
-                except socket.error:
-                    return response
-
-        if 'public-interface' in request_info.json:
-            if request_info.json['public-interface'] != "":
-                try:
-                    socket.inet_aton(request_info.json['public-interface'])
-                except socket.error:
-                    return response
-        return response
-
+class ServerInputs(Inputs):
+    """
+    Validation class for inputs
+    """
+    json = {
+        'name': [
+            DataRequired('Name is required.'),
+            Regexp('^[a-zA-Z0-9_.]+$', 0, 'Only alphabets, numbers, _ and . are allowed.')
+        ],
+        'hostname': [
+            DataRequired('Hostname is required.'),
+            Regexp('^[a-zA-Z0-9_.]+$', 0, 'Only alphabets, numbers, _ and . are allowed.')
+        ],
+        'enabled': [
+            Optional(),
+        ],
+        'admin-listener': [
+            Optional(),
+            Validation.port_validation
+        ],
+        'internal-listener': [
+            Optional(),
+            Validation.port_validation
+        ],
+        'http-listener': [
+            Optional(),
+            Validation.port_validation
+        ],
+        'zookeeper-listener': [
+            Optional(),
+            Validation.port_validation
+        ],
+        'replication-listener': [
+            Optional(),
+            Validation.port_validation
+        ],
+        'client-listener': [
+            Optional(),
+            Validation.port_validation
+        ],
+        'internal-interface': [
+            Optional(),
+            IPAddress('Invalid IP address.')
+        ],
+        'external-interface': [
+            Optional(),
+            IPAddress('Invalid IP address.')
+        ],
+        'public-interface': [
+            Optional(),
+            IPAddress('Invalid IP address.')
+        ],
+    }
