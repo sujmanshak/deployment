@@ -44,6 +44,17 @@ class ClusterSettingsPage extends Page {
         errorClientPort {$("#errorClientPort")}
 
         errorInternalInterface {$("#errorInternalInterface")}
+
+        // Database
+        buttonAddDatabase                   { $("#btnAddDatabase") }
+
+        popupAddDatabase                    { $("#txtDbName") }
+        popupAddDatabaseNameField           { $("#txtDbName") }
+        popupAddDatabaseDeploymentField     { $("#txtDeployment") }
+        popupAddDatabaseButtonOk            (required:false) { $("#btnAddDatabaseOk") }
+        popupAddDatabaseButtonCancel        { $("#addDatabase > div > div > div.modal-footer > button.btn.btn-gray") }
+
+        popupDeleteDatabaseButtonOk         { $("#btnDeleteDatabaseOk") }
     }
 
     static at = {
@@ -63,5 +74,13 @@ class ClusterSettingsPage extends Page {
      */
     String getIdOfEditButton(int index) {
         return ("editServer_" + String.valueOf(index))
+    }
+
+    String getIdOfDatabaseDeleteButton(int index) {
+        return ("deleteDatabase_" + String.valueOf(index))
+    }
+
+    String getIdOfDatabaseEditButton(int index) {
+        return ("editDatabase_" + String.valueOf(index))
     }
 }
