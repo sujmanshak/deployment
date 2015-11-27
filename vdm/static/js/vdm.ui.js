@@ -404,7 +404,7 @@ var loadPage = function() {
                 var hostId = info["id"];
                 var infos = JSON.stringify(info)
                 htmlList += '<tr>' +
-                            '<td>' + hostName + '</td>' +
+                            '<td id="tdHostname_' +hostId+ '">' + hostName + '</td>' +
                             '<td data-id="' + hostId + '" data-info=\''+ infos +'\'><a class="btnUpdateServer" href="javascript:void(0);"data-toggle="modal" data-target="#addServer" >' +
                             '<div class="editServer" id="editServer_'+hostId+'"></div></a>' +
                             '<div class="loading-small" id="loadingServer_'+hostId+'" style="display:none"></div>' +

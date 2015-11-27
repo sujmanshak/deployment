@@ -58,9 +58,12 @@ class Validation(object):
                     val = int(array[1])
                     if val < 1 or val >= 65535:
                         raise ValidationError('Port must be greater than 1 and less than 65535')
-
-                except ValueError:
-                    raise ValidationError('Value must be positive.')
+                except ValueError as err:
+                    msg = err.message
+                    if msg is 'Port must be greater than 1 and less than 65535':
+                        raise ValidationError('Port must be greater than 1 and less than 65535')
+                    else:
+                        raise ValidationError('Value must be positive.')
             else:
                 raise ValidationError('Invalid value')
         else:
@@ -68,9 +71,12 @@ class Validation(object):
                 val = int(field.data)
                 if val < 1 or val > 65536:
                     raise ValidationError('Port must be greater than 1 and less than 65535')
-            except ValueError:
-                raise ValidationError('Value must be positive.')
-        return response_result
+            except ValueError as err:
+                msg = err.message
+                if msg is 'Port must be greater than 1 and less than 65535':
+                    raise ValidationError('Port must be greater than 1 and less than 65535')
+                else:
+                    raise ValidationError('Value must be positive.')
 
 
 class ServerInputs(Inputs):
